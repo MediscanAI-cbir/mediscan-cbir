@@ -1,126 +1,180 @@
-#!/usr/bin/env python3
-"""Query a FAISS index with a single image."""
+"""
+Dataset helpers for the ROCO small subset.
+
+This module defines:
+- a strongly-typed record (`MetadataRecord`) matching one row of metadata.csv,
+- a simple in-memory loader (`RocoSmallDataset`) that validates the CSV schema
+  and provides deterministic iteration order.
+
+Expected CSV schema (required columns):
+- image_id : str
+- path     : str (path to the image file, ideally relative to the repo root)
+- caption  : str
+- cui      : str (often JSON-encoded list; kept as raw string here)
+"""
 
 from __future__ import annotations
 
-import argparse
-import json
-import os
-import sys
+import csv
+from dataclasses import dataclass
 from pathlib import Path
-
-# Work around duplicate OpenMP runtime loads across PyTorch/FAISS wheels.
-os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
-os.environ.setdefault("OMP_NUM_THREADS", "1")
-
-import faiss
-import numpy as np
-from PIL import Image
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-from mediscan.embedders.factory import get_embedder
+from typing import Iterator
 
 
-def resolve_path(raw_path: str | Path) -> Path:
-    path = Path(raw_path)
-    if path.is_absolute():
-        return path
-    return PROJECT_ROOT / path
+@dataclass(frozen=True)
+class MetadataRecord:
+    """
+    One metadata row corresponding to one image.
+
+    Attributes
+    ----------
+    image_id : str
+        Unique identifier for the image.
+    path : str
+        File path to the image. This can be relative or absolute depending on how
+        metadata.csv was produced.
+    caption : str
+        Natural language caption describing the image.
+    cui : str
+        UMLS Concept Unique Identifiers associated with the image.
+        This is typically stored as a JSON string (e.g. '["C0011849", ...]').
+        We keep it raw here and let higher layers decide how/when to parse it.
+    """
+
+    image_id: str
+    path: str
+    caption: str
+    cui: str
+
+    def to_dict(self) -> dict[str, str]:
+        """
+        Convert the record to a standard dictionary.
+
+        Useful for:
+        - logging / debug prints
+        - JSON serialization
+        - passing records to other layers (e.g., MongoDB import) without exposing
+          dataclasses.
+        """
+        return {
+            "image_id": self.image_id,
+            "path": self.path,
+            "caption": self.caption,
+            "cui": self.cui,
+        }
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Query FAISS index with an input image")
-    parser.add_argument("--embedder", default="resnet50_radimagenet", help="Embedder name")
-    parser.add_argument(
-        "--weights-path",
-        default="weights/resnet50_radimagenet.pt",
-        help="Path to embedder checkpoint",
-    )
-    parser.add_argument("--image", required=True, help="Path to query image")
-    parser.add_argument("--k", type=int, default=5, help="Top-k results (max 50)")
-    parser.add_argument(
-        "--index-path",
-        default="artifacts/index.faiss",
-        help="Path to FAISS index",
-    )
-    parser.add_argument(
-        "--ids-path",
-        default="artifacts/ids.json",
-        help="Path to indexed metadata",
-    )
-    return parser.parse_args()
+class RocoSmallDataset:
+    """
+    In-memory loader for `metadata.csv` with deterministic iteration order.
+
+    Responsibilities:
+    - read metadata.csv
+    - validate that required columns exist
+    - validate that each row has at least `image_id` and `path`
+    - store all rows as `MetadataRecord` objects in memory
+
+    Notes
+    -----
+    - The order is deterministic: records are stored in the same order as in CSV.
+    - This class does not open image files; it only loads metadata.
+      Image loading should be done by the embedder/query layer when needed.
+    """
+
+    REQUIRED_COLUMNS = ("image_id", "path", "caption", "cui")
+
+    def __init__(self, metadata_csv: str | Path = "data/roco_small/metadata.csv") -> None:
+        """
+        Parameters
+        ----------
+        metadata_csv : str | Path
+            Path to the metadata.csv file for the ROCO small subset.
+
+        Raises
+        ------
+        FileNotFoundError
+            If metadata.csv does not exist.
+        """
+        self.metadata_csv = Path(metadata_csv)
+        if not self.metadata_csv.exists():
+            raise FileNotFoundError(f"Metadata CSV not found: {self.metadata_csv}")
+
+        self._records = self._load_records()
+
+    def _load_records(self) -> list[MetadataRecord]:
+        """
+        Read and validate metadata records from CSV.
+
+        Returns
+        -------
+        list[MetadataRecord]
+            All records loaded in memory.
+
+        Raises
+        ------
+        ValueError
+            If the CSV has no header, misses required columns, or contains invalid rows.
+        """
+        records: list[MetadataRecord] = []
+
+        with self.metadata_csv.open("r", newline="", encoding="utf-8") as csv_file:
+            reader = csv.DictReader(csv_file)
+
+            # CSV must have a header row
+            if reader.fieldnames is None:
+                raise ValueError(f"CSV file has no header: {self.metadata_csv}")
+
+            # Validate required columns
+            missing_columns = [
+                column for column in self.REQUIRED_COLUMNS if column not in reader.fieldnames
+            ]
+            if missing_columns:
+                raise ValueError(
+                    "CSV missing required columns "
+                    f"{missing_columns} in {self.metadata_csv}"
+                )
+
+            # Start=2 because row 1 is the header
+            for row_number, row in enumerate(reader, start=2):
+                image_id = (row.get("image_id") or "").strip()
+                image_path = (row.get("path") or "").strip()
+                caption = (row.get("caption") or "").strip()
+                cui = (row.get("cui") or "").strip()
+
+                # Minimal validity constraints
+                if not image_id or not image_path:
+                    raise ValueError(
+                        f"Invalid row {row_number} in {self.metadata_csv}: "
+                        "image_id and path are required"
+                    )
+
+                records.append(
+                    MetadataRecord(
+                        image_id=image_id,
+                        path=image_path,
+                        caption=caption,
+                        cui=cui,
+                    )
+                )
+
+        return records
+
+    def __len__(self) -> int:
+        """Return the number of records loaded."""
+        return len(self._records)
+
+    def __iter__(self) -> Iterator[MetadataRecord]:
+        """Iterate over records in the same order as in metadata.csv."""
+        return iter(self._records)
+
+    @property
+    def records(self) -> list[MetadataRecord]:
+        """
+        Return a copy of the records list.
+
+        This prevents callers from mutating the internal list by accident.
+        """
+        return list(self._records)
 
 
-def main() -> None:
-    args = parse_args()
-    if hasattr(faiss, "omp_set_num_threads"):
-        faiss.omp_set_num_threads(1)
-
-    if args.k <= 0:
-        raise ValueError("--k must be a positive integer")
-    if args.k > 50:
-        raise ValueError("--k must be <= 50")
-
-    embedder = get_embedder(
-        args.embedder,
-        weights_path=resolve_path(args.weights_path),
-    )
-
-    image_path = resolve_path(args.image)
-    if not image_path.exists():
-        raise FileNotFoundError(f"Query image not found: {image_path}")
-
-    index_path = resolve_path(args.index_path)
-    ids_path = resolve_path(args.ids_path)
-
-    if not index_path.exists():
-        raise FileNotFoundError(f"FAISS index not found: {index_path}")
-    if not ids_path.exists():
-        raise FileNotFoundError(f"IDs file not found: {ids_path}")
-
-    index = faiss.read_index(str(index_path))
-    if index.d != embedder.dim:
-        raise RuntimeError(
-            f"Index dimension ({index.d}) does not match embedder ({embedder.dim})"
-        )
-    if index.ntotal == 0:
-        raise RuntimeError("FAISS index is empty")
-
-    with ids_path.open("r", encoding="utf-8") as ids_file:
-        indexed_rows = json.load(ids_file)
-
-    if not isinstance(indexed_rows, list):
-        raise RuntimeError("Invalid ids.json format: expected a list")
-    if len(indexed_rows) != index.ntotal:
-        raise RuntimeError(
-            f"Index/IDs mismatch: index.ntotal={index.ntotal}, ids={len(indexed_rows)}"
-        )
-
-    with Image.open(image_path) as image:
-        query_vector = embedder.encode_pil(image).reshape(1, -1).astype(np.float32)
-
-    faiss.normalize_L2(query_vector)
-
-    search_k = min(args.k, index.ntotal)
-    scores, indices = index.search(query_vector, search_k)
-
-    for rank, (idx, score) in enumerate(zip(indices[0], scores[0]), start=1):
-        if idx < 0:
-            continue
-
-        row = indexed_rows[idx]
-        image_id = row.get("image_id", "")
-        caption = row.get("caption", "")
-        cui = row.get("cui", "")
-
-        print(f"{rank}. image_id={image_id} score={float(score):.6f}")
-        print(f"   caption={caption}")
-        print(f"   cui={cui}")
-
-
-if __name__ == "__main__":
-    main()
+__all__ = ["MetadataRecord", "RocoSmallDataset"]
