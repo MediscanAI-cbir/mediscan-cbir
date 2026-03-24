@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+:root {
+  --theme-primary: #1d4ed8;
+  --theme-primary-light: #3b82f6;
+  --theme-primary-pale: #eff6ff;
+  --theme-accent: #0d9488;
+  --theme-accent-light: #14b8a6;
+  --theme-accent-pale: #f0fdfa;
+  --theme-surface: rgba(255, 255, 255, 0.9);
+  --theme-bg: #f8fafc;
+  --theme-bg-soft: #eef6ff;
+  --theme-border: #d9e4f1;
+  --theme-text: #1e293b;
+  --theme-muted: #64748b;
+  --theme-footer: #0f172a;
+  --theme-footer-muted: #94a3b8;
+}
+
+[data-theme="dark"] {
+  --theme-primary: #60a5fa;
+  --theme-primary-light: #93c5fd;
+  --theme-primary-pale: #10233f;
+  --theme-accent: #2dd4bf;
+  --theme-accent-light: #5eead4;
+  --theme-accent-pale: #0b2d2e;
+  --theme-surface: rgba(15, 23, 42, 0.82);
+  --theme-bg: #060d19;
+  --theme-bg-soft: #0d1728;
+  --theme-border: #243347;
+  --theme-text: #e5eef9;
+  --theme-muted: #9cb0ca;
+  --theme-footer: #030712;
+  --theme-footer-muted: #7f93b2;
+}
+
+@theme {
+  --color-primary: var(--theme-primary);
+  --color-primary-light: var(--theme-primary-light);
+  --color-primary-pale: var(--theme-primary-pale);
+  --color-accent: var(--theme-accent);
+  --color-accent-light: var(--theme-accent-light);
+  --color-accent-pale: var(--theme-accent-pale);
+  --color-surface: var(--theme-surface);
+  --color-bg: var(--theme-bg);
+  --color-bg-soft: var(--theme-bg-soft);
+  --color-border: var(--theme-border);
+  --color-text: var(--theme-text);
+  --color-muted: var(--theme-muted);
+  --color-footer: var(--theme-footer);
+  --color-footer-muted: var(--theme-footer-muted);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Curseur pointer sur tous les boutons */
+button {
+  cursor: pointer;
+}
+
+/* Focus visible propre */
+:focus-visible {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Logo — light mode: multiply fuse le fond blanc dans la barre */
+.theme-logo {
+  mix-blend-mode: multiply;
+  opacity: 0.97;
+  transition: filter 200ms ease, opacity 200ms ease;
+}
+
+/* Dark mode: feColorMatrix rend les pixels blancs vraiment transparents,
+   les couleurs du logo restent intactes → se fond parfaitement dans la barre */
+[data-theme="dark"] .theme-logo {
+  mix-blend-mode: normal;
+  opacity: 1;
+  filter: url(#remove-white-logo);
+}
+
+/* Hero image wrapper — mask creates real transparency at edges,
+   so whatever background (gradient, solid, dark/light) shows through naturally */
+.hero-frame {
+  position: relative;
+  -webkit-mask-image: radial-gradient(ellipse 85% 85% at 55% 48%, black 45%, transparent 78%);
+  mask-image: radial-gradient(ellipse 85% 85% at 55% 48%, black 45%, transparent 78%);
+}
+
+.hero-preview {
+  display: block;
+  width: 100%;
+  transition: filter 200ms ease;
+}
+
+[data-theme="dark"] .hero-preview {
+  filter: brightness(1.05) saturate(1.15) contrast(1.05);
+}

@@ -1,16 +1,55 @@
 from __future__ import annotations
 
-from argparse import Namespace
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from PIL import Image, UnidentifiedImageError
 
 from backend.app.config import ALLOWED_CONTENT_TYPES, ALLOWED_MODES, MAX_K
-from scripts import query as query_module
+from mediscan.search import SearchResources, query
 
 
 class SearchService:
+    """Validates user input and delegates to the mediscan search pipeline."""
+
+    def __init__(self, resources: dict[str, SearchResources]) -> None:
+        self._resources = resources
+
+    @staticmethod
+    def _normalize_mode(mode: str) -> str:
+        normalized_mode = mode.strip().lower()
+        if normalized_mode not in ALLOWED_MODES:
+            raise ValueError(f"Unsupported mode: {mode}")
+        return normalized_mode
+
+    @staticmethod
+    def _validate_k(k: int) -> None:
+        if not 0 < k <= MAX_K:
+            raise ValueError(f"k must be between 1 and {MAX_K}")
+
+    @staticmethod
+    def _validate_content_type(content_type: str | None) -> None:
+        if content_type and content_type not in ALLOWED_CONTENT_TYPES:
+            raise ValueError("Only JPEG and PNG images are accepted")
+
+    @staticmethod
+    def _validate_image_bytes(image_bytes: bytes) -> None:
+        if not image_bytes:
+            raise ValueError("Uploaded image is empty")
+
+    @staticmethod
+    def _pick_suffix(filename: str) -> str:
+        suffix = Path(filename or "query.png").suffix.lower()
+        return suffix if suffix in {".jpg", ".jpeg", ".png"} else ".png"
+
+    @staticmethod
+    def _verify_image(temp_path: Path) -> None:
+        try:
+            with Image.open(temp_path) as image:
+                image.verify()
+        except (UnidentifiedImageError, OSError) as exc:
+            raise ValueError("Invalid image file") from exc
+
     def search(
         self,
         *,
@@ -20,46 +59,23 @@ class SearchService:
         mode: str = "visual",
         k: int = 5,
     ) -> dict:
-        normalized_mode = mode.strip().lower()
-        if normalized_mode not in ALLOWED_MODES:
-            raise ValueError(f"Unsupported mode: {mode}")
-        if not 0 < k <= MAX_K:
-            raise ValueError(f"k must be between 1 and {MAX_K}")
-        if content_type and content_type not in ALLOWED_CONTENT_TYPES:
-            raise ValueError("Only JPEG and PNG images are accepted")
-        if not image_bytes:
-            raise ValueError("Uploaded image is empty")
-
-        suffix = Path(filename or "query.png").suffix.lower()
-        if suffix not in {".jpg", ".jpeg", ".png"}:
-            suffix = ".png"
+        normalized_mode = self._normalize_mode(mode)
+        self._validate_k(k)
+        self._validate_content_type(content_type)
+        self._validate_image_bytes(image_bytes)
 
         temp_path: Path | None = None
         try:
-            with NamedTemporaryFile(delete=False, suffix=suffix) as handle:
+            with NamedTemporaryFile(delete=False, suffix=self._pick_suffix(filename)) as handle:
                 handle.write(image_bytes)
                 temp_path = Path(handle.name)
 
-            try:
-                with Image.open(temp_path) as image:
-                    image.verify()
-            except (UnidentifiedImageError, OSError) as exc:
-                raise ValueError("Invalid image file") from exc
-
-            args = Namespace(
-                mode=normalized_mode,
-                image=str(temp_path),
-                k=k,
-                embedder=None,
-                model_name=None,
-                index_path=None,
-                ids_path=None,
-                exclude_self=False,
-            )
-            embedder_name, _, results = query_module.run_query(args)
+            self._verify_image(temp_path)
+            resources = self._resources[normalized_mode]
+            results = query(resources=resources, image=temp_path, k=k)
             return {
                 "mode": normalized_mode,
-                "embedder": embedder_name,
+                "embedder": resources.embedder.name,
                 "query_image": filename,
                 "results": results,
             }

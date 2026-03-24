@@ -1,6 +1,7 @@
-from pathlib import Path
+from mediscan.runtime import SUPPORTED_MODES
+from mediscan.search import MAX_K
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-MAX_K = 50
 ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png"}
-ALLOWED_MODES = {"visual", "semantic"}
+ALLOWED_MODES = SUPPORTED_MODES
+
+__all__ = ["MAX_K", "ALLOWED_CONTENT_TYPES", "ALLOWED_MODES"]

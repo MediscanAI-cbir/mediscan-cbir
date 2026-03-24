@@ -6,35 +6,18 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import os
-import sys
 from pathlib import Path
 from typing import Any
 
-os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
-os.environ.setdefault("OMP_NUM_THREADS", "1")
-
-import faiss
-import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
 from mediscan.dataset import MetadataRecord, RocoSmallDataset
-from mediscan.runtime import (
-    build_embedder,
-    compute_search_k,
-    is_visual_embedder,
-    load_indexed_rows,
-    resolve_path,
-    set_faiss_threads,
-)
-from mediscan.visual_similarity import rerank_visual_results
+from mediscan.process import configure_cpu_environment
+from mediscan.runtime import resolve_path
+from mediscan.search import MAX_K, load_resources, query
 
-MAX_K = 50
+configure_cpu_environment()
+
 SEMANTIC_KEYWORDS = (
     "subarachnoid",
     "hematoma",
@@ -183,64 +166,20 @@ def resolve_query_for_mode(
 
 
 def run_image_search(
-    query_record: MetadataRecord,
     query_image: Path,
-    embedder_name: str,
+    mode: str,
     model_name: str | None,
     index_path: Path,
     ids_path: Path,
     k: int,
 ) -> list[dict[str, Any]]:
-    set_faiss_threads(faiss)
-
-    if not index_path.exists():
-        raise FileNotFoundError(f"Missing index: {index_path}")
-    embedder = build_embedder(embedder_name, model_name=model_name)
-    index = faiss.read_index(str(index_path))
-    rows = load_indexed_rows(ids_path)
-
-    if index.d != embedder.dim:
-        raise RuntimeError(
-            f"Index dimension mismatch for {embedder_name}: index={index.d}, embedder={embedder.dim}"
-        )
-    if index.ntotal != len(rows):
-        raise RuntimeError(f"Index/ids mismatch: index.ntotal={index.ntotal}, ids={len(rows)}")
-
-    with Image.open(query_image) as image:
-        query_vector = embedder.encode_pil(image).reshape(1, -1).astype(np.float32)
-    faiss.normalize_L2(query_vector)
-
-    search_k = compute_search_k(embedder_name, k, index.ntotal)
-    scores, indices = index.search(query_vector, search_k)
-
-    results: list[dict[str, Any]] = []
-    for idx, score in zip(indices[0], scores[0]):
-        if idx < 0:
-            continue
-        row = rows[idx]
-        image_id = str(row.get("image_id", ""))
-        if image_id == query_record.image_id:
-            continue
-        results.append(
-            {
-                "image_id": image_id,
-                "path": str(row.get("path", "")),
-                "caption": str(row.get("caption", "")),
-                "cui": str(row.get("cui", "")),
-                "score": float(score),
-            }
-        )
-        if not is_visual_embedder(embedder_name) and len(results) >= k:
-            break
-
-    if is_visual_embedder(embedder_name):
-        results = rerank_visual_results(
-            query_image=query_image,
-            candidates=results,
-            resolve_path=resolve_path,
-            limit=k,
-        )
-    return results
+    resources = load_resources(
+        mode=mode,
+        model_name=model_name,
+        index_path=index_path,
+        ids_path=ids_path,
+    )
+    return query(resources=resources, image=query_image, k=k, exclude_self=True)
 
 
 def truncate(text: str, max_len: int) -> str:
@@ -328,18 +267,16 @@ def main() -> None:
     semantic_record, semantic_image, semantic_reason = resolve_query_for_mode(records, "semantic", args.semantic_image, args.image)
 
     visual_results = run_image_search(
-        query_record=visual_record,
         query_image=visual_image,
-        embedder_name="dinov2_base",
+        mode="visual",
         model_name=args.visual_model_name,
         index_path=resolve_path(args.visual_index_path),
         ids_path=resolve_path(args.visual_ids_path),
         k=args.k,
     )
     semantic_results = run_image_search(
-        query_record=semantic_record,
         query_image=semantic_image,
-        embedder_name="biomedclip",
+        mode="semantic",
         model_name=args.semantic_model_name,
         index_path=resolve_path(args.semantic_index_path),
         ids_path=resolve_path(args.semantic_ids_path),

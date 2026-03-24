@@ -1,26 +1,10 @@
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import numpy as np
 from PIL import Image
 
 from scripts.evaluation import evaluate_cui as module
-
-
-class FakeVisualEmbedder:
-    name = "dinov2_base"
-    dim = 768
-
-    def encode_pil(self, image):
-        return np.ones((768,), dtype=np.float32)
-
-
-class FakeIndex:
-    ntotal = 2
-
-    def search(self, query_vector, search_k):
-        assert search_k == 2
-        return np.array([[0.9, 0.8]], dtype=np.float32), np.array([[0, 1]], dtype=np.int64)
 
 
 def test_parse_cui_and_metrics():
@@ -30,15 +14,25 @@ def test_parse_cui_and_metrics():
     assert module.compute_tq2([{"n_communs": 1}, {"n_communs": 3}]) == {1: 1.0, 2: 0.5, 3: 0.5}
 
 
-def test_run_query_visual_uses_reranking(tmp_path):
+def test_evaluate_uses_search_query(tmp_path):
     image_path = tmp_path / "query.png"
     Image.new("RGB", (8, 8)).save(image_path)
-    ids = [{"path": str(image_path)}, {"path": str(image_path)}]
 
-    with patch("scripts.evaluation.evaluate_cui.faiss.normalize_L2"), \
-         patch("scripts.evaluation.evaluate_cui.rerank_visual_results", return_value=[{"index": 1, "score": 0.5}]) as rerank:
-        indices, scores = module.run_query(image_path, FakeVisualEmbedder(), FakeIndex(), ids, k=1)
+    query_rows = [
+        {"image_id": "q1", "path": str(image_path), "cui": '["C1", "C2"]'},
+    ]
+    fake_results = [
+        {"rank": 1, "image_id": "r1", "score": 0.9, "path": "x.png", "caption": "c", "cui": '["C1"]'},
+        {"rank": 2, "image_id": "r2", "score": 0.8, "path": "y.png", "caption": "c", "cui": '["C3"]'},
+    ]
+    resources = MagicMock()
 
-    assert indices == [1]
-    assert scores == [0.5]
-    rerank.assert_called_once()
+    with patch("scripts.evaluation.evaluate_cui.query", return_value=fake_results) as mock_query:
+        query_results, result_details = module.evaluate(query_rows, resources, k=2)
+
+    mock_query.assert_called_once()
+    assert len(query_results) == 1
+    assert query_results[0]["max_communs"] == 1
+    assert len(result_details) == 2
+    assert result_details[0]["n_communs"] == 1
+    assert result_details[1]["n_communs"] == 0

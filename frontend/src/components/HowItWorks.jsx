@@ -1,0 +1,75 @@
+import { useContext } from "react";
+import { LangContext } from "../context/lang-context";
+
+export default function HowItWorks() {
+  const { t } = useContext(LangContext);
+  const content = t.howItWorks;
+
+  return (
+    <div className="bg-bg transition-colors duration-300">
+      <section className="max-w-[1400px] mx-auto px-6 py-16">
+        <h1 className="text-5xl font-bold text-text text-center mb-4">{content.headline}</h1>
+        <p className="text-lg text-muted text-center mb-16 max-w-2xl mx-auto">{content.description}</p>
+
+        {/* Two Modes */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-text mb-2 text-center">{content.modes.title}</h2>
+          <p className="text-muted text-center mb-8 max-w-2xl mx-auto">{content.modes.description}</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[content.modes.visual, content.modes.semantic].map((mode, idx) => (
+              <div key={idx} className={`bg-gradient-to-br ${idx === 0 ? "from-primary-pale to-surface border-primary/20" : "from-accent-pale to-surface border-accent/20"} border rounded-2xl p-8`}>
+                <h3 className={`text-xl font-bold mb-1 ${idx === 0 ? "text-primary" : "text-accent"}`}>{mode.name}</h3>
+                <p className="text-xs text-muted mb-4 font-mono">{mode.model}</p>
+                <p className="text-muted mb-6">{mode.desc}</p>
+                <div className="space-y-4">
+                  {mode.steps.map((step, i) => (
+                    <div key={i} className="flex gap-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${idx === 0 ? "bg-primary" : "bg-accent"}`}>
+                        {i + 1}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-text text-sm">{step.title}</p>
+                        <p className="text-xs text-muted">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* When to Use */}
+        <div className="bg-bg-soft rounded-2xl p-8 transition-colors duration-300">
+          <h2 className="text-2xl font-bold text-text mb-2 text-center">{content.when.title}</h2>
+          <p className="text-muted text-center mb-8 max-w-xl mx-auto text-sm">{content.when.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="text-center">
+              <h3 className="font-bold text-primary mb-4 text-center">{content.when.visual.title}</h3>
+              <ul className="space-y-2">
+                {content.when.visual.cases.map((c, i) => (
+                  <li key={i} className="text-sm text-muted flex gap-2 items-center justify-center">
+                    <span className="text-primary shrink-0">✓</span>
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="text-center">
+              <h3 className="font-bold text-accent mb-4 text-center">{content.when.semantic.title}</h3>
+              <ul className="space-y-2">
+                {content.when.semantic.cases.map((c, i) => (
+                  <li key={i} className="text-sm text-muted flex gap-2 items-center justify-center">
+                    <span className="text-accent shrink-0">✓</span>
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

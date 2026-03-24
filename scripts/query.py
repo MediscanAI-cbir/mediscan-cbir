@@ -5,36 +5,17 @@ from __future__ import annotations
 
 import argparse
 import csv
-import os
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
-os.environ.setdefault("OMP_NUM_THREADS", "1")
+from mediscan.process import configure_cpu_environment
+from mediscan.search import MAX_K, search_image
 
-import faiss
-import numpy as np
-from PIL import Image
+configure_cpu_environment()
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
 
-from mediscan.runtime import (
-    build_embedder,
-    compute_search_k,
-    default_config_for_mode,
-    is_visual_embedder,
-    load_indexed_rows,
-    resolve_path,
-    set_faiss_threads,
-)
-from mediscan.visual_similarity import rerank_visual_results
-
-MAX_K = 50
 EXPORT_DIR = PROJECT_ROOT / "proofs" / "exports"
 
 
@@ -56,81 +37,16 @@ def parse_args() -> argparse.Namespace:
 
 
 def run_query(args: argparse.Namespace) -> tuple[str, str, list[dict[str, Any]]]:
-    set_faiss_threads(faiss)
-
-    default_embedder, default_index_path, default_ids_path = default_config_for_mode(args.mode)
-    embedder_name = args.embedder or default_embedder
-    index_path = resolve_path(args.index_path) if args.index_path else default_index_path
-    ids_path = resolve_path(args.ids_path) if args.ids_path else default_ids_path
-    query_image = resolve_path(args.image)
-
-    if not query_image.exists():
-        raise FileNotFoundError(f"Query image not found: {query_image}")
-    if not index_path.exists():
-        raise FileNotFoundError(f"FAISS index not found: {index_path}")
-
-    rows = load_indexed_rows(ids_path)
-    index = faiss.read_index(str(index_path))
-    if index.ntotal == 0:
-        raise RuntimeError("FAISS index is empty")
-    if len(rows) != index.ntotal:
-        raise RuntimeError(f"Index/IDs mismatch: index.ntotal={index.ntotal}, ids={len(rows)}")
-
-    embedder = build_embedder(embedder_name, model_name=args.model_name)
-    if embedder.dim != index.d:
-        raise RuntimeError(
-            f"Index dimension ({index.d}) does not match embedder ({embedder.dim})"
-        )
-
-    with Image.open(query_image) as image:
-        query_vector = embedder.encode_pil(image).reshape(1, -1).astype(np.float32)
-    faiss.normalize_L2(query_vector)
-
-    search_k = compute_search_k(
-        embedder_name,
-        args.k,
-        index.ntotal,
+    return search_image(
+        mode=args.mode,
+        image=args.image,
+        k=args.k,
+        embedder=args.embedder,
+        model_name=args.model_name,
+        index_path=args.index_path,
+        ids_path=args.ids_path,
         exclude_self=args.exclude_self,
     )
-    scores, indices = index.search(query_vector, search_k)
-
-    query_abs = str(query_image.resolve())
-    query_stem = query_image.stem
-    results: list[dict[str, Any]] = []
-
-    for idx, score in zip(indices[0], scores[0]):
-        if idx < 0:
-            continue
-        row = rows[idx]
-        image_id = str(row.get("image_id", ""))
-        relative_path = str(row.get("path", ""))
-        absolute_path = str(resolve_path(relative_path).resolve()) if relative_path else ""
-
-        if args.exclude_self and (absolute_path == query_abs or image_id == query_stem):
-            continue
-
-        results.append(
-            {
-                "rank": len(results) + 1,
-                "score": float(score),
-                "image_id": image_id,
-                "path": relative_path,
-                "caption": str(row.get("caption", "")),
-                "cui": str(row.get("cui", "")),
-            }
-        )
-        if not is_visual_embedder(embedder_name) and len(results) >= args.k:
-            break
-
-    if is_visual_embedder(embedder_name):
-        results = rerank_visual_results(
-            query_image=query_image,
-            candidates=results,
-            resolve_path=resolve_path,
-            limit=args.k,
-        )
-
-    return embedder_name, str(query_image), results
 
 
 def print_results(mode: str, embedder_name: str, query_image: str, results: list[dict[str, Any]]) -> None:

@@ -9,14 +9,12 @@ image-text alignment.
 
 from __future__ import annotations
 
-import os
-
-import numpy as np
 import torch
 from PIL import Image as PILImage
 from transformers import AutoImageProcessor, AutoModel
 
 from .base import Embedder
+from .utils import configure_torch_cpu_threads, normalize_embedding
 
 
 class DINOv2BaseEmbedder(Embedder):
@@ -26,13 +24,7 @@ class DINOv2BaseEmbedder(Embedder):
     dim = 768
 
     def __init__(self, model_name: str = "facebook/dinov2-base") -> None:
-        thread_count = self._safe_int(os.getenv("MEDISCAN_TORCH_THREADS"), default=1)
-        torch.set_num_threads(max(1, thread_count))
-        try:
-            torch.set_num_interop_threads(1)
-        except RuntimeError:
-            pass
-
+        configure_torch_cpu_threads()
         self._device = torch.device("cpu")
         self._model_name = model_name
 
@@ -44,15 +36,6 @@ class DINOv2BaseEmbedder(Embedder):
         hidden_size = getattr(self._model.config, "hidden_size", None)
         if hidden_size is not None:
             self.dim = int(hidden_size)
-
-    @staticmethod
-    def _safe_int(value: str | None, default: int) -> int:
-        if value is None:
-            return default
-        try:
-            return int(value)
-        except ValueError:
-            return default
 
     def encode_pil(self, image: PILImage.Image) -> np.ndarray:
         if not isinstance(image, PILImage.Image):
@@ -70,18 +53,7 @@ class DINOv2BaseEmbedder(Embedder):
         else:
             features = outputs.last_hidden_state[:, 0]
 
-        vector = features.squeeze(0).cpu().numpy().astype(np.float32, copy=False)
-        if vector.shape != (self.dim,):
-            raise RuntimeError(
-                f"Unexpected embedding shape: got {vector.shape}, expected ({self.dim},)"
-            )
-
-        norm = float(np.linalg.norm(vector))
-        if not np.isfinite(norm) or norm <= 0.0:
-            raise RuntimeError("Embedding norm is invalid; cannot apply L2 normalization")
-
-        vector /= norm
-        return vector
+        return normalize_embedding(features.squeeze(0).cpu().numpy(), self.dim)
 
 
 __all__ = ["DINOv2BaseEmbedder"]

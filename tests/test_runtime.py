@@ -19,6 +19,13 @@ def test_default_config_for_mode():
     assert ids_path.name == "ids_semantic.json"
 
 
+def test_get_mode_config_and_manifest_path():
+    visual_config = runtime.get_mode_config("visual")
+    assert visual_config.embedder == "dinov2_base"
+    assert visual_config.manifest_path.name == "visual_stable.json"
+    assert runtime.stable_manifest_path_for_mode("semantic").name == "semantic_stable.json"
+
+
 @patch("mediscan.runtime.get_embedder")
 def test_build_embedder_forwards_model_name(mock_get):
     mock_get.return_value = "embedder"
@@ -39,6 +46,16 @@ def test_load_indexed_rows_rejects_invalid_data(tmp_path):
     ids_path.write_text('{"bad": true}', encoding="utf-8")
     with pytest.raises(RuntimeError):
         runtime.load_indexed_rows(ids_path)
+
+
+def test_ensure_artifacts_exist(tmp_path):
+    index_path = tmp_path / "index.faiss"
+    ids_path = tmp_path / "ids.json"
+    index_path.write_bytes(b"index")
+    ids_path.write_text("[]", encoding="utf-8")
+    resolved_index, resolved_ids = runtime.ensure_artifacts_exist(index_path, ids_path)
+    assert resolved_index == index_path
+    assert resolved_ids == ids_path
 
 
 def test_compute_search_k():
