@@ -4,26 +4,19 @@ from __future__ import annotations
 
 import argparse
 import csv
-import os
 import random
-import sys
 import time
 from datetime import datetime
 from pathlib import Path
-
-os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
-os.environ.setdefault("OMP_NUM_THREADS", "1")
 
 import faiss
 import numpy as np
 from PIL import Image
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
+from mediscan.process import configure_cpu_environment
 from mediscan.runtime import build_embedder, default_config_for_mode, resolve_path, set_faiss_threads
+
+configure_cpu_environment()
 
 SEUIL_TE2E_30K = 5.0
 SEUIL_STABILITE = 0.20

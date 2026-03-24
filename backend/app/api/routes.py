@@ -1,10 +1,26 @@
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse
 
+from backend.app.config import ALLOWED_MODES
 from backend.app.models.schema import SearchResponse
-from backend.app.services.search_service import SearchService
+from mediscan.runtime import PROJECT_ROOT
 
 router = APIRouter()
-service = SearchService()
+
+IMAGES_DIR = PROJECT_ROOT / "data" / "roco_train_full" / "images"
+
+
+def _get_service(request: Request):
+    """Retrieve the SearchService loaded at startup."""
+    return request.app.state.search_service
+
+
+def _sanitize_image_id(image_id: str) -> str:
+    """Allow only the stable dataset ID characters used by the project."""
+    safe_id = "".join(c for c in image_id if c.isalnum() or c in ("_", "-"))
+    if safe_id != image_id:
+        raise HTTPException(status_code=400, detail="Invalid image ID")
+    return safe_id
 
 
 @router.get("/health")
@@ -14,10 +30,12 @@ def health() -> dict[str, str]:
 
 @router.post("/search", response_model=SearchResponse)
 async def search_image(
+    request: Request,
     image: UploadFile = File(...),
     mode: str = Form("visual"),
     k: int = Form(5),
 ) -> SearchResponse:
+    service = _get_service(request)
     try:
         image_bytes = await image.read()
         payload = service.search(
@@ -34,3 +52,15 @@ async def search_image(
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@router.get("/images/{image_id}")
+def get_image(image_id: str) -> FileResponse:
+    """Serve a dataset image by its ID."""
+    safe_id = _sanitize_image_id(image_id)
+    for ext in (".png", ".jpg", ".jpeg"):
+        path = IMAGES_DIR / f"{safe_id}{ext}"
+        if path.exists():
+            return FileResponse(path, media_type=f"image/{ext.lstrip('.')}")
+
+    raise HTTPException(status_code=404, detail="Image not found")
