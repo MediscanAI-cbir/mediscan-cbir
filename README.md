@@ -17,10 +17,14 @@ make setup
 Si tu ne veux pas utiliser `make` :
 
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
 ./.venv/bin/pip install -r requirements.txt
 cd frontend && npm ci && cd ..
 ```
+
+Version Python recommandee ; `3.11`
+
+Sur certaines machines ; `python3` peut pointer vers `3.14` ; dans ce cas `pyarrow` peut ne pas avoir de roue precompilee et l'installation peut echouer ; le `Makefile` essaie d'utiliser `python3.11` en priorite lorsqu'il est disponible
 
 ### Lancement
 

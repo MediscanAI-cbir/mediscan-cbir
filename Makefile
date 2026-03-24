@@ -1,3 +1,4 @@
+PYTHON_BOOTSTRAP := $(shell command -v python3.11 2>/dev/null || command -v python3.12 2>/dev/null || command -v python3)
 PYTHON := ./.venv/bin/python
 PIP := ./.venv/bin/pip
 PYTEST := ./.venv/bin/pytest
@@ -6,7 +7,7 @@ UVICORN := ./.venv/bin/uvicorn
 .PHONY: setup-python setup-frontend setup run-backend run-frontend test
 
 setup-python:
-	python3 -m venv .venv
+	$(PYTHON_BOOTSTRAP) -m venv .venv
 	$(PIP) install -r requirements.txt
 
 setup-frontend:
