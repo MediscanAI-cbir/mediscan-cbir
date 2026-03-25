@@ -12,7 +12,7 @@ import faiss
 import numpy as np
 from PIL import Image
 
-from mediscan.dataset import RocoSmallDataset
+from mediscan.dataset import RocoDataset
 from mediscan.process import configure_cpu_environment
 from mediscan.runtime import build_embedder, resolve_path, set_faiss_threads
 
@@ -23,7 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build a FAISS index from metadata.csv")
     parser.add_argument("--embedder", default="dinov2_base")
     parser.add_argument("--model-name", default=None)
-    parser.add_argument("--metadata", default="data/roco_small/metadata.csv")
+    parser.add_argument("--metadata", default="data/roco_train_full/metadata.csv")
     parser.add_argument("--index-path", default="artifacts/index.faiss")
     parser.add_argument("--ids-path", default="artifacts/ids.json")
     parser.add_argument("--checkpoint-prefix", default=None)
@@ -187,7 +187,7 @@ def main() -> None:
     set_faiss_threads(faiss)
 
     metadata_path = resolve_path(args.metadata)
-    dataset = RocoSmallDataset(metadata_csv=metadata_path)
+    dataset = RocoDataset(metadata_csv=metadata_path)
     embedder = build_embedder(args.embedder, model_name=args.model_name)
 
     vectors, indexed_rows, processed_records, skipped = _load_checkpoint(

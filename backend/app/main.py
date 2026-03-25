@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.app.api.routes import router
 from mediscan.process import configure_cpu_environment
 from backend.app.services.search_service import SearchService
-from mediscan.search import load_resources
 
 configure_cpu_environment()
 logger = logging.getLogger(__name__)
@@ -15,14 +14,9 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    """Load heavy resources once at startup, release on shutdown."""
-    resources = {}
-    for mode in ("visual", "semantic"):
-        try:
-            resources[mode] = load_resources(mode=mode)
-        except Exception as exc:
-            logger.warning("Could not load '%s' search resources at startup: %s", mode, exc)
-    application.state.search_service = SearchService(resources=resources)
+    """Start quickly and load heavy search resources on demand."""
+    application.state.search_service = SearchService(resources={})
+    logger.info("Search resources will be loaded lazily on the first request.")
     yield
 
 

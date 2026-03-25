@@ -9,9 +9,11 @@ import {
   Search,
   Stethoscope,
   UserKey,
+
 } from "lucide-react";
 import { useContext } from "react";
 import { LangContext } from "../context/lang-context";
+import Footer from '../components/Footer';
 
 const benefitIcons = {
   route: Route,
@@ -29,10 +31,11 @@ const useCaseIcons = {
   search: Search,
 };
 
+
 function BenefitCard({ icon, title, description }) {
   return (
     <div className="bg-surface border border-border rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all">
-      <div className="w-12 h-12 rounded-xl bg-primary-pale text-primary flex items-center justify-center mb-4 text-xl">
+      <div className="w-10 h-10 rounded-xl bg-primary-pale text-primary flex items-center justify-center mb-3">
         {icon}
       </div>
       <h3 className="font-bold text-text mb-2">{title}</h3>
@@ -51,63 +54,68 @@ function UseCaseCard({ title, description, icon }) {
   );
 }
 
-export default function HomePage() {
+export default function HomePage({ onPageChange }) {
   const { t } = useContext(LangContext);
   const content = t.home;
 
   return (
-    <div className="bg-bg transition-colors duration-300">
+    <div className="bg-bg transition-colors duration-300 -mt-16 md:-mt-20">
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-bg-soft via-primary-pale to-accent-pale pt-24 pb-20">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            {/* Left */}
-            <div>
-              <div className="inline-flex items-center gap-2 mb-5 px-4 py-2 rounded-full bg-surface border border-border shadow-sm backdrop-blur-sm">
-                <span className="w-2 h-2 rounded-full bg-accent" />
-                <span className="text-xs font-semibold text-muted">{content.badge}</span>
-              </div>
+      <section className="relative overflow-hidden bg-gradient-to-r from-primary-pale via-bg-soft to-bg min-h-[88vh] flex items-center">
+        {/* Left content */}
+        <div className="relative z-10 w-full md:w-[50%] px-8 md:px-20 py-8">
+          <div className="flex flex-col gap-6">
 
-              <h1 className="text-5xl md:text-6xl font-extrabold text-text mb-5 leading-tight">
-                {content.headline}
-              </h1>
+            <h1 className="text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold text-text leading-[1.1] tracking-tight">
+              {content.headline1}<br/>
+              {content.headline2}
+            </h1>
 
-              <p className="text-lg text-muted mb-8 leading-relaxed">
-                {content.description}
-              </p>
+            <p className="text-sm md:text-base text-muted leading-relaxed max-w-[400px]">
+              {content.description}
+            </p>
 
-              <div className="flex gap-4 flex-wrap">
-                <button className="px-7 py-3 rounded-lg bg-primary text-white font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                  {content.cta1}
-                </button>
-                <button className="px-7 py-3 rounded-lg border-2 border-primary text-primary font-semibold hover:bg-primary-pale transition-all">
-                  {content.cta2}
-                </button>
-              </div>
-
-              <p className="text-xs text-muted mt-8">
-                ✓ {content.trust}
-              </p>
+            <div className="flex gap-3 flex-wrap pt-1">
+              <button onClick={() => onPageChange("search")} className="px-8 py-3 rounded-xl bg-primary text-white font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all text-sm cursor-pointer">
+                {content.cta1}
+              </button>
+              <button onClick={() => onPageChange("features")} className="px-8 py-3 rounded-xl border-2 border-primary/40 text-primary font-semibold hover:bg-primary-pale hover:border-primary transition-all text-sm cursor-pointer">
+                {content.cta2}
+              </button>
             </div>
 
-            {/* Right - Visual */}
-            <div className="relative flex justify-center md:justify-end">
-              <div className="absolute inset-6 bg-gradient-to-tr from-primary/10 to-accent/10 rounded-[40px] blur-3xl" />
-              <div className="hero-frame relative w-full max-w-[760px]">
-                <img
-                  src="/HomePres.jpg"
-                  alt="MEDISCAN AI interface preview"
-                  className="hero-preview w-full object-contain select-none"
-                  draggable="false"
-                />
-              </div>
-            </div>
           </div>
         </div>
+
+        {/* Right - Visual */}
+        <div className="hidden md:flex absolute right-0 top-0 bottom-0 w-[54%] items-center justify-center px-6 lg:px-12">
+          <div className="absolute inset-y-0 left-0 w-32 lg:w-48 bg-gradient-to-r from-bg-soft to-transparent z-10" />
+          <div className="hero-frame relative z-0 w-full max-w-[760px]">
+            <img
+              src="/HomePres.jpg"
+              alt="MEDISCAN AI interface preview"
+              className="hero-preview w-full max-h-[72vh] object-contain object-center select-none"
+              draggable="false"
+            />
+          </div>
+        </div>
+
+        {/* Mobile */}
+        <div className="md:hidden w-full px-6 pb-12">
+          <div className="hero-frame">
+            <img
+              src="/HomePres.jpg"
+              alt="MEDISCAN AI interface preview"
+              className="hero-preview w-full object-contain select-none"
+              draggable="false"
+            />
+          </div>
+        </div>
+
       </section>
 
       {/* Trust Metrics */}
-      <section className="max-w-[1400px] mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="max-w-[100%] mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { number: content.stats.value1, label: content.stats.title1 },
           { number: content.stats.value2, label: content.stats.title2 },
@@ -121,9 +129,12 @@ export default function HomePage() {
         ))}
       </section>
 
+
       {/* Key Benefits */}
-      <section className="max-w-[1400px] mx-auto px-6 py-20">
-        <div className="text-center mb-14">
+      <section className="max-w-[1400px] mx-auto px-22 py-25">
+                    
+          <div className="text-center mb-14">
+          
           <h2 className="text-4xl font-bold text-text mb-3">{content.whyChoose.headline}</h2>
           <p className="text-muted max-w-2xl mx-auto">
             {content.whyChoose.description}
@@ -147,7 +158,8 @@ export default function HomePage() {
       </section>
 
       {/* Use Cases */}
-      <section className="max-w-[1400px] mx-auto px-6 py-20">
+      <section className="max-w-[1400px] mx-auto px-6 md:px-22 pb-24">        
+
         <h2 className="text-4xl font-bold text-text text-center mb-14">{content.useCases.headline}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -167,8 +179,7 @@ export default function HomePage() {
       </section>
 
       {/* Two Search Modes */}
-      <section className="bg-bg-soft py-20 transition-colors duration-300">
-        <div className="max-w-[1400px] mx-auto px-6">
+      <section className="bg-bg-soft py-25 px-6 md:px-22 transition-colors duration-300">        <div className="max-w-[1400px] mx-auto px-6">
           <h2 className="text-4xl font-bold text-text text-center mb-3">{content.modes.headline}</h2>
           <p className="text-muted text-center mb-14 max-w-2xl mx-auto">
             {content.modes.description}
@@ -206,23 +217,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-footer text-white py-12 transition-colors duration-300">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h4 className="font-bold mb-3">MediScan AI</h4>
-              <p className="text-sm text-footer-muted">{content.footer.tagline}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-footer-muted">{content.footer.compliance}</p>
-            </div>
-          </div>
-          <div className="border-t border-border pt-8 text-center text-sm text-footer-muted">
-            <p>© 2024 MediScan AI. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

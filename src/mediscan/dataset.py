@@ -1,4 +1,4 @@
-"""Dataset helpers for ROCO small metadata."""
+"""Dataset helpers for ROCO metadata."""
 
 from __future__ import annotations
 
@@ -24,12 +24,12 @@ class MetadataRecord:
         }
 
 
-class RocoSmallDataset:
+class RocoDataset:
     """In-memory loader for metadata.csv with deterministic iteration order."""
 
     REQUIRED_COLUMNS = ("image_id", "path", "caption", "cui")
 
-    def __init__(self, metadata_csv: str | Path = "data/roco_small/metadata.csv") -> None:
+    def __init__(self, metadata_csv: str | Path = "data/roco_train_full/metadata.csv") -> None:
         self.metadata_csv = Path(metadata_csv)
         if not self.metadata_csv.exists():
             raise FileNotFoundError(f"Metadata CSV not found: {self.metadata_csv}")
@@ -87,4 +87,4 @@ class RocoSmallDataset:
         return list(self._records)
 
 
-__all__ = ["MetadataRecord", "RocoSmallDataset"]
+__all__ = ["MetadataRecord", "RocoDataset"]

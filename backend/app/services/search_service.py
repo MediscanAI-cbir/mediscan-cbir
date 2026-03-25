@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from threading import Lock
 
 from PIL import Image, UnidentifiedImageError
 
 from backend.app.config import ALLOWED_CONTENT_TYPES, ALLOWED_MODES, MAX_K
-from mediscan.search import SearchResources, query
+from mediscan.search import SearchResources, load_resources, query
 
 
 class SearchUnavailableError(RuntimeError):
@@ -18,6 +19,7 @@ class SearchService:
 
     def __init__(self, resources: dict[str, SearchResources]) -> None:
         self._resources = resources
+        self._resources_lock = Lock()
 
     @staticmethod
     def _normalize_mode(mode: str) -> str:
@@ -56,12 +58,24 @@ class SearchService:
 
     def _get_resources(self, mode: str) -> SearchResources:
         resources = self._resources.get(mode)
-        if resources is None:
-            raise SearchUnavailableError(
-                f"Search mode '{mode}' is unavailable on this instance. "
-                "Install the required data/artifacts or rebuild the stable indexes."
-            )
-        return resources
+        if resources is not None:
+            return resources
+
+        with self._resources_lock:
+            resources = self._resources.get(mode)
+            if resources is not None:
+                return resources
+
+            try:
+                resources = load_resources(mode=mode)
+            except Exception as exc:
+                raise SearchUnavailableError(
+                    f"Search mode '{mode}' is unavailable on this instance. "
+                    "Install the required data/artifacts or rebuild the stable indexes."
+                ) from exc
+
+            self._resources[mode] = resources
+            return resources
 
     def search(
         self,

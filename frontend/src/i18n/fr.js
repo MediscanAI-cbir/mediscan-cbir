@@ -6,16 +6,19 @@ export const fr = {
     features: "Fonctionnalités",
     contact: "Contact",
     startFree: "Scanner & Chercher",
+    aboutUs: "À propos",
   },
 
   // Home Page
   home: {
     badge: "Analyse Médicale par IA",
-    headline: "Réduire l'incertitude. Accélérer le diagnostic.",
+    headline1: "Réduire l'incertitude.",
+    headline2: "Accélérer le diagnostic.",
     description: "Déverrouiller les archives visuelles de la médecine avec MediScan AI. Rechercher par contenu, trouver des cas similaires instantanément, et élever la précision clinique.",
     cta1: "Scanner & Chercher",
+    cta1Link: "/search",
+    cta2Link: "/features",
     cta2: "En Savoir Plus",
-    trust: "Conforme HIPAA · Aucune Inscription Requise · Résultats Instantanés",
 
     stats: {
       title1: "Cas Consultables",
@@ -29,8 +32,8 @@ export const fr = {
     },
 
     whyChoose: {
-      headline: "Pourquoi MEDISCAN AI",
-      description: "Une plateforme intégrée d’intelligence en imagerie conçue pour optimiser les workflows cliniques, renforcer la précision diagnostique des radiologues et anatomopathologistes, et accélérer la recherche médicale à grande échelle grâce à l’identification automatisée de cohortes.",
+      headline: "Pourquoi MEDISCAN AI ?",
+      description: "Plateforme d'IA d'imagerie conçu pour optimiser les workflows, la précision diagnostique et la recherche médicale par l'identification automatisée de cohortes.",
       features: [
         {
           icon: "route",
@@ -141,8 +144,13 @@ export const fr = {
     },
 
     footer: {
-      tagline: "Déverrouiller le potentiel diagnostique de votre archive d'images médicales.",
+      tagline: "L'IA au service du diagnostic.",
       compliance: "Conforme HIPAA · Sécurité Entreprise · ISO 27001 Certifié",
+      contact: "Contactez-nous",
+      rights: "Tous droits réservés.",
+      privacy : "Confidentialité",
+      terms: "Mentions légales",
+      aboutus: "À propos",
     },
   },
 
@@ -239,13 +247,50 @@ export const fr = {
     formName: "Nom Complet",
     formEmail: "Email",
     formOrg: "Hôpital / Organisation",
+    subject: {
+      formSubject: "Objet",
+      subjectPlaceholder: "Sélectionnez un sujet...",
+      subjectDemo: "Demander une démonstration",
+      subjectSupport: "Support Technique",
+      subjectPartnership: "Partenariats / Presse",
+      subjectOther: "Autre"
+    },
     formMessage: "Message",
     formPlaceholder1: "Dr. Sarah Johnson",
     formPlaceholder2: "sarah@hospital.com",
     formPlaceholder3: "Nom du Centre Médical",
     formPlaceholder4: "Parlez-nous de vos besoins...",
     formSubmit: "Envoyer le Message",
+    formAccept: "J'ai lu et j'accepte la",
+    formPrivacyLink: "politique de confidentialité",
     formPrivacy: "Nous respectons votre confidentialité. Vos informations ne seront jamais partagées.",
+  },
+  about: {
+    headline: "À propos de MediScan AI",
+    description:
+      "MediScan AI est dédié à transformer l'analyse d'imagerie médicale grâce à l'IA de pointe et à l'expertise clinique.",
+    mission: {
+      title: "Notre Mission",
+      text: "Permettre aux professionnels de santé d'accéder à une recherche d'images rapide, précise et intuitive, soutenue par l'IA.",
+    },
+    vision: {
+      title: "Notre Vision",
+      text: "Être la plateforme IA de référence pour l'imagerie médicale, afin d'améliorer les résultats pour les patients dans le monde entier.",
+    },
+    team: {
+      title: "Rencontrez l'Équipe",
+      members: [
+        { name: "Dr. Sarah Johnson", role: "Directrice Médicale", photo: "/team/sarah.jpg" },
+        { name: "Alex Martinez", role: "Ingénieur IA Principal", photo: "/team/alex.jpg" },
+        { name: "Emily Wong", role: "Chef de Produit", photo: "/team/emily.jpg" },
+        { name: "Michael Lee", role: "Designer UX", photo: "/team/michael.jpg" },
+      ],
+    },
+    cta: {
+      title: "Vous voulez en savoir plus ?",
+      description: "Contactez notre équipe et découvrez comment MediScan AI peut aider votre organisation.",
+      buttonText: "Nous Contacter",
+    },
   },
 
   // How It Works
@@ -330,5 +375,70 @@ export const fr = {
         ],
       },
     },
+  },
+
+  // FAQ
+  faq: {
+    headline: "Questions Fréquentes",
+    description: "Trouvez des réponses aux questions courantes sur la technologie et l'intégration de MediScan AI.",
+    categories: {
+      general: "Général",
+      technical: "Technique",
+      security: "Sécurité et Confidentialité"
+    },
+    items: [
+      // --- GÉNÉRAL ---
+      { 
+        category: "general",
+        q: "Quel est l'objectif principal de MediScan AI ?", 
+        r: "MediScan AI est un moteur de recherche spécialisé conçu pour les cliniciens. Il leur permet de trouver des cas médicaux similaires dans de vastes bases de données en utilisant à la fois des caractéristiques visuelles et des métadonnées cliniques pour faciliter la prise de décision diagnostique." 
+      },
+      { 
+        category: "general",
+        q: "Qui peut utiliser la plateforme ?", 
+        r: "La plateforme est conçue pour les radiologues, les pathologistes et les chercheurs médicaux qui ont besoin de comparer des cas actuels avec des données historiquement validées." 
+      },
+      { 
+        category: "general",
+        q: "S'agit-il d'un outil de diagnostic ?", 
+        r: "Non, MediScan AI est un outil d'aide à la décision. Il fournit des cas similaires et la littérature pertinente, mais la responsabilité diagnostique finale incombe exclusivement au professionnel de santé." 
+      },
+      
+      // --- TECHNIQUE ---
+      { 
+        category: "technical",
+        q: "Quelle est la différence entre la recherche 'Visuelle' et la recherche 'Clinique' ?", 
+        r: "La recherche visuelle (Signature Search) analyse les motifs de pixels pour trouver des formes et des textures similaires. La recherche clinique utilise l'IA pour comprendre la pathologie et trouver des cas ayant la même signification médicale, même s'ils semblent visuellement différents." 
+      },
+      { 
+        category: "technical",
+        q: "S'intègre-t-il aux systèmes PACS/DICOM existants ?", 
+        r: "Oui, notre architecture 'API-first' supporte les standards DICOM pour une intégration fluide avec la plupart des systèmes d'archivage et de transmission d'images (PACS) hospitaliers." 
+      },
+      { 
+        category: "technical",
+        q: "Quelles modalités d'imagerie sont prises en charge ?", 
+        r: "Actuellement, nous prenons en charge l'IRM, le scanner (TDM), la radiographie et la pathologie numérique. Nous élargissons constamment nos capacités à de nouvelles modalités grâce à notre framework d'IA agnostique." 
+      },
+
+      // --- SÉCURITÉ ---
+      { 
+        category: "security",
+        q: "La plateforme est-elle conforme au RGPD et à la loi HIPAA ?", 
+        r: "Absolument. Nous mettons en œuvre des mesures strictes de protection des données, garantissant que tout le traitement respecte les normes de santé internationales en matière de confidentialité et de sécurité." 
+      },
+      { 
+        category: "security",
+        q: "Où sont stockées les données médicales ?", 
+        r: "Par défaut, MediScan AI traite les images en mémoire (volatiles) et ne stocke pas d'informations d'identification personnelle (PII) sur nos serveurs de recherche sans un accord institutionnel explicite." 
+      },
+      { 
+        category: "security",
+        q: "Comment les données sont-elles cryptées ?", 
+        r: "Toutes les données en transit sont protégées par un cryptage TLS 1.3, et toutes les données au repos sont sécurisées par un cryptage de grade militaire AES-256." 
+      }
+    ],
+    contactTitle: "Vous avez encore des questions ?",
+    contactBtn: "Contactez notre équipe"
   },
 };

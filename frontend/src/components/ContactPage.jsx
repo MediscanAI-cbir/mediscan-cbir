@@ -1,11 +1,12 @@
-import { BadgeEuro, Info, Mail } from "lucide-react";
+import { ChevronDown, Mail, Info, BadgeEuro } from "lucide-react";
 import { useState, useContext } from "react";
 import { LangContext } from "../context/lang-context";
+import Footer from '../components/Footer';
 
 export default function ContactPage() {
   const { t } = useContext(LangContext);
   const content = t.contact;
-  const [form, setForm] = useState({ name: "", email: "", org: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", org: "", subject: "", message: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +23,7 @@ export default function ContactPage() {
   return (
     <div className="bg-bg transition-colors duration-300">
       {/* Hero */}
-      <section className="max-w-[1400px] mx-auto px-6 py-16">
+      <section className="max-w-[1400px] mx-auto px-22 py-16">
         <div className="text-center mb-14">
           <h1 className="text-5xl font-bold text-text mb-4">{content.headline}</h1>
           <p className="text-xl text-muted max-w-2xl mx-auto">
@@ -91,7 +92,10 @@ export default function ContactPage() {
           {/* Contact Form */}
           <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-2xl p-8 space-y-5 shadow-sm backdrop-blur-sm">
             <div>
-              <label className="block text-sm font-medium text-text mb-2">{content.formName}</label>
+              <label className="block text-sm font-medium text-text mb-2">
+                {content.formName}
+                <span className="text-red-400/90 ml-1 font-medium" aria-hidden="true">*</span>
+              </label>
               <input
                 type="text"
                 name="name"
@@ -104,7 +108,10 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text mb-2">{content.formEmail}</label>
+              <label className="block text-sm font-medium text-text mb-2">
+                {content.formEmail}
+                <span className="text-red-400/90 ml-1 font-medium" aria-hidden="true">*</span>
+              </label>
               <input
                 type="email"
                 name="email"
@@ -129,7 +136,37 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text mb-2">{content.formMessage}</label>
+              <label className="block text-sm font-medium text-text mb-2">
+                {content.subject.formSubject}
+                <span className="text-red-400/90 ml-1 font-medium" aria-hidden="true">*</span>
+              </label>
+              
+              <div className="relative">
+                <select
+                  name="subject"
+                  value={form.subject}
+                  onChange={handleChange}
+                  required 
+                  className={`w-full px-4 py-3 rounded-lg border border-border bg-bg-soft appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors ${form.subject ? 'text-text' : 'text-muted'}`}
+                >
+                  <option value="" disabled hidden>{content.subject.subjectPlaceholder}</option>
+                  <option value="demo" className="text-text">{content.subject.subjectDemo}</option>
+                  <option value="support" className="text-text">{content.subject.subjectSupport}</option>
+                  <option value="partnership" className="text-text">{content.subject.subjectPartnership}</option>
+                  <option value="other" className="text-text">{content.subject.subjectOther}</option>
+                </select>
+                
+                <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
+                  <ChevronDown className="w-4 h-4 text-muted" strokeWidth={2} />
+                </div>
+              </div>
+            </div>              
+
+            <div>
+              <label className="block text-sm font-medium text-text mb-2">
+                {content.formMessage}
+                <span className="text-red-400/90 ml-1 font-medium" aria-hidden="true">*</span>
+              </label>
               <textarea
                 name="message"
                 value={form.message}
@@ -139,6 +176,22 @@ export default function ContactPage() {
                 className="w-full px-4 py-3 rounded-lg border border-border bg-bg-soft text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none transition-colors"
                 placeholder={content.formPlaceholder4}
               />
+            </div>
+
+            <div className="flex items-start gap-3 mt-6">
+              <input
+                type="checkbox"
+                id="privacy"
+                required
+                className="mt-1 h-4 w-4 rounded border-border bg-bg-soft text-primary focus:ring-primary/50 cursor-pointer"
+              />
+              <label htmlFor="privacy" className="text-sm text-muted cursor-pointer leading-tight">
+                {content.formAccept}
+                <a href="/privacy" className="text-text underline ml-1">
+                  {content.formPrivacyLink}
+                </a>
+                <span className="text-red-500/80 ml-0.5">*</span>
+              </label>
             </div>
 
             <button

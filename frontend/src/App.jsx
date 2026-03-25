@@ -8,6 +8,9 @@ import SearchPage from "./components/SearchPage";
 import FeaturesPage from "./components/FeaturesPage";
 import ContactPage from "./components/ContactPage";
 import HowItWorks from "./components/HowItWorks";
+import FAQPage from "./components/FAQPage";
+import Footer from './components/Footer';
+import AboutPage from "./components/AboutPage";
 
 const pages = {
   home: HomePage,
@@ -15,6 +18,8 @@ const pages = {
   features: FeaturesPage,
   contact: ContactPage,
   how: HowItWorks,
+  faq: FAQPage,
+  about : AboutPage
 };
 
 function AppInner() {
@@ -26,10 +31,10 @@ function AppInner() {
 
   function handlePageChange(page) {
     if (page === currentPage) return;
+    setCurrentPage(page);
     setPageVisible(false);
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      setCurrentPage(page);
       setDisplayPage(page);
       window.scrollTo({ top: 0, behavior: "instant" });
       setPageVisible(true);
@@ -49,15 +54,16 @@ function AppInner() {
   return (
     <div className="min-h-screen bg-bg text-text transition-colors duration-300">
       <Navigation currentPage={currentPage} onPageChange={handlePageChange} />
-      <main
+      <main className="pt-0"
         style={{
           opacity,
           transform: `translateY(${translateY})`,
           transition: "opacity 160ms ease, transform 160ms ease",
         }}
       >
-        <PageComponent />
+        <PageComponent onPageChange={handlePageChange} />
       </main>
+      <Footer onPageChange={handlePageChange} />
     </div>
   );
 }

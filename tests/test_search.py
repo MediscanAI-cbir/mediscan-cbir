@@ -66,17 +66,13 @@ def make_paths(tmp_path: Path, mode: str) -> tuple[Path, Path, Path]:
     return query_path, index_path, ids_path
 
 
-def test_search_image_visual_reranks(tmp_path):
+def test_search_image_visual_returns_faiss_order(tmp_path):
     query_path, index_path, ids_path = make_paths(tmp_path, "visual")
 
     with patch("mediscan.search.default_config_for_mode", return_value=("dinov2_base", index_path, ids_path)), \
          patch("mediscan.search.build_embedder", return_value=FakeVisualEmbedder()), \
          patch("mediscan.search.faiss.read_index", return_value=FakeVisualIndex()), \
-         patch("mediscan.search.faiss.normalize_L2"), \
-         patch(
-             "mediscan.search.rerank_visual_results",
-             return_value=[{"rank": 1, "image_id": "result", "path": "x.png", "score": 0.5, "caption": "c", "cui": "[]"}],
-         ) as rerank:
+         patch("mediscan.search.faiss.normalize_L2"):
         embedder_name, _, results = search_module.search_image(
             mode="visual",
             image=query_path,
@@ -86,7 +82,6 @@ def test_search_image_visual_reranks(tmp_path):
 
     assert embedder_name == "dinov2_base"
     assert results[0]["image_id"] == "result"
-    rerank.assert_called_once()
 
 
 def test_search_image_semantic_returns_faiss_order(tmp_path):
@@ -95,8 +90,7 @@ def test_search_image_semantic_returns_faiss_order(tmp_path):
     with patch("mediscan.search.default_config_for_mode", return_value=("biomedclip", index_path, ids_path)), \
          patch("mediscan.search.build_embedder", return_value=FakeSemanticEmbedder()), \
          patch("mediscan.search.faiss.read_index", return_value=FakeSemanticIndex()), \
-         patch("mediscan.search.faiss.normalize_L2"), \
-         patch("mediscan.search.rerank_visual_results") as rerank:
+         patch("mediscan.search.faiss.normalize_L2"):
         embedder_name, _, results = search_module.search_image(
             mode="semantic",
             image=query_path,
@@ -107,7 +101,6 @@ def test_search_image_semantic_returns_faiss_order(tmp_path):
     assert embedder_name == "biomedclip"
     assert len(results) == 1
     assert results[0]["image_id"] == "result"
-    rerank.assert_not_called()
 
 
 class FakeSemanticIndexSingle:

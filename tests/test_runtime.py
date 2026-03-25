@@ -59,6 +59,6 @@ def test_ensure_artifacts_exist(tmp_path):
 
 
 def test_compute_search_k():
-    assert runtime.compute_search_k("dinov2_base", k=10, ntotal=200) == 120
-    assert runtime.compute_search_k("biomedclip", k=10, ntotal=100) == 10
-    assert runtime.compute_search_k("biomedclip", k=10, ntotal=100, exclude_self=True) == 20
+    assert runtime.compute_search_k(k=10, ntotal=200) == 10
+    assert runtime.compute_search_k(k=10, ntotal=5) == 5
+    assert runtime.compute_search_k(k=10, ntotal=200, exclude_self=True) == 11

@@ -1,7 +1,11 @@
 # Virtual environments
 .venv/
+.venv311/
 venv/
 env/
+
+# Local evaluation outputs
+proofs/
 
 # Local/private resources (never version)
 data/

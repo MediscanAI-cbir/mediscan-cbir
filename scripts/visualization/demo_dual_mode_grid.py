@@ -11,7 +11,7 @@ from typing import Any
 
 from PIL import Image, ImageDraw, ImageFont
 
-from mediscan.dataset import MetadataRecord, RocoSmallDataset
+from mediscan.dataset import MetadataRecord, RocoDataset
 from mediscan.process import configure_cpu_environment
 from mediscan.runtime import resolve_path
 from mediscan.search import MAX_K, load_resources, query
@@ -57,7 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--k", type=int, default=5, help=f"Top-k results (max {MAX_K})")
     parser.add_argument("--columns", type=int, default=3)
     parser.add_argument("--tile-size", type=int, default=220)
-    parser.add_argument("--metadata", default="data/roco_small/metadata.csv")
+    parser.add_argument("--metadata", default="data/roco_train_full/metadata.csv")
     parser.add_argument("--visual-model-name", default=None)
     parser.add_argument("--semantic-model-name", default=None)
     parser.add_argument("--visual-index-path", default="artifacts/index.faiss")
@@ -259,7 +259,7 @@ def main() -> None:
     if not 0 < args.k <= MAX_K:
         raise ValueError(f"--k must be between 1 and {MAX_K}")
 
-    records = RocoSmallDataset(metadata_csv=resolve_path(args.metadata)).records
+    records = RocoDataset(metadata_csv=resolve_path(args.metadata)).records
     if not records:
         raise RuntimeError("Empty dataset")
 
@@ -284,7 +284,7 @@ def main() -> None:
     )
 
     render_grid(
-        title="Visual Similarity (DINOv2 + FAISS + reranking)",
+        title="Visual Similarity (DINOv2 + FAISS)",
         subtitle=f"query_id={visual_record.image_id}",
         query_image=visual_image,
         results=visual_results,
