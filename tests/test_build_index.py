@@ -47,7 +47,7 @@ def test_main_builds_index_and_ids(tmp_path):
     dataset = [Record("img1", str(image_path)), Record("img2", str(image_path))]
 
     with patch("scripts.build_index.parse_args", return_value=args), \
-         patch("scripts.build_index.RocoSmallDataset", return_value=dataset), \
+         patch("scripts.build_index.RocoDataset", return_value=dataset), \
          patch("scripts.build_index.build_embedder", return_value=FakeEmbedder()), \
          patch("scripts.build_index.faiss.write_index") as write_index:
         build_index.main()
@@ -100,7 +100,7 @@ def test_main_resumes_from_checkpoint(tmp_path):
     fake_embedder = FakeEmbedder()
 
     with patch("scripts.build_index.parse_args", return_value=args), \
-         patch("scripts.build_index.RocoSmallDataset", return_value=dataset), \
+         patch("scripts.build_index.RocoDataset", return_value=dataset), \
          patch("scripts.build_index.build_embedder", return_value=fake_embedder), \
          patch("scripts.build_index.faiss.write_index") as write_index, \
          patch.object(fake_embedder, "encode_pil", wraps=fake_embedder.encode_pil) as encode_pil:

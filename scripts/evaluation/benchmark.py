@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--embedder", default=None, help="Optional embedder override")
     parser.add_argument("--model-name", default=None)
     parser.add_argument("--index-path", default=None)
-    parser.add_argument("--images-dir", default="data/roco_small/images")
+    parser.add_argument("--images-dir", default="data/roco_train_full/images")
     parser.add_argument("--output-dir", default="proofs/perf")
     return parser.parse_args()
 

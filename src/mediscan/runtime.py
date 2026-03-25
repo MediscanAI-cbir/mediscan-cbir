@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from mediscan.embedders.factory import get_embedder
-from mediscan.visual_similarity import VISUAL_SHORTLIST_SIZE
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -39,8 +38,6 @@ STABLE_MODE_CONFIGS = {
         manifest_path=PROJECT_ROOT / "artifacts" / "manifests" / "semantic_stable.json",
     ),
 }
-VISUAL_EMBEDDERS = frozenset({"dinov2_base"})
-SEMANTIC_EMBEDDERS = frozenset({"biomedclip"})
 SUPPORTED_MODES = frozenset(STABLE_MODE_CONFIGS)
 
 
@@ -109,22 +106,9 @@ def ensure_artifacts_exist(index_path: str | Path, ids_path: str | Path) -> tupl
     return resolved_index, resolved_ids
 
 
-def is_visual_embedder(name: str) -> bool:
-    """Return True when the embedder belongs to the visual branch."""
-    return name.strip().lower() in VISUAL_EMBEDDERS
-
-
-def compute_search_k(
-    embedder_name: str,
-    k: int,
-    ntotal: int,
-    *,
-    exclude_self: bool = False,
-) -> int:
-    """Choose how many candidates FAISS should return before optional reranking."""
-    if is_visual_embedder(embedder_name):
-        return min(ntotal, max(VISUAL_SHORTLIST_SIZE, k + 20))
-    extra = 10 if exclude_self else 0
+def compute_search_k(k: int, ntotal: int, *, exclude_self: bool = False) -> int:
+    """Choose how many candidates FAISS should return."""
+    extra = 1 if exclude_self else 0
     return min(ntotal, k + extra)
 
 
@@ -140,14 +124,11 @@ __all__ = [
     "PROJECT_ROOT",
     "STABLE_MODE_CONFIGS",
     "SUPPORTED_MODES",
-    "VISUAL_EMBEDDERS",
-    "SEMANTIC_EMBEDDERS",
     "build_embedder",
     "compute_search_k",
     "default_config_for_mode",
     "ensure_artifacts_exist",
     "get_mode_config",
-    "is_visual_embedder",
     "load_indexed_rows",
     "resolve_path",
     "set_faiss_threads",

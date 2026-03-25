@@ -16,12 +16,10 @@ from mediscan.runtime import (
     compute_search_k,
     default_config_for_mode,
     ensure_artifacts_exist,
-    is_visual_embedder,
     load_indexed_rows,
     resolve_path,
     set_faiss_threads,
 )
-from mediscan.visual_similarity import rerank_visual_results
 
 MAX_K = 50
 
@@ -93,12 +91,7 @@ def query(
         query_vector = embedder.encode_pil(pil_image).reshape(1, -1).astype(np.float32)
     faiss.normalize_L2(query_vector)
 
-    search_k = compute_search_k(
-        embedder.name,
-        k,
-        index.ntotal,
-        exclude_self=exclude_self,
-    )
+    search_k = compute_search_k(k, index.ntotal, exclude_self=exclude_self)
     scores, indices = index.search(query_vector, search_k)
 
     query_abs = str(query_image.resolve())
@@ -126,16 +119,8 @@ def query(
                 "cui": str(row.get("cui", "")),
             }
         )
-        if not is_visual_embedder(embedder.name) and len(results) >= k:
+        if len(results) >= k:
             break
-
-    if is_visual_embedder(embedder.name):
-        results = rerank_visual_results(
-            query_image=query_image,
-            candidates=results,
-            resolve_path=resolve_path,
-            limit=k,
-        )
 
     return results
 

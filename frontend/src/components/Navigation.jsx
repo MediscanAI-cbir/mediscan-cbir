@@ -10,11 +10,11 @@ export default function Navigation({ currentPage, onPageChange }) {
     { id: "search", label: t.nav.scan },
     { id: "how", label: t.nav.features },
     { id: "contact", label: t.nav.contact },
+    { id: "about", label: t.nav.aboutUs },
   ];
 
   return (
-    <header className="bg-surface/78 backdrop-blur-xl border-b border-border shadow-sm sticky top-0 z-40 transition-colors duration-300">
-      {/* SVG filter: rend le fond blanc du logo transparent en mode nuit */}
+    <nav className="sticky top-0 z-50 bg-transparent">
       <svg style={{ display: "none" }}>
         <defs>
           <filter id="remove-white-logo" colorInterpolationFilters="sRGB">
@@ -29,44 +29,52 @@ export default function Navigation({ currentPage, onPageChange }) {
         </defs>
       </svg>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-4 relative flex items-center justify-center min-h-[108px]">
-        {/* Logo + Brand */}
-        <button
-          onClick={() => onPageChange("home")}
-          className="hover:opacity-95 transition-opacity cursor-pointer flex-shrink-0 fixed left-4 top-4 z-50"
-        >
-          <img
-            src="/Logo.png"
-            alt="MediScan AI"
-            className="theme-logo h-[72px] md:h-[84px] w-auto object-contain"
-            style={{ display: "block" }}
-          />
-        </button>
+      <div className="max-w-[1400px] mx-auto px-[3vw] flex items-center justify-between h-16 md:h-20">
+        
+        {/* Logo */}
+        <div className="flex-1 flex justify-start">
+          <button
+            onClick={() => onPageChange("home")}
+            className="hover:opacity-95 transition-opacity cursor-pointer"
+          >
+            <img
+              src="/logo.svg"
+              alt="MediScan AI"
+              className="h-[clamp(40px,14vw,64px)] w-auto object-contain"
+            />
+          </button>
+        </div>
 
-        {/* Main navigation */}
-        <nav className="flex gap-1 justify-center flex-wrap rounded-2xl border border-border bg-surface/72 px-2 py-2 shadow-lg backdrop-blur-lg">
-          {mainTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => onPageChange(tab.id)}
-              className={`relative px-5 py-2 text-sm font-medium rounded-lg transition-all duration-200 group
-                ${currentPage === tab.id
-                  ? "bg-primary text-white shadow-sm"
-                  : "text-muted hover:text-text hover:bg-bg-soft"
-                }`}
-            >
-              {tab.label}
-              {/* Underline indicator for active */}
-              {currentPage === tab.id && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/60" />
-              )}
-            </button>
-          ))}
-        </nav>
+        {/* NAVBAR FLOTTANTE */}
+        <div className="flex-1 flex justify-center">
+          <div className="flex items-center gap-[0.5vw] rounded-2xl border border-border bg-surface/70 px-[1vw] py-1.5 shadow-lg backdrop-blur-lg">
+            {mainTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => onPageChange(tab.id)}
+                className={`relative px-[clamp(0.5rem,1.5vw,1.25rem)] py-1.5 text-[clamp(11px,1.2vw,14px)] font-medium rounded-lg transition-all duration-200 whitespace-nowrap
+                  ${
+                    currentPage === tab.id
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-muted hover:text-text hover:bg-bg-soft"
+                  }`}
+              >
+                {tab.label}
+                {currentPage === tab.id && (
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/60" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* Language Selector */}
-        <LanguageSelector />
+        {/* Language */}
+        <div className="flex-1 flex justify-end">
+          <div className="scale-[clamp(0.8,1vw,1)] origin-right">
+            <LanguageSelector />
+          </div>
+        </div>
       </div>
-    </header>
+    </nav>
   );
 }
