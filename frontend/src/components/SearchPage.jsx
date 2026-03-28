@@ -90,7 +90,7 @@ export default function SearchPage() {
   }
 
   // EXPORT CSV
-  // 🔥 EXPORT CSV
+  // EXPORT CSV
 function exportCSV() {
   if (!results) return;
 
@@ -110,7 +110,7 @@ function exportCSV() {
   a.click();
 }
 
-// 🔥 EXPORT PDF
+// EXPORT PDF
 async function exportPDF() {
   if (!results) return;
 

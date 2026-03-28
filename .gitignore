@@ -44,3 +44,4 @@ __pycache__/
 # Frontend generated files
 frontend/node_modules/
 frontend/dist/
+node_modules/

@@ -1,14 +1,12 @@
 from pydantic import BaseModel
 
-
 class SearchResult(BaseModel):
-    rank: int
     image_id: str
     score: float
-    path: str
-    caption: str
-    cui: str
-
+    rank: int | None = None 
+    path: str | None = None 
+    caption: str = ""
+    cui: list = [] 
 
 class SearchResponse(BaseModel):
     mode: str

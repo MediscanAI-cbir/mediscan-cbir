@@ -379,7 +379,7 @@ export const fr = {
 
   // FAQ
   faq: {
-    headline: "Questions Fréquentes",
+    headline: "Questions Fréquentes (FAQ)",
     description: "Trouvez des réponses aux questions courantes sur la technologie et l'intégration de MediScan AI.",
     categories: {
       general: "Général",

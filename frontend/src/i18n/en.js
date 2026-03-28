@@ -376,11 +376,11 @@ export const en = {
         ],
       },
     },
-
+  },
 
   // FAQ
   faq: {
-    headline: "Frequently Asked Questions",
+    headline: "Frequently Asked Questions (FAQ)",
     description: "Find answers to common questions about MediScan AI's technology and integration.",
     categories: {
       general: "General",
@@ -440,5 +440,5 @@ export const en = {
     contactTitle: "Still have questions?",
     contactBtn: "Contact our team"
   },
-},
 };
+
