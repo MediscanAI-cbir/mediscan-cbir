@@ -93,6 +93,8 @@ Ou télécharger : https://git-lfs.com/
 git clone https://github.com/OzanTaskin/mediscan-cbir.git
 cd mediscan-cbir
 git lfs pull                  # télécharge les index FAISS (~300 Mo)
+cp .env.example .env          # crée le fichier de config local
+# → édite .env et renseigne MONGO_URI si tu veux l'enrichissement MongoDB (optionnel)
 chmod +x run.sh
 ./run.sh                      # installe tout et lance le projet
 ```
@@ -103,10 +105,31 @@ chmod +x run.sh
 git clone https://github.com/OzanTaskin/mediscan-cbir.git
 cd mediscan-cbir
 git lfs pull
+copy .env.example .env
+rem → édite .env si besoin
 run.bat
 ```
 
 Ouvrir ensuite : **http://127.0.0.1:5173**
+
+---
+
+## Configuration `.env`
+
+Le fichier `.env` n'est **jamais commité** (dans `.gitignore`). Chaque développeur crée le sien depuis le template :
+
+```bash
+cp .env.example .env
+```
+
+| Variable     | Obligatoire | Description |
+|--------------|-------------|-------------|
+| `MONGO_URI`  | Non         | URI MongoDB Atlas pour l'enrichissement des métadonnées. Si absent, la recherche fonctionne normalement sans enrichissement. |
+| `BACKEND_PORT` | Non       | Port FastAPI (défaut : 8000) |
+
+**Sans `MONGO_URI`** : le site fonctionne complètement — les résultats viennent des index FAISS locaux et les images sont chargées depuis HuggingFace. MongoDB ajoute uniquement des métadonnées supplémentaires (captions enrichies, codes CUI UMLS).
+
+**Si MongoDB est configuré mais inaccessible** (réseau, IP non whitelistée sur Atlas) : la recherche continue sans enrichissement, aucune erreur n'est retournée.
 
 ---
 
@@ -125,11 +148,13 @@ Ouvrir ensuite : **http://127.0.0.1:5173**
 
 ## URLs
 
-| Service          | URL                                      |
-|------------------|------------------------------------------|
-| Frontend         | http://127.0.0.1:5173                    |
-| Backend health   | http://127.0.0.1:8000/api/health         |
-| API search       | POST http://127.0.0.1:8000/api/search    |
+| Service               | URL                                           |
+|-----------------------|-----------------------------------------------|
+| Frontend              | http://127.0.0.1:5173                         |
+| Backend health        | http://127.0.0.1:8000/api/health              |
+| Recherche par image   | `POST` http://127.0.0.1:8000/api/search       |
+| Recherche par texte   | `POST` http://127.0.0.1:8000/api/search-text  |
+| Image (redirect HF)   | `GET`  http://127.0.0.1:8000/api/images/{id}  |
 
 ---
 
@@ -232,11 +257,12 @@ py -3.11 -m venv .venv311
 
 ## Notes importantes
 
-- **Sans `data/`** : le site se lance et l'API répond, mais la recherche retourne une erreur.
-- **Avec `data/` et `artifacts/`** (index FAISS via Git LFS) : tout fonctionne.
+- **`data/` non requis** : les images sont servies depuis HuggingFace (`Mediscan-Team/mediscan-data`). Tu n'as pas besoin de télécharger le dataset localement.
+- **`artifacts/` obligatoire** : les index FAISS sont requis pour la recherche. Ils sont versionnés via Git LFS (~300 Mo) — `git lfs pull` les télécharge automatiquement.
 - **Le backend lazy-charge les modèles** au premier appel — la toute première recherche prend ~30s.
 - **CPU uniquement**, pas de GPU nécessaire.
 - **Architecture** : testé sur macOS ARM64 (Apple Silicon) et x86_64.
+- **MongoDB optionnel** : sans `MONGO_URI`, la recherche fonctionne normalement. Même si `MONGO_URI` est défini mais que la connexion échoue (timeout, IP non whitelistée), la recherche continue sans enrichissement.
 
 ---
 
@@ -309,12 +335,21 @@ mediscan-cbir/
 ## Architecture (résumé)
 
 ```
-Frontend React/Vite  →  Backend FastAPI  →  mediscan (lib Python)
-                                               ├── DINOv2  (mode visual,   768-dim)
-                                               ├── BioMedCLIP  (mode semantic, 512-dim)
-                                               └── FAISS IndexFlatIP
+Frontend React/Vite
+        ↓
+Backend FastAPI
+        ↓
+mediscan (lib Python)
+   ├── DINOv2        (mode visual,   768-dim)
+   ├── BioMedCLIP    (mode semantic, 512-dim — image ET texte)
+   └── FAISS IndexFlatIP  ← index locaux dans artifacts/
+        ↓
+MongoDB Atlas (optionnel) — enrichissement métadonnées
+        ↓
+Images  ←  HuggingFace CDN (Mediscan-Team/mediscan-data)
 ```
 
-Deux modes de recherche :
-- **visual** — similarité visuelle (DINOv2) + reranking bas-niveau
-- **semantic** — similarité sémantique médicale (BioMedCLIP)
+Trois modes de recherche :
+- **Recherche par image / visual** — similarité visuelle avec DINOv2
+- **Recherche par image / semantic** — similarité sémantique médicale avec BioMedCLIP
+- **Recherche par texte** — description en langage naturel → BioMedCLIP encode le texte → FAISS trouve les images les plus proches sémantiquement
