@@ -93,7 +93,11 @@ class SearchService:
 
         enriched = []
         for res in results:
-            db_info = self._mongo_collection.find_one({"image_id": res["image_id"]})
+            try:
+                db_info = self._mongo_collection.find_one({"image_id": res["image_id"]})
+            except Exception:
+                # MongoDB unreachable (timeout, network, auth) — skip enrichment
+                return results
             if db_info:
                 enriched.append({
                     "rank":     res.get("rank", 0),
