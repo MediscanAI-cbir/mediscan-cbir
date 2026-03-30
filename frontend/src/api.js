@@ -37,3 +37,33 @@ export async function searchText(text, k) {
 
   return response.json();
 }
+
+export async function searchById(imageId, mode, k) {
+  const response = await fetch(`${API_BASE}/search-by-id`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image_id: imageId, mode, k }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.detail || `Erreur ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function searchByIds(imageIds, mode, k) {
+  const response = await fetch(`${API_BASE}/search-by-ids`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image_ids: imageIds, mode, k }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.detail || `Erreur ${response.status}`);
+  }
+
+  return response.json();
+}

@@ -3,11 +3,14 @@ from __future__ import annotations
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from threading import Lock
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 
 from PIL import Image, UnidentifiedImageError
 
 from backend.app.config import ALLOWED_CONTENT_TYPES, ALLOWED_MODES, MAX_K, MONGO_URI, DB_NAME, COLLECTION_NAME
 from mediscan.search import SearchResources, load_resources, query, query_text
+
 
 
 class SearchUnavailableError(RuntimeError):
@@ -160,4 +163,122 @@ class SearchService:
             "embedder":   resources.embedder.name,
             "query_text": text,
             "results":    self._enrich_with_mongo(results),
+        }
+    
+    def search_by_id(
+        self,
+        *,
+        image_id: str,
+        mode: str = "visual",
+        k: int = 5,
+    ) -> dict:
+        """Relance une recherche depuis un image_id existant."""
+        normalized_mode = self._normalize_mode(mode)
+        self._validate_k(k)
+
+        num_str = image_id.split("_")[-1]
+        folder_idx = (int(num_str) - 1) // 1000 + 1
+        folder_name = f"images_{folder_idx:02d}"
+        from backend.app.config import HF_BASE_URL
+        url = f"{HF_BASE_URL}/{folder_name}/{image_id}.png"
+
+        temp_path: Path | None = None
+        try:
+            with NamedTemporaryFile(delete=False, suffix=".png") as handle:
+                temp_path = Path(handle.name)
+            urllib.request.urlretrieve(url, temp_path)
+            self._verify_image(temp_path)
+            resources = self._get_resources(normalized_mode)
+            results = query(resources=resources, image=temp_path, k=k, exclude_self=True)
+            return {
+                "mode":           normalized_mode,
+                "embedder":       resources.embedder.name,
+                "query_image_id": image_id,
+                "results":        self._enrich_with_mongo(results),
+            }
+        finally:
+            if temp_path is not None:
+                temp_path.unlink(missing_ok=True)
+
+    
+    def search_by_ids(
+        self,
+        *,
+        image_ids: list[str],
+        mode: str = "visual",
+        k: int = 5,
+    ) -> dict:
+        """Recherche par centroide — moyenne des embeddings de plusieurs images.
+        Les images sont telechargees et encodees en parallele pour de meilleures performances.
+        """
+        if not image_ids:
+            raise ValueError("La liste d'image_ids est vide")
+        if len(image_ids) > 20:
+            raise ValueError("Maximum 20 images selectionnables")
+
+        normalized_mode = self._normalize_mode(mode)
+        self._validate_k(k)
+
+        resources = self._get_resources(normalized_mode)
+        embedder = resources.embedder
+
+        from backend.app.config import HF_BASE_URL
+        import numpy as np
+        import faiss as faiss_lib
+
+        def download_and_encode(image_id: str):
+            """Telecharge et encode une image — execute en parallele."""
+            num_str = image_id.split("_")[-1]
+            folder_idx = (int(num_str) - 1) // 1000 + 1
+            folder_name = f"images_{folder_idx:02d}"
+            url = f"{HF_BASE_URL}/{folder_name}/{image_id}.png"
+
+            temp_path: Path | None = None
+            try:
+                with NamedTemporaryFile(delete=False, suffix=".png") as handle:
+                    temp_path = Path(handle.name)
+                urllib.request.urlretrieve(url, temp_path)
+                self._verify_image(temp_path)
+                with Image.open(temp_path) as pil_image:
+                    return embedder.encode_pil(pil_image)
+            finally:
+                if temp_path is not None:
+                    temp_path.unlink(missing_ok=True)
+
+        # Telechargement et encodage en parallele
+        with ThreadPoolExecutor(max_workers=len(image_ids)) as executor:
+            embeddings = list(executor.map(download_and_encode, image_ids))
+
+        # Calcul du centroide
+        centroid = np.mean(embeddings, axis=0).reshape(1, -1).astype(np.float32)
+        faiss_lib.normalize_L2(centroid)
+
+        search_k = min(k + len(image_ids), resources.index.ntotal)
+        scores, indices = resources.index.search(centroid, search_k)
+
+        results = []
+        excluded_ids = set(image_ids)
+        for idx, score in zip(indices[0], scores[0]):
+            if idx < 0:
+                continue
+            row = resources.rows[idx]
+            image_id = str(row.get("image_id", ""))
+            if image_id in excluded_ids:
+                continue
+            results.append({
+                "rank": len(results) + 1,
+                "score": float(score),
+                "image_id": image_id,
+                "path": str(row.get("path", "")),
+                "caption": str(row.get("caption", "")),
+                "cui": str(row.get("cui", "")),
+            })
+            if len(results) >= k:
+                break
+
+        return {
+            "mode":            normalized_mode,
+            "embedder":        embedder.name,
+            "query_image_ids": image_ids,
+            "results":         self._enrich_with_mongo(results),
         }

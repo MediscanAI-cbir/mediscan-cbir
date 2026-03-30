@@ -22,3 +22,17 @@ class TextSearchResponse(BaseModel):
     embedder: str
     query_text: str
     results: list[SearchResult]
+
+
+class IdSearchResponse(BaseModel):
+    mode: str
+    embedder: str
+    query_image_id: str
+    results: list[SearchResult]
+
+
+class IdsSearchResponse(BaseModel):
+    mode: str
+    embedder: str
+    query_image_ids: list[str]
+    results: list[SearchResult]

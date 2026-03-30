@@ -5,7 +5,7 @@ import UploadZone from "./UploadZone";
 import Controls from "./Controls";
 import StatusBar from "./StatusBar";
 import ResultsGrid from "./ResultsGrid";
-import { searchImage } from "../api";
+import { searchImage, searchById, searchByIds } from "../api";
 import jsPDF from "jspdf";
 
 const searchModeIcons = {
@@ -51,7 +51,45 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
 
     try {
       const data = await searchImage(file, mode, k);
-      setResults(data);
+      setResults({ ...data, onRelaunch: handleRelaunch, onRelaunchMultiple: handleRelaunchMultiple });
+      setStatus(null);
+    } catch (err) {
+      setStatus({
+        type: "error",
+        message: err.message || content.error,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRelaunch(imageId) {
+    setLoading(true);
+    setStatus({ type: "loading", message: content.searching });
+    setResults(null);
+
+    try {
+      const data = await searchById(imageId, mode, k);
+      setResults({ ...data, onRelaunch: handleRelaunch, onRelaunchMultiple: handleRelaunchMultiple });
+      setStatus(null);
+    } catch (err) {
+      setStatus({
+        type: "error",
+        message: err.message || content.error,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRelaunchMultiple(imageIds) {
+    setLoading(true);
+    setStatus({ type: "loading", message: content.searching });
+    setResults(null);
+
+    try {
+      const data = await searchByIds(imageIds, mode, k);
+      setResults({ ...data, onRelaunch: handleRelaunch, onRelaunchMultiple: handleRelaunchMultiple });
       setStatus(null);
     } catch (err) {
       setStatus({
