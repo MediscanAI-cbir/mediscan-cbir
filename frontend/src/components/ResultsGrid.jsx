@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { imageUrl } from "../api";
 
-function ScoreBar({ score }) {
+function ScoreBar({ score, tone }) {
   const pct = Math.round(score * 100);
-  const color = pct >= 70 ? "bg-accent" : pct >= 40 ? "bg-primary" : "bg-border";
+  const color = tone === "accent"
+    ? (pct >= 70 ? "bg-accent" : pct >= 40 ? "bg-accent/50" : "bg-border")
+    : (pct >= 70 ? "bg-primary" : pct >= 40 ? "bg-primary/50" : "bg-border");
   return (
     <div className="mt-2">
       <div className="flex justify-between items-center mb-1">
@@ -17,9 +19,23 @@ function ScoreBar({ score }) {
   );
 }
 
-function ResultCard({ result, onRelaunch, selected, onToggleSelect }) {
+function ResultCard({ result, onRelaunch, selected, onToggleSelect, tone }) {
+  const c = tone === "accent" ? {
+    selected: "border-accent ring-2 ring-accent/30",
+    rank: "bg-accent",
+    checkbox: "bg-accent border-accent",
+    checkboxHover: "hover:border-accent",
+    relaunch: "border-accent/40 text-accent hover:bg-accent hover:text-white",
+  } : {
+    selected: "border-primary ring-2 ring-primary/30",
+    rank: "bg-primary",
+    checkbox: "bg-primary border-primary",
+    checkboxHover: "hover:border-primary",
+    relaunch: "border-primary/40 text-primary hover:bg-primary hover:text-white",
+  };
+
   return (
-    <div className={`bg-surface border rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 group backdrop-blur-sm ${selected ? "border-primary ring-2 ring-primary/30" : "border-border"}`}>
+    <div className={`bg-surface border rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 group backdrop-blur-sm ${selected ? c.selected : "border-border"}`}>
       <div className="bg-bg border-b border-border relative">
         <img
           src={imageUrl(result.image_id)}
@@ -27,13 +43,13 @@ function ResultCard({ result, onRelaunch, selected, onToggleSelect }) {
           loading="lazy"
           className="w-full aspect-square object-contain"
         />
-        <span className="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+        <span className={`absolute top-2 left-2 ${c.rank} text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow`}>
           #{result.rank}
         </span>
         {onToggleSelect && (
           <button
             onClick={() => onToggleSelect(result.image_id)}
-            className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow ${selected ? "bg-primary border-primary" : "bg-surface border-border hover:border-primary"}`}
+            className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow ${selected ? `${c.checkbox}` : `bg-surface border-border ${c.checkboxHover}`}`}
           >
             {selected && (
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -44,15 +60,13 @@ function ResultCard({ result, onRelaunch, selected, onToggleSelect }) {
         )}
       </div>
       <div className="p-3.5">
-        <p className="text-text text-xs leading-relaxed line-clamp-3">
-          {result.caption}
-        </p>
+        <p className="text-text text-xs leading-relaxed line-clamp-3">{result.caption}</p>
         <p className="text-muted text-[10px] mt-1.5 font-mono truncate">{result.image_id}</p>
-        <ScoreBar score={result.score} />
+        <ScoreBar score={result.score} tone={tone} />
         {onRelaunch && (
           <button
             onClick={() => onRelaunch(result.image_id)}
-            className="mt-3 w-full text-xs font-semibold px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary hover:text-white transition-all"
+            className={`mt-3 w-full text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${c.relaunch}`}
           >
             Rechercher depuis cette image
           </button>
@@ -68,14 +82,23 @@ export default function ResultsGrid({ data }) {
   if (!data) return null;
 
   const isVisual = data.mode === "visual";
-  const modeLabel = isVisual ? "Visuel (DINOv2)" : "Sémantique (BioMedCLIP)";
-  const modeColor = isVisual ? "bg-primary-pale text-primary border-primary/20" : "bg-accent-pale text-accent border-accent/20";
+  const tone = isVisual ? "primary" : "accent";
+
+  const modeLabel = isVisual ? "Visuel (DINOv2)" : data.mode === "text" ? "Texte (BioMedCLIP)" : "Sémantique (BioMedCLIP)";
+  const modeColor = isVisual
+    ? "bg-primary-pale text-primary border-primary/20"
+    : "bg-accent-pale text-accent border-accent/20";
+
+  const selectionBg = isVisual
+    ? "bg-primary-pale border-primary/20"
+    : "bg-accent-pale border-accent/20";
+  const selectionText = isVisual ? "text-primary" : "text-accent";
+  const selectionBtnBorder = isVisual ? "border-primary/30 text-primary hover:bg-primary/10" : "border-accent/30 text-accent hover:bg-accent/10";
+  const selectionBtnPrimary = isVisual ? "bg-primary hover:bg-primary/90" : "bg-accent hover:bg-accent/90";
 
   function handleToggleSelect(imageId) {
     setSelectedIds((prev) =>
-      prev.includes(imageId)
-        ? prev.filter((id) => id !== imageId)
-        : [...prev, imageId]
+      prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId]
     );
   }
 
@@ -98,20 +121,20 @@ export default function ResultsGrid({ data }) {
       </div>
 
       {selectedIds.length >= 2 && (
-        <div className="mb-4 p-3 bg-primary-pale border border-primary/20 rounded-xl flex items-center justify-between gap-3">
-          <span className="text-sm text-primary font-medium">
+        <div className={`mb-4 p-3 border rounded-xl flex items-center justify-between gap-3 ${selectionBg}`}>
+          <span className={`text-sm font-medium ${selectionText}`}>
             {selectedIds.length} images sélectionnées
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setSelectedIds([])}
-              className="text-xs px-3 py-1.5 rounded-lg border border-primary/30 text-primary hover:bg-primary/10 transition-all"
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${selectionBtnBorder}`}
             >
               Annuler
             </button>
             <button
               onClick={handleRelaunchMultiple}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary/90 transition-all"
+              className={`text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-all ${selectionBtnPrimary}`}
             >
               Rechercher depuis la sélection
             </button>
@@ -127,6 +150,7 @@ export default function ResultsGrid({ data }) {
             onRelaunch={data.onRelaunch}
             selected={selectedIds.includes(r.image_id)}
             onToggleSelect={handleToggleSelect}
+            tone={tone}
           />
         ))}
       </div>

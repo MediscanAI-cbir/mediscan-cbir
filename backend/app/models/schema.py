@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from typing import Union
+from pydantic import BaseModel, field_validator
 
 
 class SearchResult(BaseModel):
@@ -7,7 +8,14 @@ class SearchResult(BaseModel):
     score: float
     path: str
     caption: str
-    cui: str
+    cui: Union[str, list]
+
+    @field_validator("cui", mode="before")
+    @classmethod
+    def coerce_cui(cls, v):
+        if isinstance(v, list):
+            return v[0] if v else ""
+        return v
 
 
 class SearchResponse(BaseModel):

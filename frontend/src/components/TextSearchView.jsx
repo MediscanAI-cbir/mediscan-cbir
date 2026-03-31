@@ -15,8 +15,21 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [minScore, setMinScore] = useState(0);
+  const [captionFilter, setCaptionFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("desc");
+
+  function filterResults(data) {
+    if (!data || !data.results) return null;
+    const filtered = data.results
+      .filter((r) => r.score >= minScore)
+      .filter((r) => r.caption.toLowerCase().includes(captionFilter.toLowerCase()))
+      .sort((a, b) => sortOrder === "desc" ? b.score - a.score : a.score - b.score);
+    return { ...data, results: filtered };
+  }
+
   useEffect(() => {
-    onChromeToneChange?.("accent");
+    onChromeToneChange?.("primary");
   }, [onChromeToneChange]);
 
   async function handleSearch() {
@@ -132,7 +145,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
         </div>
 
         {/* Status */}
-        <StatusBar status={status} />
+        <StatusBar status={status} tone="accent" />
 
         {/* Loader */}
         {loading && (
@@ -141,23 +154,78 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
           </div>
         )}
 
-        {/* Results */}
+        {/* Filtres */}
         {results && (
-          <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm backdrop-blur-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-bold text-text">{content.step3}</h2>
-              <div className="flex gap-2">
-                <button onClick={exportJSON} className="px-3 py-1 border rounded-lg hover:bg-accent/10 text-sm">
-                  JSON
-                </button>
-                <button onClick={exportCSV} className="px-3 py-1 border rounded-lg hover:bg-accent/10 text-sm">
-                  CSV
-                </button>
+          <div className="flex gap-2 my-4 flex-wrap items-center bg-surface border border-border rounded-2xl p-4">
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">Min Score</label>
+              <div className="flex items-center gap-1">
+                <input
+                  type="range" min="0" max="1" step="0.01"
+                  value={minScore}
+                  onChange={(e) => setMinScore(Number(e.target.value))}
+                  className="w-24 h-1.5 rounded-full appearance-none bg-border
+                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4
+                    [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full
+                    [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:cursor-pointer"
+                />
+                <span className="text-xs font-bold text-accent w-8">{Math.round(minScore * 100)}%</span>
               </div>
             </div>
-            <ResultsGrid data={results} />
+
+            <div className="h-8 w-px bg-border mx-1" />
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">Caption</label>
+              <div className="relative">
+                <svg className="absolute left-2 top-1/2 -translate-y-1/2 text-muted" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                  type="text" placeholder="Filter by caption..."
+                  value={captionFilter}
+                  onChange={(e) => setCaptionFilter(e.target.value)}
+                  className="pl-6 pr-3 py-1.5 text-xs border border-border rounded-xl bg-bg text-text placeholder:text-muted focus:outline-none focus:border-accent w-44"
+                />
+              </div>
+            </div>
+
+            <div className="h-8 w-px bg-border mx-1" />
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">Sort</label>
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="px-3 py-1.5 text-xs border border-border rounded-xl bg-bg text-text cursor-pointer focus:outline-none focus:border-accent"
+              >
+                <option value="desc">Score ↓</option>
+                <option value="asc">Score ↑</option>
+              </select>
+            </div>
+
+            <div className="h-8 w-px bg-border mx-1" />
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">Export</label>
+              <div className="flex gap-1.5">
+                {[["JSON", exportJSON], ["CSV", exportCSV]].map(([label, fn]) => (
+                  <button
+                    key={label}
+                    onClick={fn}
+                    className="px-2.5 py-1.5 text-xs font-semibold rounded-xl border border-border bg-bg text-muted hover:text-text hover:border-accent transition-all cursor-pointer"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Results */}
+        {results && <ResultsGrid data={filterResults(results)} />}
 
         {/* Empty state */}
         {!results && !loading && (

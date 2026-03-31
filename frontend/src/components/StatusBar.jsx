@@ -1,18 +1,23 @@
-export default function StatusBar({ status }) {
+export default function StatusBar({ status, tone = "primary" }) {
   if (!status) return null;
 
   const isError = status.type === "error";
   const isLoading = status.type === "loading";
 
+  const isAccent = tone === "accent";
+
   return (
     <div
       className={`flex items-center gap-3 py-3 px-4 my-5 rounded-xl text-sm font-medium border
         ${isError ? "bg-red-500/10 text-red-400 border-red-500/25" : ""}
-        ${isLoading ? "bg-primary-pale text-primary border-primary/20" : ""}
+        ${isLoading && !isAccent ? "bg-primary-pale text-primary border-primary/20" : ""}
+        ${isLoading && isAccent ? "bg-accent-pale text-accent border-accent/20" : ""}
       `}
     >
       {isLoading && (
-        <span className="inline-block w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin shrink-0" />
+        <span className={`inline-block w-4 h-4 border-2 rounded-full animate-spin shrink-0
+          ${isAccent ? "border-accent/30 border-t-accent" : "border-primary/30 border-t-primary"}`}
+        />
       )}
       {isError && (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
