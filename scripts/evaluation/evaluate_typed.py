@@ -1,4 +1,4 @@
-"""Evaluate retrieval quality with typed CUI metrics (TM / TA / TP).
+﻿"""Evaluate retrieval quality with typed CUI metrics (TM / TA / TP).
 
 TM — Taux Modalite   : le modele retrouve-t-il le meme type d'examen ?
 TA — Taux Anatomie   : le modele retrouve-t-il la meme region du corps ?

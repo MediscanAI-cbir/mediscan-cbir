@@ -12,7 +12,6 @@ from backend.app.config import ALLOWED_CONTENT_TYPES, ALLOWED_MODES, MAX_K, MONG
 from mediscan.search import SearchResources, load_resources, query, query_text
 
 
-
 class SearchUnavailableError(RuntimeError):
     """Raised when a requested retrieval mode is not available at runtime."""
 
@@ -24,14 +23,13 @@ class SearchService:
         self._resources = resources
         self._resources_lock = Lock()
 
-        # MongoDB is optional — only connect if MONGO_URI is configured.
         self._mongo_collection = None
         if MONGO_URI:
             try:
                 from pymongo import MongoClient
                 self._mongo_collection = MongoClient(MONGO_URI)[DB_NAME][COLLECTION_NAME]
             except Exception:
-                pass  # MongoDB unavailable, fall back to raw results
+                pass
 
     @staticmethod
     def _normalize_mode(mode: str) -> str:
@@ -99,8 +97,8 @@ class SearchService:
             try:
                 db_info = self._mongo_collection.find_one({"image_id": res["image_id"]})
             except Exception:
-                # MongoDB unreachable (timeout, network, auth) — skip enrichment
                 return results
+
             if db_info:
                 enriched.append({
                     "rank":     res.get("rank", 0),
@@ -108,7 +106,10 @@ class SearchService:
                     "score":    float(res.get("score", 0)),
                     "caption":  db_info.get("caption", res.get("caption", "")),
                     "cui":      db_info.get("cui", res.get("cui", "")),
-                    "path":     res.get("path", ""),
+                    "path":     db_info.get("file_name", res.get("path", "")),
+                    "modalite": db_info.get("modalite"),
+                    "organe":   db_info.get("organe"),
+                    "mo":       db_info.get("mo"),
                 })
             else:
                 enriched.append(res)
@@ -164,7 +165,7 @@ class SearchService:
             "query_text": text,
             "results":    self._enrich_with_mongo(results),
         }
-    
+
     def search_by_id(
         self,
         *,
@@ -200,7 +201,6 @@ class SearchService:
             if temp_path is not None:
                 temp_path.unlink(missing_ok=True)
 
-    
     def search_by_ids(
         self,
         *,
@@ -208,9 +208,7 @@ class SearchService:
         mode: str = "visual",
         k: int = 5,
     ) -> dict:
-        """Recherche par centroide — moyenne des embeddings de plusieurs images.
-        Les images sont telechargees et encodees en parallele pour de meilleures performances.
-        """
+        """Recherche par centroide — moyenne des embeddings de plusieurs images."""
         if not image_ids:
             raise ValueError("La liste d'image_ids est vide")
         if len(image_ids) > 20:
@@ -227,7 +225,6 @@ class SearchService:
         import faiss as faiss_lib
 
         def download_and_encode(image_id: str):
-            """Telecharge et encode une image — execute en parallele."""
             num_str = image_id.split("_")[-1]
             folder_idx = (int(num_str) - 1) // 1000 + 1
             folder_name = f"images_{folder_idx:02d}"
@@ -245,12 +242,12 @@ class SearchService:
                 if temp_path is not None:
                     temp_path.unlink(missing_ok=True)
 
-        # Telechargement et encodage en parallele
         with ThreadPoolExecutor(max_workers=len(image_ids)) as executor:
             embeddings = list(executor.map(download_and_encode, image_ids))
 
-        # Calcul du centroide
-        centroid = np.mean(embeddings, axis=0).reshape(1, -1).astype(np.float32)
+        # Agregation par max pooling (features dominantes)
+        emb_matrix = np.array(embeddings, dtype=np.float32)
+        centroid = np.max(emb_matrix, axis=0).reshape(1, -1).astype(np.float32)
         faiss_lib.normalize_L2(centroid)
 
         search_k = min(k + len(image_ids), resources.index.ntotal)
@@ -266,12 +263,15 @@ class SearchService:
             if image_id in excluded_ids:
                 continue
             results.append({
-                "rank": len(results) + 1,
-                "score": float(score),
+                "rank":     len(results) + 1,
+                "score":    float(score),
                 "image_id": image_id,
-                "path": str(row.get("path", "")),
-                "caption": str(row.get("caption", "")),
-                "cui": str(row.get("cui", "")),
+                "path":     str(row.get("path", "")),
+                "caption":  str(row.get("caption", "")),
+                "cui":      str(row.get("cui", "")),
+                "modalite": None,
+                "organe":   None,
+                "mo":       None,
             })
             if len(results) >= k:
                 break
