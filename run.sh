@@ -7,9 +7,9 @@ readonly FRONTEND_DIR="$PROJECT_DIR/frontend"
 readonly VENV_DIR="$PROJECT_DIR/.venv311"
 readonly PYTHON_BIN="$VENV_DIR/bin/python"
 readonly BACKEND_HOST="127.0.0.1"
-readonly BACKEND_PORT="8000"
 readonly FRONTEND_PORT="5173"
 readonly BACKEND_LOG="/tmp/mediscan-backend.log"
+BACKEND_PORT="${BACKEND_PORT:-8000}"
 BACKEND_PID=""
 
 cd "$PROJECT_DIR"
@@ -34,6 +34,16 @@ require_command() {
     if ! command -v "$command_name" >/dev/null 2>&1; then
         fail "$error_message"
     fi
+}
+
+load_env_value() {
+    local key="$1"
+
+    if [ ! -f "$PROJECT_DIR/.env" ]; then
+        return 0
+    fi
+
+    sed -n "s/^${key}=//p" "$PROJECT_DIR/.env" | tail -n 1 | sed 's/^"//; s/"$//'
 }
 
 validate_node_version() {
@@ -106,14 +116,12 @@ cleanup() {
 }
 
 start_backend() {
+    local groq_key
+
     log_info "Démarrage du backend (port $BACKEND_PORT)..."
-    # Charge GROQ_KEY_API depuis .env si défini
-    if [ -f "$PROJECT_DIR/.env" ]; then
-        local groq_key
-        groq_key=$(grep -E '^GROQ_KEY_API=' "$PROJECT_DIR/.env" | cut -d= -f2- | tr -d '"'"'" || true)
-        if [ -n "$groq_key" ]; then
-            export GROQ_KEY_API="$groq_key"
-        fi
+    groq_key="$(load_env_value GROQ_KEY_API || true)"
+    if [ -n "$groq_key" ]; then
+        export GROQ_KEY_API="$groq_key"
     fi
     PYTHONPATH="$PROJECT_DIR/src:$PROJECT_DIR" \
         "$PYTHON_BIN" -m uvicorn backend.app.main:app \
@@ -168,6 +176,11 @@ validate_node_version
 warn_if_git_lfs_missing
 ensure_python_environment
 install_frontend_dependencies
+
+ENV_BACKEND_PORT="$(load_env_value BACKEND_PORT || true)"
+if [ -n "$ENV_BACKEND_PORT" ]; then
+    BACKEND_PORT="$ENV_BACKEND_PORT"
+fi
 
 kill_port_process "$BACKEND_PORT"
 kill_port_process "$FRONTEND_PORT"

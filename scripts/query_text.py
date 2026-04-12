@@ -5,7 +5,7 @@ Usage:
 
 The semantic FAISS index (artifacts/index_semantic.faiss) must exist.
 Build it first with:
-    PYTHONPATH=src:. .venv311/bin/python scripts/build_index.py --mode semantic
+    PYTHONPATH=src:. .venv311/bin/python scripts/rebuild_stable_indexes.py
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ def main() -> None:
         print(f"ERROR: {exc}", file=sys.stderr)
         print(
             "Hint: build the index first with:\n"
-            "  PYTHONPATH=src:. .venv311/bin/python scripts/build_index.py --mode semantic",
+            "  PYTHONPATH=src:. .venv311/bin/python scripts/rebuild_stable_indexes.py",
             file=sys.stderr,
         )
         sys.exit(1)

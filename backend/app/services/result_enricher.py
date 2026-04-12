@@ -28,17 +28,26 @@ class MongoResultEnricher:
         return cls(collection=_load_mongo_collection())
 
     def enrich(self, results: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        if self._collection is None:
+        if self._collection is None or not results:
+            return results
+
+        image_ids = [result["image_id"] for result in results if result.get("image_id")]
+
+        try:
+            docs = {
+                doc["image_id"]: doc
+                for doc in self._collection.find(
+                    {"image_id": {"$in": image_ids}},
+                    {"image_id": 1, "caption": 1, "cui": 1},
+                )
+            }
+        except Exception:
             return results
 
         enriched_results = []
         for result in results:
-            try:
-                db_info = self._collection.find_one({"image_id": result["image_id"]})
-            except Exception:
-                return results
-
-            if not db_info:
+            db_info = docs.get(result["image_id"])
+            if db_info is None:
                 enriched_results.append(result)
                 continue
 

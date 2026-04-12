@@ -13,7 +13,8 @@ import {
   UserKey,
 } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
+import { VisualModeIcon, InterpretiveModeIcon } from "./icons";
 
 const benefitIcons = {
   route: Route,
@@ -30,24 +31,6 @@ const useCaseIcons = {
   hospital: Hospital,
   search: Search,
 };
-
-function VisualModeIcon({ className = "h-4 w-4" }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function InterpretiveModeIcon({ className = "h-4 w-4" }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-    </svg>
-  );
-}
 
 function WhyFeature({ icon, title, description }) {
   return (
@@ -403,7 +386,7 @@ export default function HomePage({ onPageChange }) {
                 <div className="home-hero-actions mt-8 flex flex-wrap gap-3">
                   <button
                     onClick={() => onPageChange("search")}
-                    className="home-hero-button-primary rounded-xl px-8 py-3 text-sm font-semibold"
+                    className="home-hero-button-primary home-hero-button-scan rounded-xl px-8 py-3 text-sm font-semibold"
                   >
                     {content.cta1}
                   </button>

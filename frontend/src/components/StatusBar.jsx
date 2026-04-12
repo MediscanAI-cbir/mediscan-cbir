@@ -15,7 +15,7 @@ export default function StatusBar({
   return (
     <div
       role={isError ? "alert" : "status"}
-      className={`${enableToneTransition ? "search-tone-transition " : ""}flex items-center gap-3 py-3 px-4 my-5 rounded-xl text-sm font-medium border
+      className={`${enableToneTransition ? "search-tone-transition " : ""}search-status flex items-center gap-3 py-3 px-4 my-5 rounded-xl text-sm font-medium border
         ${isError ? "bg-red-500/10 text-red-400 border-red-500/25" : ""}
         ${isLoading && !isAccent ? useHomePrimaryTone ? "mediscan-primary-surface mediscan-primary-text" : "bg-primary-pale text-primary border-primary/20" : ""}
         ${isLoading && isAccent ? "mediscan-accent-surface mediscan-accent-text" : ""}

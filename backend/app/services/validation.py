@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from backend.app.config import ALLOWED_CONTENT_TYPES, ALLOWED_MODES, MAX_K
+from backend.app.config import ALLOWED_CONTENT_TYPES, ALLOWED_MODES, MAX_K, MAX_UPLOAD_BYTES
 from backend.app.image_utils import sanitize_image_id
 
 MAX_TEXT_QUERY_LENGTH = 500
@@ -30,6 +30,9 @@ def validate_content_type(content_type: str | None) -> None:
 def validate_image_bytes(image_bytes: bytes) -> None:
     if not image_bytes:
         raise ValueError("Uploaded image is empty")
+    if len(image_bytes) > MAX_UPLOAD_BYTES:
+        max_size_mb = MAX_UPLOAD_BYTES / (1024 * 1024)
+        raise ValueError(f"Uploaded image exceeds the {max_size_mb:.0f} MB limit")
 
 
 def validate_text_query(text: str) -> str:

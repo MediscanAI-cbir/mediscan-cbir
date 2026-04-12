@@ -5,12 +5,15 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
+from shutil import copyfileobj
 from tempfile import NamedTemporaryFile
-import urllib.request
+from urllib.error import URLError
+from urllib.request import urlopen
 
 import numpy as np
 from PIL import Image, UnidentifiedImageError
 
+from backend.app.config import REMOTE_IMAGE_TIMEOUT_SECONDS
 from backend.app.image_utils import hf_image_url
 
 MAX_DOWNLOAD_WORKERS = 8
@@ -38,7 +41,15 @@ def temporary_image_path(*, suffix: str) -> Iterator[Path]:
 @contextmanager
 def downloaded_image(image_id: str) -> Iterator[Path]:
     with temporary_image_path(suffix=".png") as temp_path:
-        urllib.request.urlretrieve(hf_image_url(image_id), temp_path)
+        try:
+            with urlopen(
+                hf_image_url(image_id),
+                timeout=REMOTE_IMAGE_TIMEOUT_SECONDS,
+            ) as response, temp_path.open("wb") as handle:
+                copyfileobj(response, handle)
+        except (OSError, URLError) as exc:
+            raise RuntimeError(f"Unable to download image '{image_id}'.") from exc
+
         verify_image(temp_path)
         yield temp_path
 
@@ -55,8 +66,8 @@ def build_centroid_embedding(
     embedder,
     max_download_workers: int = MAX_DOWNLOAD_WORKERS,
 ) -> np.ndarray:
-    worker_count = min(len(image_ids), max_download_workers)
+    worker_count = max(1, min(len(image_ids), max_download_workers))
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
         embeddings = list(executor.map(partial(encode_remote_image, embedder=embedder), image_ids))
 
-    return np.mean(embeddings, axis=0).reshape(1, -1).astype(np.float32)
+    return np.mean(np.stack(embeddings, axis=0), axis=0).reshape(1, -1).astype(np.float32)

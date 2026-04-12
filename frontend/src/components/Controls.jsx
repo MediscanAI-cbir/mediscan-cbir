@@ -1,5 +1,7 @@
-import { useContext } from "react";
-import { LangContext } from "../context/lang-context";
+import { Info } from "lucide-react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { LangContext } from "../context/LangContext";
 
 export default function Controls({
   mode,
@@ -8,16 +10,32 @@ export default function Controls({
   onKChange,
   onSearch,
   disabled,
+  loading = false,
   showModeToggle = true,
   useHomeVisualTone = false,
   enableToneTransition = false,
+  modeToggleDisabled = false,
+  modeChangeGuardActive = false,
+  modeChangeConfirmMessage = "",
+  modeChangeConfirmActionLabel = "",
+  modeChangeCancelLabel = "",
+  onModeInfoClick = null,
+  modeInfoLabel = "",
 }) {
   const { t } = useContext(LangContext);
-  const sliderBg = mode === "visual"
-    ? "[&::-webkit-slider-thumb]:bg-primary [&::-moz-range-thumb]:bg-primary"
-    : "[&::-webkit-slider-thumb]:bg-accent [&::-moz-range-thumb]:bg-accent";
+  const [pendingMode, setPendingMode] = useState(null);
+  const [popoverStyle, setPopoverStyle] = useState(null);
   const useHomePrimaryTone = useHomeVisualTone && mode === "visual";
   const useAccentTone = mode === "semantic";
+  const toneSyncClass = enableToneTransition ? "search-tone-sync" : "";
+  const sliderToneClass = mode === "visual" ? "search-slider-track-primary" : "search-slider-track-accent";
+  const modeToggleRef = useRef(null);
+  const popoverRef = useRef(null);
+
+  const panelSurfaceClass = mode === "visual"
+    ? useHomePrimaryTone ? "mediscan-primary-surface" : "bg-primary/5 border-primary/20"
+    : useAccentTone ? "mediscan-accent-surface" : "bg-accent/5 border-accent/20";
+
   const modeShellClass = mode === "visual"
     ? useHomePrimaryTone
       ? "image-search-mode-shell image-search-mode-shell-primary"
@@ -25,25 +43,138 @@ export default function Controls({
     : useAccentTone
       ? "image-search-mode-shell image-search-mode-shell-accent"
       : "border-accent/20 bg-accent/10";
+  const activeModeClass = modeToggleDisabled ? "cursor-not-allowed" : "cursor-pointer";
+  const visualInactiveClass = modeToggleDisabled
+    ? "cursor-not-allowed text-muted/75"
+    : "cursor-pointer text-muted hover:bg-primary/8 hover:text-primary";
+  const semanticInactiveClass = modeToggleDisabled
+    ? "cursor-not-allowed text-muted/75"
+    : "cursor-pointer text-muted hover:bg-accent/8 hover:text-accent";
+
+  useEffect(() => {
+    if (!modeChangeGuardActive) {
+      setPendingMode(null);
+    }
+  }, [modeChangeGuardActive]);
+
+  useEffect(() => {
+    setPendingMode(null);
+  }, [mode]);
+
+  useEffect(() => {
+    if (!pendingMode) return undefined;
+
+    const handlePointerDown = (event) => {
+      const target = event.target;
+      if (popoverRef.current?.contains(target) || modeToggleRef.current?.contains(target)) {
+        return;
+      }
+
+      setPendingMode(null);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+    };
+  }, [pendingMode]);
+
+  useLayoutEffect(() => {
+    if (!pendingMode || !modeToggleRef.current || typeof window === "undefined") {
+      setPopoverStyle(null);
+      return undefined;
+    }
+
+    const updatePopoverPosition = () => {
+      const rect = modeToggleRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const viewportWidth = window.innerWidth;
+      const desiredWidth = Math.min(384, viewportWidth - 32);
+      const width = Math.max(260, desiredWidth);
+      const left = Math.min(
+        Math.max(16, rect.left),
+        Math.max(16, viewportWidth - width - 16),
+      );
+
+      setPopoverStyle({
+        top: rect.bottom + 10,
+        left,
+        width,
+      });
+    };
+
+    updatePopoverPosition();
+    window.addEventListener("resize", updatePopoverPosition);
+    window.addEventListener("scroll", updatePopoverPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePopoverPosition);
+      window.removeEventListener("scroll", updatePopoverPosition, true);
+    };
+  }, [pendingMode]);
+
+  function handleModeAttempt(nextMode, options = {}) {
+    const { force = false } = options;
+
+    if (nextMode === mode) {
+      setPendingMode(null);
+      return;
+    }
+
+    if (modeToggleDisabled) return;
+
+    const result = onModeChange(nextMode, { force });
+
+    if (result === "confirm" && !force) {
+      setPendingMode(nextMode);
+      return;
+    }
+
+    setPendingMode(null);
+  }
+
+  function handleConfirmModeChange() {
+    if (!pendingMode) return;
+    handleModeAttempt(pendingMode, { force: true });
+  }
 
   return (
-    <div className={`${enableToneTransition ? "search-tone-transition " : ""}image-search-panel rounded-2xl p-5 shadow-sm flex flex-wrap gap-5 items-end border ${mode === "visual" ? useHomePrimaryTone ? "mediscan-primary-surface" : "bg-primary/5 border-primary/20" : useAccentTone ? "mediscan-accent-surface" : "bg-accent/5 border-accent/20"}`}>
+    <div className={`${enableToneTransition ? "search-tone-transition " : ""}search-controls-panel image-search-panel rounded-2xl p-5 shadow-sm flex flex-wrap gap-4 items-stretch sm:items-end border ${panelSurfaceClass}`}>
       {/* Mode toggle */}
       {showModeToggle && (
         <div className="flex-1 min-w-[220px]">
-          <label className="block text-xs text-muted mb-2 font-semibold uppercase tracking-wider">
-            {t.search.analysisMode}
-          </label>
-          <div className={`${enableToneTransition ? "search-tone-transition " : ""}flex rounded-xl overflow-hidden border ${modeShellClass}`}>
+          <div className="mb-2 flex items-center gap-2">
+            <label className={`${toneSyncClass} block text-xs font-semibold uppercase tracking-wider text-muted`}>
+              {t.search.analysisMode}
+            </label>
+            {onModeInfoClick && (
+              <button
+                type="button"
+                onClick={onModeInfoClick}
+                className={`${enableToneTransition ? "search-tone-transition " : ""}inline-flex h-5.5 w-5.5 items-center justify-center rounded-md text-muted transition-all hover:bg-primary/6 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/25`}
+                aria-label={modeInfoLabel || t.search.analysisMode}
+                title={modeInfoLabel || t.search.analysisMode}
+              >
+                <Info className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+          <div ref={modeToggleRef}>
+            <div className={`${enableToneTransition ? "search-tone-transition " : ""}search-mode-shell flex gap-1 rounded-xl border p-1 ${modeShellClass}`}>
             <button
               type="button"
-              onClick={() => onModeChange("visual")}
-              className={`${enableToneTransition ? "search-tone-transition " : ""}flex-1 py-2.5 px-4 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer
+              onClick={() => handleModeAttempt("visual")}
+              aria-disabled={modeToggleDisabled}
+              className={`${enableToneTransition ? "search-tone-transition " : ""}search-mode-option flex-1 rounded-[0.8rem] border border-transparent py-2.5 px-4 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer
                 ${mode === "visual"
                   ? useHomePrimaryTone
-                    ? "mediscan-primary-chip font-semibold"
-                    : "bg-primary-pale text-primary font-semibold"
-                  : "text-muted hover:text-text hover:bg-white/10"
+                    ? `mediscan-primary-chip font-semibold shadow-sm ${activeModeClass}`
+                    : `bg-primary-pale text-primary font-semibold shadow-sm ${activeModeClass}`
+                  : visualInactiveClass
                 }`}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -53,11 +184,12 @@ export default function Controls({
             </button>
             <button
               type="button"
-              onClick={() => onModeChange("semantic")}
-              className={`${enableToneTransition ? "search-tone-transition " : ""}flex-1 py-2.5 px-4 text-sm font-medium flex items-center justify-center gap-2 border-l border-border cursor-pointer
+              onClick={() => handleModeAttempt("semantic")}
+              aria-disabled={modeToggleDisabled}
+              className={`${enableToneTransition ? "search-tone-transition " : ""}search-mode-option flex-1 rounded-[0.8rem] border border-transparent py-2.5 px-4 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer
                 ${mode === "semantic"
-                  ? "mediscan-accent-chip font-semibold"
-                  : "text-muted hover:text-text hover:bg-white/10"
+                  ? `mediscan-accent-chip font-semibold shadow-sm ${activeModeClass}`
+                  : semanticInactiveClass
                 }`}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -66,15 +198,16 @@ export default function Controls({
               </svg>
               {t.search.modeSemantic}
             </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* K slider */}
       <div className="flex-1 min-w-[200px]">
-        <label className="block text-xs text-muted mb-2 font-semibold uppercase tracking-wider">
+        <label className={`${toneSyncClass} block text-xs text-muted mb-2 font-semibold uppercase tracking-wider`}>
           {t.search.numResults}:{" "}
-          <strong className={`text-base font-bold ${mode === "visual" ? useHomePrimaryTone ? "mediscan-primary-text" : "text-primary" : useAccentTone ? "mediscan-accent-text" : "text-accent"}`}>{k}</strong>
+          <strong className={`${toneSyncClass} text-base font-bold ${mode === "visual" ? useHomePrimaryTone ? "mediscan-primary-text" : "text-primary" : useAccentTone ? "mediscan-accent-text" : "text-accent"}`}>{k}</strong>
         </label>
         <input
           type="range"
@@ -82,11 +215,10 @@ export default function Controls({
           max="50"
           value={k}
           onChange={(e) => onKChange(Number(e.target.value))}
-          className={`w-full h-1.5 rounded-full ${mode === "visual" ? "bg-primary/20" : "bg-accent/20"} appearance-none
+          className={`${toneSyncClass} search-slider-track ${sliderToneClass} w-full h-1.5 rounded-full appearance-none
             [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5
             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer
             [&::-webkit-slider-thumb]:shadow-md
-            ${sliderBg}
             [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:cursor-pointer`}
         />
@@ -97,8 +229,8 @@ export default function Controls({
         type="button"
         onClick={onSearch}
         disabled={disabled}
-        className={`${enableToneTransition ? "search-tone-transition " : ""}py-3 px-8 rounded-xl font-semibold
-          flex items-center gap-2 whitespace-nowrap cursor-pointer
+        className={`${enableToneTransition ? "search-tone-transition " : ""}search-action-button h-11 w-full min-w-0 px-4 rounded-xl font-semibold
+          inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer sm:h-12 sm:w-auto sm:min-w-[9.75rem] sm:px-8
           disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none
           ${mode === "visual"
             ? useHomePrimaryTone
@@ -109,11 +241,59 @@ export default function Controls({
               : "button-solid-accent"
           }`}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        {t.search.search}
+        {loading ? (
+          <>
+            <span className="inline-block h-[1.05rem] w-[1.05rem] shrink-0 rounded-full border-2 border-current/25 border-t-current animate-spin" />
+          </>
+        ) : (
+          <>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            {t.search.search}
+          </>
+        )}
       </button>
+      {pendingMode && modeChangeConfirmMessage && popoverStyle && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed z-[120]"
+          style={{
+            top: `${popoverStyle.top}px`,
+            left: `${popoverStyle.left}px`,
+            width: `${popoverStyle.width}px`,
+          }}
+        >
+          <div
+            ref={popoverRef}
+            className="rounded-2xl border border-border/80 bg-surface/95 p-3 shadow-xl backdrop-blur-sm"
+          >
+            <p className="text-xs font-medium leading-5 text-muted">
+              {modeChangeConfirmMessage}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingMode(null)}
+                className="inline-flex items-center rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted transition-colors hover:border-primary/20 hover:text-text"
+              >
+                {modeChangeCancelLabel}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmModeChange}
+                className={`inline-flex items-center rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors ${
+                  mode === "semantic"
+                    ? "mediscan-primary-chip"
+                    : "mediscan-accent-chip"
+                }`}
+              >
+                {modeChangeConfirmActionLabel}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

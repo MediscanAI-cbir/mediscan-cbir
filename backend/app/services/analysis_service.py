@@ -1,51 +1,88 @@
+from __future__ import annotations
+
 from groq import Groq
-import os
+
+from backend.app.config import GROQ_API_KEY, GROQ_MODEL, MAX_CONCLUSION_RESULTS
+
+
+class ClinicalConclusionError(RuntimeError):
+    """Raised when the optional LLM summarization service cannot be used."""
+
+
+def _prepare_ranked_captions(search_result: dict) -> tuple[str, int]:
+    results = search_result.get("results", [])
+    ranked_captions: list[str] = []
+
+    for result in results[:MAX_CONCLUSION_RESULTS]:
+        caption = str(result.get("caption", "")).strip()
+        if not caption:
+            continue
+
+        similarity_pct = round(float(result.get("score", 0)) * 100, 1)
+        ranked_captions.append(f"- Similarite {similarity_pct}% : {caption}")
+
+    if not ranked_captions:
+        raise ValueError("Impossible de generer une synthese sans descriptions exploitables.")
+
+    return "\n".join(ranked_captions), len(ranked_captions)
+
+
+def _build_messages(search_result: dict) -> list[dict[str, str]]:
+    ranked_captions, caption_count = _prepare_ranked_captions(search_result)
+    mode = str(search_result.get("mode", "inconnu")).strip() or "inconnu"
+
+    return [
+        {
+            "role": "system",
+            "content": (
+                "Tu aides un prototype universitaire non clinique de recherche d'images medicales. "
+                "Tu rediges une synthese prudente et concise en francais a partir de descriptions similaires. "
+                "Tu ne poses jamais de diagnostic, tu ne proposes jamais de traitement, "
+                "et tu rappelles toujours que la sortie ne remplace pas l'avis d'un professionnel de sante. "
+                "Tu ne mentionnes pas CBIR, FAISS, embeddings ou l'infrastructure technique. "
+                "Pas de tableau. Pas de HTML. Pas de listes interminables."
+            ),
+        },
+        {
+            "role": "user",
+            "content": (
+                f"Mode de recherche : {mode}\n"
+                f"Nombre de descriptions retenues : {caption_count}\n\n"
+                "Descriptions d'images similaires, triees par similarite decroissante :\n"
+                f"{ranked_captions}\n\n"
+                "Redige une synthese en 3 courts paragraphes :\n"
+                "1. Observations communes retrouvees dans les descriptions les plus proches.\n"
+                "2. Points de prudence et limites : variabilite des resultats, manque de contexte clinique, ambiguite possible.\n"
+                "3. Rappel explicite qu'il s'agit d'un resume exploratoire non clinique et non d'un diagnostic.\n"
+                "Style sobre, comprehensible et factuel."
+            ),
+        },
+    ]
 
 
 def generate_clinical_conclusion(search_result: dict) -> str:
-    results = search_result.get("results", [])
-    print("PREMIER RÉSULTAT:", results[0] if results else "vide")
-    scores = [r.get("score", 0) for r in results]
-    confidence = round(sum(scores) / len(scores) * 100, 1) if scores else 0
+    if not GROQ_API_KEY:
+        raise ClinicalConclusionError(
+            "La fonctionnalite d'analyse IA n'est pas configuree sur cette instance."
+        )
 
-    # Captions pondérées par score de similarité (rank 1 = poids maximal)
-    weighted_captions = "\n".join([
-        f"- [similarité {round(r.get('score', 0) * 100, 1)}%] {r.get('caption', '')}"
-        for r in results if r.get('caption', '').strip()
-    ])
+    try:
+        client = Groq(api_key=GROQ_API_KEY)
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=_build_messages(search_result),
+            temperature=0.2,
+            max_tokens=500,
+        )
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ClinicalConclusionError(
+            "Le service d'analyse IA est temporairement indisponible."
+        ) from exc
 
-    client = Groq(api_key=os.environ.get("GROQ_KEY_API"))
+    conclusion = (response.choices[0].message.content or "").strip()
+    if not conclusion:
+        raise ClinicalConclusionError("Le service d'analyse IA a retourne une reponse vide.")
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "Tu es un radiologue francophone expert. "
-                    "On te donne des descriptions d'images médicales similaires, chacune accompagnée de son score de similarité. "
-                    "Tu rédiges une synthèse médicale précise et structurée en français. "
-                    "Les descriptions avec un score de similarité élevé doivent avoir plus de poids dans ton analyse. "
-                    "Les descriptions avec un score faible sont des cas moins représentatifs et ne doivent pas dominer la synthèse. "
-                    "Tu ne mentionnes jamais CBIR, FAISS ou tout système informatique. "
-                    "Tu ne fais jamais de tableau. Tu ne copies jamais les descriptions mot pour mot."
-                )
-            },
-            {
-                "role": "user",
-                "content": (
-                    f"Images médicales similaires retrouvées (classées par score de similarité décroissant) :\n{weighted_captions}\n\n"
-                    f"Niveau de confiance global : {confidence}%\n\n"
-                    "Rédige une synthèse médicale complète en 3 paragraphes :\n"
-                    "1. Pathologie dominante observée — base-toi principalement sur les résultats à score élevé (termes médicaux précis)\n"
-                    "2. Recommandations (examens ou suivi à envisager)\n"
-                    "3. Niveau de confiance et limites de l'analyse\n\n"
-                    "Français médical uniquement. Pas de tableau. Réponse complète."
-                )
-            }
-        ],
-        temperature=0.3,
-        max_tokens=1000,
-    )
-
-    return response.choices[0].message.content
+    return conclusion

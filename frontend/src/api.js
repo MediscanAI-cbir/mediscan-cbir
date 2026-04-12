@@ -9,12 +9,56 @@ async function parseJsonSafely(response) {
   return response.json().catch(() => ({}));
 }
 
+function formatApiError(detail, fallbackMessage) {
+  if (typeof detail === "string" && detail.trim()) {
+    return detail;
+  }
+
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => {
+        if (!item || typeof item !== "object") {
+          return String(item);
+        }
+
+        const location = Array.isArray(item.loc)
+          ? item.loc.filter((part) => part !== "body").join(".")
+          : "";
+        const message = typeof item.msg === "string" ? item.msg : "";
+
+        if (location && message) {
+          return `${location}: ${message}`;
+        }
+        return message || null;
+      })
+      .filter(Boolean);
+
+    if (messages.length) {
+      return messages.join(" | ");
+    }
+  }
+
+  if (detail && typeof detail === "object") {
+    if (typeof detail.message === "string" && detail.message.trim()) {
+      return detail.message;
+    }
+
+    try {
+      return JSON.stringify(detail);
+    } catch {
+      return fallbackMessage;
+    }
+  }
+
+  return fallbackMessage;
+}
+
 async function requestJson(path, options = {}) {
   const response = await fetch(buildApiUrl(path), options);
 
   if (!response.ok) {
     const err = await parseJsonSafely(response);
-    throw new Error(err.detail || `Erreur ${response.status}`);
+    throw new Error(formatApiError(err.detail, `Erreur ${response.status}`));
   }
 
   return parseJsonSafely(response);
@@ -58,4 +102,8 @@ export async function searchByIds(imageIds, mode, k) {
 
 export async function fetchConclusion(searchResult) {
   return postJson("/generate-conclusion", searchResult);
+}
+
+export async function sendContactMessage(payload) {
+  return postJson("/contact", payload);
 }

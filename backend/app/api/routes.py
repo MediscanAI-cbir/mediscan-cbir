@@ -5,18 +5,34 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
+from backend.app.config import MAX_UPLOAD_BYTES
 from backend.app.image_utils import hf_image_url, sanitize_image_id, with_public_result_paths
-from backend.app.models.schema import IdSearchResponse, IdsSearchResponse, SearchResponse, TextSearchResponse
-from backend.app.services.analysis_service import generate_clinical_conclusion
+from backend.app.models.schema import (
+    ConclusionRequest,
+    ConclusionResponse,
+    ContactRequest,
+    ContactResponse,
+    IdSearchResponse,
+    IdsSearchResponse,
+    SearchResponse,
+    TextSearchResponse,
+)
+from backend.app.services.analysis_service import ClinicalConclusionError, generate_clinical_conclusion
+from backend.app.services.email_service import EmailConfigurationError, EmailDeliveryError, EmailService
 from backend.app.services.search_service import SearchService, SearchUnavailableError
 
 router = APIRouter()
 ResponseModelT = TypeVar("ResponseModelT", bound=BaseModel)
+UPLOAD_CHUNK_SIZE = 1024 * 1024
 
 
 def _get_service(request: Request) -> SearchService:
     """Retrieve the SearchService loaded at startup."""
     return request.app.state.search_service
+
+
+def _get_email_service(request: Request) -> EmailService:
+    return request.app.state.email_service
 
 
 def _sanitize_image_id_or_400(image_id: str) -> str:
@@ -30,6 +46,8 @@ def _as_http_exception(exc: Exception) -> HTTPException:
     if isinstance(exc, ValueError):
         return HTTPException(status_code=400, detail=str(exc))
     if isinstance(exc, SearchUnavailableError):
+        return HTTPException(status_code=503, detail=str(exc))
+    if isinstance(exc, ClinicalConclusionError):
         return HTTPException(status_code=503, detail=str(exc))
     return HTTPException(status_code=500, detail=str(exc))
 
@@ -51,6 +69,27 @@ def _run_service_call(
         raise _as_http_exception(exc) from exc
 
 
+async def _read_upload_bytes(image: UploadFile) -> bytes:
+    chunks: list[bytes] = []
+    total_size = 0
+
+    while True:
+        chunk = await image.read(UPLOAD_CHUNK_SIZE)
+        if not chunk:
+            break
+
+        total_size += len(chunk)
+        if total_size > MAX_UPLOAD_BYTES:
+            max_size_mb = MAX_UPLOAD_BYTES / (1024 * 1024)
+            raise HTTPException(
+                status_code=413,
+                detail=f"Uploaded image exceeds the {max_size_mb:.0f} MB limit",
+            )
+        chunks.append(chunk)
+
+    return b"".join(chunks)
+
+
 @router.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -64,7 +103,7 @@ async def search_image(
     k: int = Form(5),
 ) -> SearchResponse:
     service = _get_service(request)
-    image_bytes = await image.read()
+    image_bytes = await _read_upload_bytes(image)
 
     return _run_service_call(
         SearchResponse,
@@ -143,8 +182,31 @@ async def search_by_ids(body: IdsSearchRequest, request: Request) -> IdsSearchRe
     )
 
 
-@router.post("/generate-conclusion")
-async def get_conclusion(payload: dict) -> dict:
-    """Génère une synthèse IA via LLM à partir des résultats de recherche."""
-    conclusion = generate_clinical_conclusion(payload)
-    return {"conclusion": conclusion}
+@router.post("/generate-conclusion", response_model=ConclusionResponse)
+async def get_conclusion(body: ConclusionRequest) -> ConclusionResponse:
+    """Genere une synthese IA prudente a partir des resultats de recherche."""
+    try:
+        conclusion = generate_clinical_conclusion(body.model_dump())
+    except (ValueError, ClinicalConclusionError) as exc:
+        raise _as_http_exception(exc) from exc
+
+    return ConclusionResponse(conclusion=conclusion)
+
+
+@router.post("/contact", response_model=ContactResponse)
+async def contact(body: ContactRequest, request: Request) -> ContactResponse:
+    email_service = _get_email_service(request)
+
+    try:
+        email_service.send_contact_email(
+            name=body.name,
+            email=body.email,
+            subject=body.subject,
+            message=body.message,
+        )
+    except EmailConfigurationError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except EmailDeliveryError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return ContactResponse(success=True, message="Contact email sent successfully.")

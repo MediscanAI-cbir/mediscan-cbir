@@ -15,7 +15,7 @@ export const fr = {
     badge: "Analyse Médicale par IA",
     headline1: "Réduire l'incertitude.",
     headline2: "Accélérer le diagnostic.",
-    description: "Explorer des archives d'imagerie médicale par contenu visuel ou par description textuelle, retrouver des cas visuellement ou cliniquement apparentés, et soutenir l'interprétation par une recherche structurée de similarité.",
+    description: "Explorer des archives d'imagerie médicale par contenu visuel ou par description textuelle, retrouver des cas visuellement ou sémantiquement apparentés, et découvrir un prototype universitaire de CBIR via un workflow de similarité structuré.",
     cta1: "Scanner & Chercher",
     cta1Link: "/search",
     cta2Link: "/features",
@@ -34,7 +34,7 @@ export const fr = {
 
     whyChoose: {
       headline: "Pourquoi MEDISCAN AI ?",
-      description: "Plateforme d'IA d'imagerie conçu pour optimiser les workflows, la précision diagnostique et la recherche médicale par l'identification automatisée de cohortes.",
+      description: "Prototype universitaire conçu pour explorer des workflows de recherche d'images médicales pour la démonstration, l'enseignement et l'expérimentation.",
       features: [
         {
           icon: "route",
@@ -49,7 +49,7 @@ export const fr = {
         {
           icon: "blocks",
           title: "Scalable Research Infrastructure",
-          desc: "Privé, léger en infrastructure, et prêt à s’intégrer au PACS, EMR et environnements de recherche.",
+          desc: "Fonctionne localement avec une pile FastAPI plus React simple et un enrichissement de métadonnées optionnel.",
         },
       ],
     },
@@ -66,12 +66,12 @@ export const fr = {
         {
           num: "2",
           title: "Analyser",
-          desc: "MEDISCAN AI analyse les caractéristiques visuelles et cliniques instantanément.",
+          desc: "MEDISCAN indexe instantanément des caractéristiques visuelles et sémantiques.",
         },
         {
           num: "3",
           title: "Découvrir",
-          desc: "Recevez les résultats classés avec scores de confiance et métadonnées cliniques.",
+          desc: "Recevez des résultats similaires classés avec scores et métadonnées disponibles.",
         },
       ],
     },
@@ -132,16 +132,16 @@ export const fr = {
       list: [
         { title: "Vitesse Éclair", desc: "Latence inférieure à la seconde sur des millions d'images" },
         { title: "Intelligence Interprétative", desc: "IA entraînée sur des ensembles de données médicales annotées" },
-        { title: "Multi-Modal", desc: "Tous les types et modalités d'imagerie supportés" },
-        { title: "Sécurisé", desc: "Sécurité et conformité de classe entreprise" },
-        { title: "Analyse", desc: "Suivre les modèles d'utilisation et les résultats cliniques" },
-        { title: "Accès API", desc: "Intégrer directement dans vos flux de travail" },
+        { title: "Recherche Duale", desc: "Modes de recherche visuel et sémantique sur le même jeu de données" },
+        { title: "Prototype de Recherche", desc: "Conçu pour la démonstration, l'expérimentation et la lecture du code" },
+        { title: "Export des Résultats", desc: "Exporter les résultats visibles en JSON, CSV ou PDF" },
+        { title: "API Ouverte", desc: "Endpoints REST simples pour intégrations locales et tests" },
       ],
     },
 
     footer: {
-      tagline: "L'IA au service du diagnostic.",
-      compliance: "Conforme HIPAA · Sécurité Entreprise · ISO 27001 Certifié",
+      tagline: "Prototype universitaire de recherche d'images médicales.",
+      compliance: "Prototype universitaire · Non clinique · Démo locale",
       contact: "Contactez-nous",
       rights: "Tous droits réservés.",
       privacy : "Confidentialité",
@@ -193,7 +193,7 @@ export const fr = {
       title3: "Complètement Gratuit",
       desc3: "Aucune inscription, aucune limite",
     },
-    footer: "Conforme HIPAA · Vos données restent privées · Aucune publicité",
+    footer: "Prototype universitaire · Synthèse non clinique · Sans inscription",
 
     hub: {
       badge: "Moteur de recherche d'images médicales",
@@ -214,7 +214,7 @@ export const fr = {
         subtitle: "Recherche en langage naturel",
         desc: "Décrivez un cas médical en anglais et retrouvez les images correspondantes par signification médicale.",
         features: [
-          "Recherche par signification médicale — en anglais",
+          "Recherche par signification médicale",
           "Résultats sémantiquement pertinents",
         ],
         cta: "Décrire un cas",
@@ -245,62 +245,183 @@ export const fr = {
       acceptedFormats: "JPEG ou PNG uniquement",
       previewAlt: "Aperçu de l'image sélectionnée",
       legendEyebrow: "À lire",
-      legendTitle: "Ce que représente chaque mode d’analyse dans MEDISCAN AI",
-      legendDescription: "Cette légende reste fixe : un mode lit la structure visible, l’autre lit la similarité médicalement pertinente.",
+      legendTitle: "Choisir le bon mode d’analyse selon votre objectif",
+      legendDescription: "Les deux modes n’ont pas la même utilité : l’un aide à comparer rapidement ce que vous voyez dans l’image, l’autre aide à retrouver des cas proches par leur sens médical. Utilisez cette note pour choisir le mode le plus pertinent avant de lancer la recherche.",
       legend: {
         visual: {
           label: "ANALYSE VISUELLE",
           title: "Similarité structurelle et anatomique",
-          description: "Visual Analysis compare ce qui est directement visible dans l’image : formes, contours, textures, contrastes et organisation spatiale.",
-          note: "À utiliser pour rechercher des images visuellement ou anatomiquement proches.",
+          description: "L’analyse visuelle est le bon choix quand vous partez d’une image et que vous voulez retrouver des cas qui se ressemblent à l’écran. Elle met l’accent sur l’apparence globale, les structures visibles et les ressemblances anatomiques.",
+          note: "Utile pour comparer rapidement une radio, retrouver des images au rendu proche, ou vérifier si un cas ressemble visuellement à d’autres exemples de la base.",
         },
         interpretive: {
           label: "ANALYSE INTERPRÉTATIVE",
           title: "Similarité médicale et sémantique",
-          description: "Interpretive Analysis va au-delà de l’apparence visuelle pour se concentrer sur le sens médical, les patterns pathologiques et la similarité sémantique.",
-          note: "À utiliser pour retrouver des cas médicalement ou sémantiquement similaires.",
+          description: "L’analyse interprétative est plus utile quand votre objectif est de retrouver des cas pertinents pour la lecture du cas, même si leur apparence n’est pas strictement identique. Elle privilégie la proximité de sens et la pertinence clinique.",
+          note: "Utile pour explorer des cas proches dans leur intention diagnostique, élargir la recherche à des exemples médicalement pertinents, ou privilégier l’utilité clinique plutôt que la simple ressemblance visuelle.",
         },
       },
+      detailStep: "3. Détails",
       readyStep: "3. Lancer la recherche",
       readyTitle: "Démarrer la recherche visuelle",
       readyDescription: "Importez une image médicale, choisissez le mode d’analyse, puis lancez la recherche pour faire remonter les cas les plus proches.",
       pendingStep: "3. Lancer l’analyse",
       pendingTitle: "Votre image est prête",
       pendingDescription: "Ajustez les paramètres d’analyse, puis cliquez sur Chercher pour retrouver les correspondances visuelles ou interprétatives les plus proches.",
+      modeChangeConfirm: "Changer de mode supprimera les résultats actuels. Vous devrez relancer la recherche.",
+      modeChangeConfirmAction: "Continuer",
+      modeChangeCancel: "Annuler",
+      modeInfoLabel: "Voir l’aide rapide sur les modes d’analyse",
     },
 
     text: {
       headline: "Recherche par texte médical",
-      badge: "Analyse sémantique · Langage naturel",
+      badge: "Analyse interprétative · Langage naturel",
       label: "Requête médicale",
       langNote: "en anglais",
       placeholder: "Ex : chest X-ray bilateral pneumonia...",
       back: "Retour",
       searching: "Analyse en cours...",
       error: "Une erreur est survenue.",
+      step1: "1. Requête médicale",
+      step1Desc: "Formulation médicale · Anglais",
+      step2: "2. Choisir le nombre de résultats",
       step3: "Résultats",
+      readyStep: "3. Lancer la recherche",
+      pendingStep: "3. Lancer l'analyse",
+      emptyStep: "3. Lancer la recherche",
+      readyTitle: "Démarrer la recherche interprétative",
+      readyDescription: "Saisissez une description médicale en anglais, puis lancez la recherche pour retrouver les images dont les légendes correspondent le mieux sur le plan clinique.",
+      pendingTitle: "Votre requête est prête",
+      pendingDescription: "Ajustez le nombre de résultats, puis cliquez sur Chercher pour retrouver les correspondances interprétatives les plus proches.",
+      modeInfoLabel: "Voir l’aide rapide sur l’analyse interprétative",
+      legendEyebrow: "À lire",
+      legendTitle: "Comprendre l’analyse interprétative guidée par texte",
+      legendDescription: "Ici, la recherche ne part pas d’une image mais d’une description médicale. MediScan rapproche votre requête en anglais des légendes cliniques indexées pour retrouver des cas proches par leur sens médical, pas uniquement par leur apparence visuelle.",
+      legend: {
+        interpretive: {
+          label: "ANALYSE INTERPRÉTATIVE",
+          title: "Recherche par sens médical",
+          description: "La requête texte compare vos mots aux légendes et aux concepts cliniques associés pour faire remonter des cas proches dans leur signification médicale.",
+          note: "À utiliser quand vous partez d’une hypothèse, d’un diagnostic, d’un finding radiologique ou d’une formulation clinique précise.",
+        },
+        writing: {
+          label: "FORMULATION",
+          title: "Décrire le cas de façon utile",
+          description: "Privilégiez une formulation courte et structurée en anglais : modalité, région anatomique, findings principaux et contexte clinique utile. Exemple : chest X-ray with bilateral lower lobe opacities.",
+          note: "Les requêtes trop vagues élargissent beaucoup les résultats ; les requêtes trop longues diluent souvent les signaux importants.",
+        },
+      },
+      quickNoteEyebrow: "À lire",
+      quickNoteTitle: "Recherche guidée par texte",
+      quickNoteDescription: "Décrivez des observations en anglais pour interroger l'index sémantique.",
+      quickNoteChip: "Analyse interprétative",
+      quickNoteBody: "Utilisez une formulation médicale concise pour retrouver des images dont les légendes expriment des constats ou pathologies similaires.",
+      quickNoteExample: "Ex : chest X-ray bilateral pneumonia",
+    },
+    conclusion: {
+      title: "Synthèse IA",
+      copy: "Copier",
+      collapse: "Réduire",
+      expand: "Développer",
+      disclaimer: "Résumé de recherche uniquement. Ne remplace ni un jugement médical ni un diagnostic.",
+      generate: "Générer la synthèse",
+      loading: "Génération de la synthèse...",
+      regenerate: "Générer à nouveau",
+      error: "Impossible de générer la synthèse pour le moment.",
+      noResults: "Lancez une recherche avant de demander une synthèse.",
     },
     filters: {
+      title: "Filtres",
+      refineHint: "Affinez les résultats visibles de votre recherche texte sans quitter la page.",
+      infoLabel: "Voir l’aide sur les filtres de recherche texte",
+      reset: "Réinitialiser",
       minScore: "Score min.",
       caption: "Légende",
       captionPlaceholder: "Filtrer par légende...",
+      quickTerms: "Mots suggérés",
+      quickTermsHint: "Cliquez pour affiner",
+      cui: "Code CUI",
+      cuiPlaceholder: "Ex. C0018799",
+      cuiPresence: "Présence CUI",
+      all: "Tous",
+      withCui: "Avec CUI",
+      withoutCui: "Sans CUI",
+      cuiTypesTitle: "Filtres par type CUI",
+      cuiModalite: "Modalité",
+      cuiAnatomie: "Anatomie",
+      cuiFinding: "Pathologie / Finding",
+      cuiTypeAll: "Tous",
       sort: "Tri",
       sortDesc: "Score ↓",
       sortAsc: "Score ↑",
+      reference: "Référence image",
+      referencePlaceholder: "Ex. ROCO_000123",
+      referenceHint: "Retrouvez une image précise à partir de son identifiant.",
+      guide: {
+        eyebrow: "Aide filtres",
+        title: "Affiner les résultats de votre recherche par texte",
+        description: "Les filtres agissent sur la liste déjà trouvée. Ils affinent l’affichage sans relancer la recherche.",
+        caption: {
+          label: "LÉGENDE, CUI ET RÉFÉRENCE",
+          title: "Retrouver un type de cas dans les résultats textuels",
+          description: "Le filtre légende cherche dans les descriptions déjà remontées. Les filtres CUI resserrent ensuite par modalité, anatomie ou pathologie, et la référence permet de retrouver un identifiant précis.",
+          note: "Pratique pour passer d’une requête large à une sélection plus ciblée.",
+        },
+        score: {
+          label: "SCORE ET TRI",
+          title: "Garder les correspondances les plus proches de votre texte",
+          description: "Le score minimum retire les résultats les moins proches de votre description. Score ↓ garde les meilleurs en tête ; score ↑ montre les cas plus limites.",
+          note: "Montez le seuil si vous voulez une liste plus stricte.",
+        },
+        order: {
+          label: "COMBINAISON",
+          title: "Construire une lecture plus ciblée",
+          description: "Le plus efficace est de combiner plusieurs filtres pour isoler rapidement le sous-ensemble utile.",
+          note: "Exemple : mot-clé de légende + score minimum + anatomie.",
+        },
+      },
       compare: "Comparer",
       compareOn: "✓ Comparaison active",
       export: "Exporter",
     },
     results: {
-      visualMode: "Visuel (DINOv2)",
-      semanticMode: "Sémantique (BioMedCLIP)",
-      textMode: "Texte (BioMedCLIP)",
+      visualMode: "Analyse visuelle",
+      semanticMode: "Analyse interprétative",
+      textMode: "Recherche texte",
       relaunchImage: "Rechercher depuis cette image",
+      compareAction: "Compare",
+      closeCompare: "Fermer la comparaison",
+      compareTitle: "Comparaison",
+      queryImageLabel: "Image requete",
+      selectedImageLabel: "Resultat correspondant",
+      resultMetadataHint: "Les informations ci-dessous correspondent au resultat selectionne.",
+      resultCaptionLabel: "Caption du resultat",
+      resultScoreLabel: "Score du resultat",
+      resultCuiLabel: "Code CUI du resultat",
+      openDetails: "Voir l'image en grand",
+      closeDetails: "Fermer la fenêtre de détail",
+      downloadImage: "Télécharger l'image",
+      detailsTitle: "Détails du résultat",
+      paginationLabel: "Pagination des résultats",
+      pageLabel: "Page",
+      previousPage: "Précédent",
+      nextPage: "Suivant",
+      captionLabel: "Légende complète",
+      scoreLabel: "Score",
+      rawScoreLabel: "Score brut",
+      rankLabel: "Rang",
+      identifierLabel: "Référence",
+      cuiLabel: "Code CUI",
+      noCaption: "Aucune légende disponible pour cette image.",
+      notAvailable: "Non disponible",
       resultsFoundSingular: "résultat trouvé",
       resultsFoundPlural: "résultats trouvés",
       selectedCount: "images sélectionnées",
       clearSelection: "Annuler",
       relaunchSelection: "Rechercher depuis la sélection",
+      selectionSearchSingle: "Search from image",
+      selectionSearchPlural: "Search from images",
     },
   },
 
@@ -310,12 +431,12 @@ export const fr = {
     description: "Une question, un bug ou juste envie de dire bonjour ? On lit chaque message.",
     supportLabel: "Support",
     supportDesc: "Pour toute question technique ou retour sur MediScan.",
-    supportAddr: "support@mediscan.ai",
+    supportAddr: "mediscanaisupport@gmail.com",
     responseLabel: "Temps de réponse",
     responseDesc: "Nous répondons généralement sous 24h les jours ouvrés.",
-    sentTitle: "Brouillon d'email prêt",
-    sentDesc: "Votre messagerie s'est ouverte avec un message prérempli pour l'équipe MEDISCAN.",
-    sentAnother: "Préparer un autre email",
+    sentTitle: "Message envoyé",
+    sentDesc: "Votre message a bien été transmis à l'équipe MEDISCAN. Nous revenons vers vous rapidement.",
+    sentAnother: "Envoyer un autre message",
     formName: "Nom",
     formEmail: "Email",
     formSubject: "Objet",
@@ -325,28 +446,25 @@ export const fr = {
     formPlaceholder2: "votre@email.com",
     formPlaceholder4: "Comment pouvons-nous vous aider ?",
     formSubmit: "Envoyer",
+    formSending: "Envoi en cours...",
     formPrivacy: "Vos informations ne seront jamais partagées.",
+    errorGeneric: "Impossible d'envoyer votre message pour le moment. Merci de réessayer plus tard.",
   },
   about: {
     headline: "À propos de MEDISCAN AI",
     description:
-      "MEDISCAN AI est dédié à transformer l'analyse d'imagerie médicale grâce à l'IA de pointe et à l'expertise clinique.",
+      "MEDISCAN AI est un prototype universitaire centré sur la recherche d'images médicales, l'expérimentation rapide et la transparence du code.",
     mission: {
       title: "Notre Mission",
       text: "Rendre la recherche d'images médicales accessible et efficace — permettre aux cliniciens et chercheurs de retrouver des cas pertinents dans de grandes bases de données, à partir d'une image ou d'une description textuelle.",
     },
     vision: {
       title: "Notre Objectif",
-      text: "Combler le fossé entre les archives d'images médicales brutes et la connaissance clinique exploitable, grâce à un système de recherche rapide et fiable fondé sur l'IA biomédicale de pointe.",
+      text: "Réduire l'écart entre des archives d'images médicales brutes et des expérimentations concrètes de recherche grâce à une pile biomédicale rapide et compréhensible.",
     },
     team: {
       title: "Rencontrez l'Équipe",
-      members: [
-        { name: "Dr. Sarah Johnson", role: "Directrice Médicale", photo: "" },
-        { name: "Alex Martinez", role: "Ingénieur IA Principal", photo: "" },
-        { name: "Emily Wong", role: "Chef de Produit", photo: "" },
-        { name: "Michael Lee", role: "Designer UX", photo: "" },
-      ],
+      members: [],
     },
     cta: {
       title: "Vous voulez en savoir plus ?",
@@ -358,7 +476,7 @@ export const fr = {
   // How It Works
   howItWorks: {
     headline: "Comment Fonctionne MEDISCAN AI",
-    description: "Recherche d'images cliniques alimentée par l'IA avancée et le raisonnement clinique.",
+    description: "Recherche d'images médicales alimentée par des embeddings visuels et sémantiques.",
     pipeline: {
       title: "Le Pipeline de Recherche",
       steps: [
@@ -382,7 +500,7 @@ export const fr = {
           },
           {
             title: "Intégration du Contexte Interprétatif",
-            desc: "Combine les caractéristiques visuelles avec les connaissances anatomiques et cliniques.",
+            desc: "Compare les caractéristiques visuelles à celles du jeu de données indexé.",
           },
           {
             title: "Notation de Similarité",
@@ -397,23 +515,23 @@ export const fr = {
       semantic: {
         name: "Analyse Interprétative",
         model: "Modèle de Langage Biomédical",
-        desc: "Comprend le contexte clinique, la pathologie et la signification diagnostique.",
+        desc: "Aligne les légendes d'images et les requêtes texte dans un espace d'embedding biomédical.",
         steps: [
           {
             title: "Codage Biomédical",
-            desc: "Modèles entraînés sur 100K+ images médicales annotées cliniquement.",
+            desc: "Les embeddings sont produits par un modèle biomédical configuré dans le projet.",
           },
           {
             title: "Raisonnement Interprétatif",
-            desc: "Reconnaît les maladies, conditions et motifs cliniques.",
+            desc: "Capture des relations sémantiques exprimées dans les légendes et les requêtes texte.",
           },
           {
             title: "Alignement des Preuves",
-            desc: "Associe les cas en fonction de la similarité clinique et de la valeur diagnostique.",
+            desc: "Associe les cas selon leur similarité sémantique dans un espace d'embedding partagé.",
           },
           {
             title: "Notation de Confiance",
-            desc: "Chaque résultat inclut la confiance clinique basée sur les données d'entraînement.",
+            desc: "Chaque résultat inclut un score de similarité, pas une confiance médicale calibrée.",
           },
         ],
       },
@@ -442,7 +560,7 @@ export const fr = {
   // FAQ
   faq: {
     headline: "Questions Fréquentes",
-    description: "Trouvez des réponses aux questions courantes sur la technologie et l'intégration de MEDISCAN AI.",
+    description: "Trouvez des réponses sur le prototype actuel, son périmètre et ses limites.",
     categories: {
       general: "Général",
       technical: "Technique",
@@ -453,51 +571,51 @@ export const fr = {
       { 
         category: "general",
         q: "Quel est l'objectif principal de MEDISCAN AI ?", 
-        r: "MEDISCAN AI est un moteur de recherche spécialisé conçu pour les cliniciens. Il leur permet de trouver des cas médicaux similaires dans de vastes bases de données en utilisant à la fois des caractéristiques visuelles et des métadonnées cliniques pour faciliter la prise de décision diagnostique." 
+        r: "MEDISCAN AI est un prototype universitaire de recherche d'images médicales. Il permet d'explorer des cas visuellement ou sémantiquement similaires dans un jeu de données, sans constituer un système de décision clinique." 
       },
       { 
         category: "general",
         q: "Qui peut utiliser la plateforme ?", 
-        r: "La plateforme est conçue pour les radiologues, les pathologistes et les chercheurs médicaux qui ont besoin de comparer des cas actuels avec des données historiquement validées." 
+        r: "La version actuelle est surtout adaptée aux démonstrations, projets étudiants, explorations techniques et prototypes de recherche autour de la recherche d'images médicales." 
       },
       { 
         category: "general",
         q: "S'agit-il d'un outil de diagnostic ?", 
-        r: "Non, MEDISCAN AI est un outil d'aide à la décision. Il fournit des cas similaires et la littérature pertinente, mais la responsabilité diagnostique finale incombe exclusivement au professionnel de santé." 
+        r: "Non. C'est un prototype non clinique qui retourne des cas similaires et des synthèses IA optionnelles à titre exploratoire uniquement." 
       },
       
       // --- TECHNIQUE ---
       { 
         category: "technical",
         q: "Quelle est la différence entre la recherche 'Visuelle' et la recherche 'Interprétative' ?", 
-        r: "La recherche visuelle (Signature Search) analyse les motifs de pixels pour trouver des formes et des textures similaires. La recherche clinique utilise l'IA pour comprendre la pathologie et trouver des cas ayant la même signification médicale, même s'ils semblent visuellement différents." 
+        r: "La recherche visuelle se concentre sur la similarité structurelle de l'image. La recherche interprétative s'appuie sur un espace sémantique pour retrouver des cas dont la légende exprime un sens proche." 
       },
       { 
         category: "technical",
         q: "S'intègre-t-il aux systèmes PACS/DICOM existants ?", 
-        r: "Oui, notre architecture 'API-first' supporte les standards DICOM pour une intégration fluide avec la plupart des systèmes d'archivage et de transmission d'images (PACS) hospitaliers." 
+        r: "Pas dans la version actuelle. Le prototype expose une API REST simple et fonctionne avec des entrées JPEG/PNG, mais n'intègre pas PACS/DICOM nativement." 
       },
       { 
         category: "technical",
         q: "Quelles modalités d'imagerie sont prises en charge ?", 
-        r: "Actuellement, nous prenons en charge l'IRM, le scanner (TDM), la radiographie et la pathologie numérique. Nous élargissons constamment nos capacités à de nouvelles modalités grâce à notre framework d'IA agnostique." 
+        r: "Le prototype s'appuie sur un jeu de données de recherche et accepte des uploads JPEG/PNG via l'interface. L'ingestion DICOM et une couverture complète des modalités ne sont pas implémentées ici." 
       },
 
       // --- SÉCURITÉ ---
       { 
         category: "security",
         q: "La plateforme est-elle conforme au RGPD et à la loi HIPAA ?", 
-        r: "Absolument. Nous mettons en œuvre des mesures strictes de protection des données, garantissant que tout le traitement respecte les normes de santé internationales en matière de confidentialité et de sécurité." 
+        r: "Pas par défaut. La conformité dépend de la façon dont le projet est déployé, hébergé, sécurisé et gouverné. Ce dépôt doit être considéré comme un prototype non clinique." 
       },
       { 
         category: "security",
         q: "Où sont stockées les données médicales ?", 
-        r: "Par défaut, MEDISCAN AI traite les images en mémoire (volatiles) et ne stocke pas d'informations d'identification personnelle (PII) sur nos serveurs de recherche sans un accord institutionnel explicite." 
+        r: "Les fichiers envoyés sont traités par le backend pour la recherche, tandis que les images de résultats proviennent d'un jeu de données public hébergé sur Hugging Face. L'enrichissement MongoDB reste optionnel et dépend de votre environnement." 
       },
       { 
         category: "security",
         q: "Comment les données sont-elles cryptées ?", 
-        r: "Toutes les données en transit sont protégées par un cryptage TLS 1.3, et toutes les données au repos sont sécurisées par un cryptage de grade militaire AES-256." 
+        r: "Le chiffrement dépend de votre déploiement. Un environnement local de développement ne garantit pas à lui seul TLS, stockage chiffré ou hébergement conforme." 
       }
     ],
     contactTitle: "Vous avez encore des questions ?",

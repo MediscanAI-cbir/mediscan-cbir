@@ -3,6 +3,13 @@ REM run.bat — Lance MediScan AI (backend + frontend) sous Windows
 setlocal enabledelayedexpansion
 
 cd /d "%~dp0"
+set BACKEND_PORT=8000
+
+if exist ".env" (
+    for /f "tokens=1,* delims==" %%a in ('findstr /R "^BACKEND_PORT=" ".env"') do (
+        if not "%%b"=="" set BACKEND_PORT=%%b
+    )
+)
 
 REM ── Python 3.11 : essaie d'abord le Python Launcher (py), puis python3.11, puis python ──
 set PYTHON311=
@@ -99,22 +106,22 @@ cd ..
 echo      OK
 
 REM ── Backend ──────────────────────────────────────────────────────────────────
-echo [3/3] Demarrage du backend sur le port 8000...
+echo [3/3] Demarrage du backend sur le port !BACKEND_PORT!...
 
-REM Tuer d'eventuels processus existants sur le port 8000
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8000" 2^>nul') do (
+REM Tuer d'eventuels processus existants sur le port choisi
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":!BACKEND_PORT!" 2^>nul') do (
     taskkill /F /PID %%a >nul 2>&1
 )
 
 set PYTHONPATH=%cd%\src;%cd%
-start "MediScan-Backend" /b cmd /c "set PYTHONPATH=%cd%\src;%cd% && .venv311\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 > %TEMP%\mediscan-backend.log 2>&1"
+start "MediScan-Backend" /b cmd /c "set PYTHONPATH=%cd%\src;%cd% && .venv311\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port !BACKEND_PORT! > %TEMP%\mediscan-backend.log 2>&1"
 
 REM Attente health check
 echo  En attente du backend (max 30s)...
 set READY=0
 for /l %%i in (1,1,30) do (
     if !READY! equ 0 (
-        curl -sf http://127.0.0.1:8000/api/health >nul 2>&1
+        curl -sf http://127.0.0.1:!BACKEND_PORT!/api/health >nul 2>&1
         if !errorlevel! equ 0 (
             set READY=1
         ) else (
@@ -129,14 +136,14 @@ if !READY! equ 0 (
     type %TEMP%\mediscan-backend.log
     pause & exit /b 1
 )
-echo  Backend pret  =^>  http://127.0.0.1:8000
+echo  Backend pret  =^>  http://127.0.0.1:!BACKEND_PORT!
 
 REM ── Frontend dev server ───────────────────────────────────────────────────────
 echo.
 echo  ===========================================
 echo   MediScan AI est pret !
 echo   Frontend : http://127.0.0.1:5173
-echo   Backend  : http://127.0.0.1:8000
+echo   Backend  : http://127.0.0.1:!BACKEND_PORT!
 echo   Ctrl+C pour arreter le frontend
 echo  ===========================================
 echo.

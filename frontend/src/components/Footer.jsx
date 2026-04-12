@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
 
 function GitHubMark({ className = "" }) {
   return (
@@ -14,9 +14,9 @@ function GitHubMark({ className = "" }) {
   );
 }
 
-const Footer = ({ onPageChange }) => {
+export default function Footer({ onPageChange }) {
   const { t } = useContext(LangContext);
-  const content = t?.home || {};
+  const content = t.home;
   const footerContent = content.footer || {};
   const currentYear = new Date().getFullYear();
 
@@ -160,6 +160,4 @@ const Footer = ({ onPageChange }) => {
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

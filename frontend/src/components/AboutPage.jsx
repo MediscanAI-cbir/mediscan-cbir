@@ -1,6 +1,6 @@
 // src/components/AboutPage.jsx
 import { useContext, useEffect, useState } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
 
 function TeamAvatar({ member }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -35,6 +35,7 @@ function TeamAvatar({ member }) {
 export default function AboutPage() {
   const { t } = useContext(LangContext);
   const content = t.about;
+  const teamMembers = content.team?.members || [];
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -77,27 +78,29 @@ export default function AboutPage() {
       </section>
 
       {/* Team Members */}
-      <section className="page-container mb-16">
-        <h2
-          className={`text-3xl font-bold text-title text-center mb-12 ${ready ? "by-image-panel-enter-up" : "opacity-0"}`}
-          style={{ animationDelay: "200ms" }}
-        >
-          {content.team.title}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {content.team.members.map((member, idx) => (
-            <div
-              key={idx}
-              className={`bg-surface rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-lg transition-all ${ready ? "by-image-panel-enter-up" : "opacity-0"}`}
-              style={{ animationDelay: `${260 + idx * 60}ms` }}
-            >
-              <TeamAvatar member={member} />
-              <h3 className="font-bold text-title mb-1">{member.name}</h3>
-              <p className="text-sm text-muted">{member.role}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {teamMembers.length > 0 && (
+        <section className="page-container mb-16">
+          <h2
+            className={`text-3xl font-bold text-title text-center mb-12 ${ready ? "by-image-panel-enter-up" : "opacity-0"}`}
+            style={{ animationDelay: "200ms" }}
+          >
+            {content.team.title}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {teamMembers.map((member, idx) => (
+              <div
+                key={idx}
+                className={`bg-surface rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-lg transition-all ${ready ? "by-image-panel-enter-up" : "opacity-0"}`}
+                style={{ animationDelay: `${260 + idx * 60}ms` }}
+              >
+                <TeamAvatar member={member} />
+                <h3 className="font-bold text-title mb-1">{member.name}</h3>
+                <p className="text-sm text-muted">{member.role}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
 
     </div>

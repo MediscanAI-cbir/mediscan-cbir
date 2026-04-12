@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
-import { ThemeContext } from "./theme-context";
 import {
   COLOR_PALETTES,
   DEFAULT_PALETTE_ID,
@@ -8,6 +7,16 @@ import {
   applyPaletteVariables,
   isPaletteId,
 } from "../theme/palettes";
+
+export const ThemeContext = createContext();
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useTheme must be used within ThemeProvider");
+  }
+  return context;
+}
 
 function getInitialTheme() {
   const stored = localStorage.getItem("theme");
@@ -39,7 +48,7 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = theme;
-    root.dataset.palette = palette;
+    root.removeAttribute("data-palette");
     root.style.colorScheme = theme;
     applyPaletteVariables(root, theme, palette);
     localStorage.setItem("theme", theme);

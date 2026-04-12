@@ -78,7 +78,7 @@ class SearchService:
     def _get_resources(self, mode: str) -> SearchResources:
         try:
             return self._resource_registry.get_or_load(mode)
-        except Exception as exc:
+        except (FileNotFoundError, RuntimeError) as exc:
             raise SearchUnavailableError(
                 f"Search mode '{mode}' is unavailable on this instance. "
                 "Install the required data/artifacts or rebuild the stable indexes."

@@ -1,10 +1,11 @@
 import { lazy, Suspense, useState, useEffect, useRef, useContext } from "react";
 import { LangProvider } from "./context/LangContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { LangContext } from "./context/lang-context";
+import { LangContext } from "./context/LangContext";
 import Navigation from "./components/Navigation";
 import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
+import Spinner from "./components/Spinner";
 
 const SearchPage = lazy(() => import("./components/SearchPage"));
 const ContactPage = lazy(() => import("./components/ContactPage"));
@@ -23,8 +24,6 @@ const MOTION_ENTER_DURATION_MS = 620;
 const MOTION_ENTER_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const HOME_SURFACE = "home-page";
 const SEARCH_HUB_SURFACE = "search-hub-surface";
-const SEARCH_VISUAL_SURFACE = "search-visual-surface";
-const SEARCH_VISUAL_ACCENT_SURFACE = "search-visual-surface-accent";
 const DEFAULT_SURFACE = "bg-bg";
 const PAGE_EXIT_DURATION_MS = 240;
 const SURFACE_FADE_DURATION_MS = 620;
@@ -74,24 +73,18 @@ function shouldShowFooter(route) {
   return route.page !== "search" || route.searchView !== "hub";
 }
 
-function getRouteSurface(route, searchTone) {
+function getRouteSurface(route) {
   if (route.page === "home") return HOME_SURFACE;
   if (route.page === "contact") return HOME_SURFACE;
   if (route.page !== "search") return DEFAULT_SURFACE;
   if (route.searchView === "hub") return SEARCH_HUB_SURFACE;
-  if (route.searchView === "text") return SEARCH_VISUAL_ACCENT_SURFACE;
-  return searchTone === "accent"
-    ? SEARCH_VISUAL_ACCENT_SURFACE
-    : SEARCH_VISUAL_SURFACE;
+  return DEFAULT_SURFACE;
 }
 
 function PageLoader() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center px-6 py-20">
-      <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/20 border-t-primary/70" />
-        <p className="text-sm text-muted">Chargement…</p>
-      </div>
+      <Spinner label="Chargement…" />
     </div>
   );
 }
@@ -143,8 +136,8 @@ function AppInner() {
   function navigateToRoute(nextRouteLike) {
     const nextRoute = normalizeRoute(nextRouteLike);
     const nextSearchTone = getInitialSearchTone(nextRoute);
-    const currentSurface = getRouteSurface(displayRoute, searchTone);
-    const nextSurface = getRouteSurface(nextRoute, nextSearchTone);
+    const currentSurface = getRouteSurface(displayRoute);
+    const nextSurface = getRouteSurface(nextRoute);
 
     if (areRoutesEqual(nextRoute, displayRoute)) return;
 
@@ -206,7 +199,7 @@ function AppInner() {
   const opacity = pageVisible && langVisible ? 1 : 0;
   const translateY = pageVisible ? "0px" : "4px";
   const scale = pageVisible ? 1 : 0.996;
-  const currentSurface = getRouteSurface(displayRoute, searchTone);
+  const currentSurface = getRouteSurface(displayRoute);
   const navTone =
     displayRoute.page === "search" && displayRoute.searchView !== "hub"
       ? searchTone

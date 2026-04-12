@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { en } from "../i18n/en";
 import { fr } from "../i18n/fr";
-import { LangContext } from "./lang-context";
+
+export const LangContext = createContext();
 
 export function LangProvider({ children }) {
   const [lang, setLang] = useState(() => localStorage.getItem("lang") || "en");

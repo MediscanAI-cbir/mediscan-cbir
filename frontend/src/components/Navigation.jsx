@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
 import LanguageSelector from "./LanguageSelector";
 
 export default function Navigation({

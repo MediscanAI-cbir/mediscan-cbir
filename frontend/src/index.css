@@ -161,23 +161,23 @@
 
 /* ── Tokens de couleur — mode sombre ── */
 [data-theme="dark"] {
-  --palette-title: #e5eef9;
-  --palette-text: #e5eef9;
-  --palette-muted: #9cb0ca;
-  --palette-visual: #60a5fa;
-  --palette-visual-light: #93c5fd;
-  --palette-visual-pale: #10233f;
-  --palette-semantic: #22d3ee;
-  --palette-semantic-light: #67e8f9;
-  --palette-semantic-pale: #082030;
-  --palette-surface: rgba(15, 23, 42, 0.82);
-  --palette-bg: #060d19;
-  --palette-bg-soft: #0d1728;
-  --palette-border: #243347;
-  --palette-footer: #030712;
-  --palette-footer-muted: #7f93b2;
-  --palette-danger: #f87171;
-  --palette-on-strong: #f8fbff;
+  --palette-title: #e8f1f7;
+  --palette-text: #d8e6ee;
+  --palette-muted: #91a6b5;
+  --palette-visual: #6fa7dc;
+  --palette-visual-light: #8bbbe4;
+  --palette-visual-pale: #10283f;
+  --palette-semantic: #7ccfe3;
+  --palette-semantic-light: #a9e3ee;
+  --palette-semantic-pale: #102f3a;
+  --palette-surface: rgba(13, 24, 34, 0.9);
+  --palette-bg: #061018;
+  --palette-bg-soft: #0b1a24;
+  --palette-border: #1e3442;
+  --palette-footer: #030a10;
+  --palette-footer-muted: #839aa8;
+  --palette-danger: #f37b7b;
+  --palette-on-strong: #f6fbfb;
   --theme-title: var(--palette-title);
   --theme-primary: var(--palette-visual);
   --theme-primary-light: var(--palette-visual-light);
@@ -254,15 +254,15 @@
   --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 66%, white 34%);
   --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 48%, white 52%);
   --mediscan-interpretive-block-shadow: color-mix(in srgb, var(--mediscan-interpretive-block-base) 22%, transparent);
-  --home-tree-root-border: rgba(104, 146, 214, 0.2);
-  --home-tree-root-bg-top: rgba(8, 24, 46, 0.95);
-  --home-tree-root-bg-mid: rgba(13, 36, 69, 0.9);
-  --home-tree-root-bg-bottom: rgba(20, 55, 102, 0.82);
-  --home-tree-root-shadow: rgba(5, 14, 33, 0.32);
-  --home-tree-root-icon-border: rgba(120, 170, 255, 0.22);
-  --home-tree-root-icon-bg: rgba(120, 170, 255, 0.14);
-  --home-tree-root-icon-color: #d9e7ff;
-  --home-tree-root-label: #dce8ff;
+  --home-tree-root-border: rgba(111, 167, 220, 0.18);
+  --home-tree-root-bg-top: rgba(9, 28, 42, 0.95);
+  --home-tree-root-bg-mid: rgba(12, 38, 58, 0.9);
+  --home-tree-root-bg-bottom: rgba(15, 50, 72, 0.82);
+  --home-tree-root-shadow: rgba(1, 8, 14, 0.34);
+  --home-tree-root-icon-border: rgba(111, 167, 220, 0.2);
+  --home-tree-root-icon-bg: rgba(111, 167, 220, 0.12);
+  --home-tree-root-icon-color: #d8e9f7;
+  --home-tree-root-label: #d8e6ee;
   --home-tree-blue-border: var(--mediscan-visual-block-surface-border);
   --home-tree-blue-bg-top: var(--mediscan-visual-block-surface-fill);
   --home-tree-blue-bg-mid: var(--mediscan-visual-block-surface-fill);
@@ -310,440 +310,6 @@
   --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 22%, transparent);
 }
 
-[data-palette="custom-test"] {
-  --mediscan-primary-surface-border: color-mix(in srgb, var(--theme-primary) 20%, transparent);
-  --mediscan-primary-surface-fill: color-mix(in srgb, var(--theme-primary) 42%, var(--theme-bg-soft));
-  --mediscan-primary-chip-border: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  --mediscan-primary-chip-fill: color-mix(in srgb, var(--theme-primary) 18%, white 82%);
-  --mediscan-primary-chip-text: color-mix(in srgb, var(--theme-primary) 76%, var(--theme-text) 24%);
-  --mediscan-primary-text-color: color-mix(in srgb, var(--theme-primary) 58%, var(--theme-text) 42%);
-  --mediscan-primary-outline-border: color-mix(in srgb, var(--theme-primary) 20%, transparent);
-  --mediscan-primary-outline-fill: color-mix(in srgb, white 76%, var(--theme-primary) 24%);
-  --mediscan-primary-outline-text: color-mix(in srgb, var(--theme-primary) 66%, var(--theme-text) 34%);
-  --mediscan-primary-outline-hover-border: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  --mediscan-primary-outline-hover-fill: color-mix(in srgb, white 70%, var(--theme-primary) 30%);
-  --mediscan-primary-outline-hover-text: color-mix(in srgb, var(--theme-primary) 74%, var(--theme-text) 26%);
-  --mediscan-primary-button-shadow: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  --mediscan-primary-button-hover-shadow: color-mix(in srgb, var(--theme-primary) 28%, transparent);
-  --mediscan-accent-surface-border: color-mix(in srgb, var(--theme-accent) 20%, transparent);
-  --mediscan-accent-surface-fill: color-mix(in srgb, var(--theme-accent) 42%, var(--theme-bg-soft));
-  --mediscan-accent-chip-border: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  --mediscan-accent-chip-fill: color-mix(in srgb, var(--theme-accent) 18%, white 82%);
-  --mediscan-accent-chip-text: color-mix(in srgb, var(--theme-accent) 76%, var(--theme-text) 24%);
-  --mediscan-accent-text-color: color-mix(in srgb, var(--theme-accent) 60%, var(--theme-text) 40%);
-  --mediscan-accent-outline-border: color-mix(in srgb, var(--theme-accent) 20%, transparent);
-  --mediscan-accent-outline-fill: color-mix(in srgb, white 76%, var(--theme-accent) 24%);
-  --mediscan-accent-outline-text: color-mix(in srgb, var(--theme-accent) 68%, var(--theme-text) 32%);
-  --mediscan-accent-outline-hover-border: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  --mediscan-accent-outline-hover-fill: color-mix(in srgb, white 70%, var(--theme-accent) 30%);
-  --mediscan-accent-outline-hover-text: color-mix(in srgb, var(--theme-accent) 76%, var(--theme-text) 24%);
-  --mediscan-accent-button-shadow: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-  --mediscan-accent-button-hover-shadow: color-mix(in srgb, var(--theme-accent) 26%, transparent);
-  --mediscan-visual-block-surface-border: color-mix(in srgb, var(--mediscan-visual-block-base) 28%, transparent);
-  --mediscan-visual-block-surface-fill: color-mix(in srgb, var(--mediscan-visual-block-base) 22%, white 78%);
-  --mediscan-visual-block-chip-border: color-mix(in srgb, var(--mediscan-visual-block-base) 26%, transparent);
-  --mediscan-visual-block-chip-fill: color-mix(in srgb, var(--mediscan-visual-block-base) 18%, white 82%);
-  --mediscan-visual-block-text: color-mix(in srgb, var(--mediscan-visual-block-base) 88%, var(--theme-text) 12%);
-  --mediscan-visual-block-soft-text: color-mix(in srgb, var(--mediscan-visual-block-base) 72%, var(--theme-text) 28%);
-  --mediscan-visual-block-shadow: color-mix(in srgb, var(--mediscan-visual-block-base) 20%, transparent);
-  --mediscan-interpretive-block-surface-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 28%, transparent);
-  --mediscan-interpretive-block-surface-fill: color-mix(in srgb, var(--mediscan-interpretive-block-base) 22%, white 78%);
-  --mediscan-interpretive-block-chip-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 26%, transparent);
-  --mediscan-interpretive-block-chip-fill: color-mix(in srgb, var(--mediscan-interpretive-block-base) 18%, white 82%);
-  --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 88%, var(--theme-text) 12%);
-  --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 72%, var(--theme-text) 28%);
-  --mediscan-interpretive-block-shadow: color-mix(in srgb, var(--mediscan-interpretive-block-base) 20%, transparent);
-  --tree-wire-primary-tint: color-mix(in srgb, var(--theme-primary) 34%, white 66%);
-  --tree-wire-primary-mid: color-mix(in srgb, var(--theme-primary) 70%, white 30%);
-  --tree-wire-primary-soft: color-mix(in srgb, var(--theme-primary) 84%, white 16%);
-  --tree-wire-primary-glow: color-mix(in srgb, var(--theme-primary) 20%, transparent);
-  --tree-wire-accent-tint: color-mix(in srgb, var(--theme-accent) 34%, white 66%);
-  --tree-wire-accent-mid: color-mix(in srgb, var(--theme-accent) 70%, white 30%);
-  --tree-wire-accent-soft: color-mix(in srgb, var(--theme-accent) 84%, white 16%);
-  --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 20%, transparent);
-}
-
-[data-theme="dark"][data-palette="custom-test"] {
-  --mediscan-primary-surface-border: color-mix(in srgb, var(--theme-primary) 26%, transparent);
-  --mediscan-primary-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 56%, var(--theme-primary) 44%);
-  --mediscan-primary-chip-border: color-mix(in srgb, var(--theme-primary) 30%, transparent);
-  --mediscan-primary-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 66%, var(--theme-primary) 34%);
-  --mediscan-primary-chip-text: color-mix(in srgb, var(--theme-primary) 76%, white 24%);
-  --mediscan-primary-text-color: color-mix(in srgb, var(--theme-primary) 56%, white 44%);
-  --mediscan-primary-outline-border: color-mix(in srgb, var(--theme-primary) 28%, transparent);
-  --mediscan-primary-outline-fill: color-mix(in srgb, rgba(12, 19, 31, 0.76) 74%, var(--theme-primary) 26%);
-  --mediscan-primary-outline-text: color-mix(in srgb, var(--theme-primary) 72%, white 28%);
-  --mediscan-primary-outline-hover-border: color-mix(in srgb, var(--theme-primary) 32%, transparent);
-  --mediscan-primary-outline-hover-fill: color-mix(in srgb, rgba(16, 24, 38, 0.72) 68%, var(--theme-primary) 32%);
-  --mediscan-primary-outline-hover-text: color-mix(in srgb, var(--theme-primary) 80%, white 20%);
-  --mediscan-accent-surface-border: color-mix(in srgb, var(--theme-accent) 26%, transparent);
-  --mediscan-accent-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 56%, var(--theme-accent) 44%);
-  --mediscan-accent-chip-border: color-mix(in srgb, var(--theme-accent) 30%, transparent);
-  --mediscan-accent-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 66%, var(--theme-accent) 34%);
-  --mediscan-accent-chip-text: color-mix(in srgb, var(--theme-accent) 76%, white 24%);
-  --mediscan-accent-text-color: color-mix(in srgb, var(--theme-accent) 58%, white 42%);
-  --mediscan-accent-outline-border: color-mix(in srgb, var(--theme-accent) 28%, transparent);
-  --mediscan-accent-outline-fill: color-mix(in srgb, rgba(12, 19, 31, 0.76) 74%, var(--theme-accent) 26%);
-  --mediscan-accent-outline-text: color-mix(in srgb, var(--theme-accent) 72%, white 28%);
-  --mediscan-accent-outline-hover-border: color-mix(in srgb, var(--theme-accent) 32%, transparent);
-  --mediscan-accent-outline-hover-fill: color-mix(in srgb, rgba(16, 24, 38, 0.72) 68%, var(--theme-accent) 32%);
-  --mediscan-accent-outline-hover-text: color-mix(in srgb, var(--theme-accent) 80%, white 20%);
-  --mediscan-visual-block-surface-border: color-mix(in srgb, var(--mediscan-visual-block-base) 32%, transparent);
-  --mediscan-visual-block-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.84) 66%, var(--mediscan-visual-block-base) 34%);
-  --mediscan-visual-block-chip-border: color-mix(in srgb, var(--mediscan-visual-block-base) 34%, transparent);
-  --mediscan-visual-block-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 70%, var(--mediscan-visual-block-base) 30%);
-  --mediscan-visual-block-text: color-mix(in srgb, var(--mediscan-visual-block-base) 80%, white 20%);
-  --mediscan-visual-block-soft-text: color-mix(in srgb, var(--mediscan-visual-block-base) 64%, white 36%);
-  --mediscan-interpretive-block-surface-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 32%, transparent);
-  --mediscan-interpretive-block-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.84) 66%, var(--mediscan-interpretive-block-base) 34%);
-  --mediscan-interpretive-block-chip-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 34%, transparent);
-  --mediscan-interpretive-block-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 70%, var(--mediscan-interpretive-block-base) 30%);
-  --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 80%, white 20%);
-  --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 64%, white 36%);
-  --tree-wire-primary-tint: color-mix(in srgb, rgba(8, 12, 20, 0.88) 64%, var(--theme-primary) 36%);
-  --tree-wire-primary-mid: color-mix(in srgb, rgba(8, 12, 20, 0.38) 34%, var(--theme-primary) 66%);
-  --tree-wire-primary-soft: color-mix(in srgb, rgba(8, 12, 20, 0.2) 18%, var(--theme-primary-light) 82%);
-  --tree-wire-primary-glow: color-mix(in srgb, var(--theme-primary) 26%, transparent);
-  --tree-wire-accent-tint: color-mix(in srgb, rgba(8, 12, 20, 0.88) 64%, var(--theme-accent) 36%);
-  --tree-wire-accent-mid: color-mix(in srgb, rgba(8, 12, 20, 0.38) 34%, var(--theme-accent) 66%);
-  --tree-wire-accent-soft: color-mix(in srgb, rgba(8, 12, 20, 0.2) 18%, var(--theme-accent-light) 82%);
-  --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 26%, transparent);
-}
-
-[data-palette="clinical-tech"] {
-  --mediscan-primary-surface-border: color-mix(in srgb, var(--theme-primary) 18%, transparent);
-  --mediscan-primary-surface-fill: color-mix(in srgb, var(--theme-primary) 42%, var(--theme-bg-soft) 58%);
-  --mediscan-primary-chip-border: color-mix(in srgb, var(--theme-primary) 20%, transparent);
-  --mediscan-primary-chip-fill: color-mix(in srgb, var(--theme-primary) 32%, var(--theme-bg) 68%);
-  --mediscan-primary-chip-text: color-mix(in srgb, var(--theme-primary) 82%, var(--theme-text) 18%);
-  --mediscan-primary-text-color: color-mix(in srgb, var(--theme-primary) 60%, var(--theme-text) 40%);
-  --mediscan-primary-outline-border: color-mix(in srgb, var(--theme-primary) 18%, transparent);
-  --mediscan-primary-outline-fill: color-mix(in srgb, var(--theme-primary) 24%, var(--theme-bg) 76%);
-  --mediscan-primary-outline-text: color-mix(in srgb, var(--theme-primary) 70%, var(--theme-text) 30%);
-  --mediscan-primary-outline-hover-border: color-mix(in srgb, var(--theme-primary) 22%, transparent);
-  --mediscan-primary-outline-hover-fill: color-mix(in srgb, var(--theme-primary) 30%, var(--theme-bg) 70%);
-  --mediscan-primary-outline-hover-text: color-mix(in srgb, var(--theme-primary) 78%, var(--theme-text) 22%);
-  --mediscan-primary-button-shadow: color-mix(in srgb, var(--theme-primary) 18%, transparent);
-  --mediscan-primary-button-hover-shadow: color-mix(in srgb, var(--theme-primary) 22%, transparent);
-  --mediscan-accent-surface-border: color-mix(in srgb, var(--theme-accent) 18%, transparent);
-  --mediscan-accent-surface-fill: color-mix(in srgb, var(--theme-accent) 42%, var(--theme-bg-soft) 58%);
-  --mediscan-accent-chip-border: color-mix(in srgb, var(--theme-accent) 20%, transparent);
-  --mediscan-accent-chip-fill: color-mix(in srgb, var(--theme-accent) 32%, var(--theme-bg) 68%);
-  --mediscan-accent-chip-text: color-mix(in srgb, var(--theme-accent) 82%, var(--theme-text) 18%);
-  --mediscan-accent-text-color: color-mix(in srgb, var(--theme-accent) 62%, var(--theme-text) 38%);
-  --mediscan-accent-outline-border: color-mix(in srgb, var(--theme-accent) 18%, transparent);
-  --mediscan-accent-outline-fill: color-mix(in srgb, var(--theme-accent) 24%, var(--theme-bg) 76%);
-  --mediscan-accent-outline-text: color-mix(in srgb, var(--theme-accent) 72%, var(--theme-text) 28%);
-  --mediscan-accent-outline-hover-border: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-  --mediscan-accent-outline-hover-fill: color-mix(in srgb, var(--theme-accent) 30%, var(--theme-bg) 70%);
-  --mediscan-accent-outline-hover-text: color-mix(in srgb, var(--theme-accent) 80%, var(--theme-text) 20%);
-  --mediscan-accent-button-shadow: color-mix(in srgb, var(--theme-accent) 18%, transparent);
-  --mediscan-accent-button-hover-shadow: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-  --mediscan-visual-block-surface-border: color-mix(in srgb, var(--mediscan-visual-block-base) 22%, transparent);
-  --mediscan-visual-block-surface-fill: color-mix(in srgb, var(--mediscan-visual-block-base) 34%, var(--theme-bg-soft) 66%);
-  --mediscan-visual-block-chip-border: color-mix(in srgb, var(--mediscan-visual-block-base) 20%, transparent);
-  --mediscan-visual-block-chip-fill: color-mix(in srgb, var(--mediscan-visual-block-base) 28%, var(--theme-bg) 72%);
-  --mediscan-visual-block-text: color-mix(in srgb, var(--mediscan-visual-block-base) 92%, var(--theme-text) 8%);
-  --mediscan-visual-block-soft-text: color-mix(in srgb, var(--mediscan-visual-block-base) 78%, var(--theme-text) 22%);
-  --mediscan-visual-block-shadow: color-mix(in srgb, var(--mediscan-visual-block-base) 18%, transparent);
-  --mediscan-interpretive-block-surface-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 22%, transparent);
-  --mediscan-interpretive-block-surface-fill: color-mix(in srgb, var(--mediscan-interpretive-block-base) 34%, var(--theme-bg-soft) 66%);
-  --mediscan-interpretive-block-chip-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 20%, transparent);
-  --mediscan-interpretive-block-chip-fill: color-mix(in srgb, var(--mediscan-interpretive-block-base) 28%, var(--theme-bg) 72%);
-  --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 92%, var(--theme-text) 8%);
-  --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 80%, var(--theme-text) 20%);
-  --mediscan-interpretive-block-shadow: color-mix(in srgb, var(--mediscan-interpretive-block-base) 18%, transparent);
-  --tree-wire-primary-tint: color-mix(in srgb, var(--theme-primary) 28%, white 72%);
-  --tree-wire-primary-mid: color-mix(in srgb, var(--theme-primary) 64%, white 36%);
-  --tree-wire-primary-soft: color-mix(in srgb, var(--theme-primary) 80%, white 20%);
-  --tree-wire-primary-glow: color-mix(in srgb, var(--theme-primary) 16%, transparent);
-  --tree-wire-accent-tint: color-mix(in srgb, var(--theme-accent) 28%, white 72%);
-  --tree-wire-accent-mid: color-mix(in srgb, var(--theme-accent) 64%, white 36%);
-  --tree-wire-accent-soft: color-mix(in srgb, var(--theme-accent) 80%, white 20%);
-  --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 16%, transparent);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] {
-  --mediscan-primary-surface-border: color-mix(in srgb, var(--theme-primary) 22%, transparent);
-  --mediscan-primary-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.78) 44%, var(--theme-primary) 56%);
-  --mediscan-primary-chip-border: color-mix(in srgb, var(--theme-primary) 26%, transparent);
-  --mediscan-primary-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 56%, var(--theme-primary) 44%);
-  --mediscan-primary-chip-text: color-mix(in srgb, var(--theme-primary) 84%, white 16%);
-  --mediscan-primary-text-color: color-mix(in srgb, var(--theme-primary) 64%, white 36%);
-  --mediscan-primary-outline-border: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  --mediscan-primary-outline-fill: color-mix(in srgb, rgba(12, 19, 31, 0.82) 60%, var(--theme-primary) 40%);
-  --mediscan-primary-outline-text: color-mix(in srgb, var(--theme-primary) 78%, white 22%);
-  --mediscan-primary-outline-hover-border: color-mix(in srgb, var(--theme-primary) 28%, transparent);
-  --mediscan-primary-outline-hover-fill: color-mix(in srgb, rgba(12, 19, 31, 0.76) 52%, var(--theme-primary) 48%);
-  --mediscan-primary-outline-hover-text: color-mix(in srgb, var(--theme-primary) 86%, white 14%);
-  --mediscan-accent-surface-border: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-  --mediscan-accent-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.78) 44%, var(--theme-accent) 56%);
-  --mediscan-accent-chip-border: color-mix(in srgb, var(--theme-accent) 26%, transparent);
-  --mediscan-accent-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.82) 56%, var(--theme-accent) 44%);
-  --mediscan-accent-chip-text: color-mix(in srgb, var(--theme-accent) 84%, white 16%);
-  --mediscan-accent-text-color: color-mix(in srgb, var(--theme-accent) 66%, white 34%);
-  --mediscan-accent-outline-border: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  --mediscan-accent-outline-fill: color-mix(in srgb, rgba(12, 19, 31, 0.82) 60%, var(--theme-accent) 40%);
-  --mediscan-accent-outline-text: color-mix(in srgb, var(--theme-accent) 78%, white 22%);
-  --mediscan-accent-outline-hover-border: color-mix(in srgb, var(--theme-accent) 28%, transparent);
-  --mediscan-accent-outline-hover-fill: color-mix(in srgb, rgba(12, 19, 31, 0.76) 52%, var(--theme-accent) 48%);
-  --mediscan-accent-outline-hover-text: color-mix(in srgb, var(--theme-accent) 86%, white 14%);
-  --mediscan-visual-block-surface-border: color-mix(in srgb, var(--mediscan-visual-block-base) 28%, transparent);
-  --mediscan-visual-block-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.8) 48%, var(--mediscan-visual-block-base) 52%);
-  --mediscan-visual-block-chip-border: color-mix(in srgb, var(--mediscan-visual-block-base) 28%, transparent);
-  --mediscan-visual-block-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.84) 58%, var(--mediscan-visual-block-base) 42%);
-  --mediscan-visual-block-text: color-mix(in srgb, var(--mediscan-visual-block-base) 90%, white 10%);
-  --mediscan-visual-block-soft-text: color-mix(in srgb, var(--mediscan-visual-block-base) 74%, white 26%);
-  --mediscan-visual-block-shadow: color-mix(in srgb, var(--mediscan-visual-block-base) 22%, transparent);
-  --mediscan-interpretive-block-surface-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 28%, transparent);
-  --mediscan-interpretive-block-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.8) 48%, var(--mediscan-interpretive-block-base) 52%);
-  --mediscan-interpretive-block-chip-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 28%, transparent);
-  --mediscan-interpretive-block-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.84) 58%, var(--mediscan-interpretive-block-base) 42%);
-  --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 90%, white 10%);
-  --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 76%, white 24%);
-  --mediscan-interpretive-block-shadow: color-mix(in srgb, var(--mediscan-interpretive-block-base) 22%, transparent);
-  --tree-wire-primary-tint: color-mix(in srgb, rgba(8, 12, 20, 0.9) 68%, var(--theme-primary) 32%);
-  --tree-wire-primary-mid: color-mix(in srgb, rgba(8, 12, 20, 0.42) 38%, var(--theme-primary) 62%);
-  --tree-wire-primary-soft: color-mix(in srgb, rgba(8, 12, 20, 0.26) 22%, var(--theme-primary-light) 78%);
-  --tree-wire-primary-glow: color-mix(in srgb, var(--theme-primary) 22%, transparent);
-  --tree-wire-accent-tint: color-mix(in srgb, rgba(8, 12, 20, 0.9) 68%, var(--theme-accent) 32%);
-  --tree-wire-accent-mid: color-mix(in srgb, rgba(8, 12, 20, 0.42) 38%, var(--theme-accent) 62%);
-  --tree-wire-accent-soft: color-mix(in srgb, rgba(8, 12, 20, 0.26) 22%, var(--theme-accent-light) 78%);
-  --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-}
-
-[data-palette="clinical-tech"] .search-visual-surface {
-  background-color: color-mix(in srgb, var(--theme-primary) 28%, var(--theme-bg-soft) 72%);
-}
-
-[data-palette="clinical-tech"] .search-visual-surface-accent {
-  background-color: color-mix(in srgb, var(--theme-accent) 28%, var(--theme-bg-soft) 72%);
-}
-
-[data-palette="clinical-tech"] .image-search-mode-shell-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 26%, transparent);
-  background: color-mix(in srgb, var(--theme-primary) 38%, var(--theme-bg) 62%);
-}
-
-[data-palette="clinical-tech"] .image-search-mode-shell-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 26%, transparent);
-  background: color-mix(in srgb, var(--theme-accent) 38%, var(--theme-bg) 62%);
-}
-
-[data-palette="clinical-tech"] .image-search-soft-control-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  background: color-mix(in srgb, var(--theme-primary) 44%, var(--theme-bg) 56%);
-}
-
-[data-palette="clinical-tech"] .image-search-soft-control-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  background: color-mix(in srgb, var(--theme-accent) 44%, var(--theme-bg) 56%);
-}
-
-[data-palette="clinical-tech"] .image-search-file-meta-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  background: color-mix(in srgb, var(--theme-primary) 40%, var(--theme-bg) 60%);
-}
-
-[data-palette="clinical-tech"] .image-search-file-meta-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  background: color-mix(in srgb, var(--theme-accent) 40%, var(--theme-bg) 60%);
-}
-
-[data-palette="clinical-tech"] .search-semantic-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent) 30%, var(--theme-bg-soft) 70%) 0%,
-      color-mix(in srgb, var(--theme-bg) 84%, var(--theme-accent) 16%) 100%
-    );
-}
-[data-theme="dark"][data-palette="clinical-tech"] .search-visual-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-primary) 40%, var(--theme-bg-soft) 60%) 0%,
-      color-mix(in srgb, var(--theme-bg) 72%, var(--theme-primary) 28%) 100%
-    );
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-visual-surface-accent {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent) 40%, var(--theme-bg-soft) 60%) 0%,
-      color-mix(in srgb, var(--theme-bg) 72%, var(--theme-accent) 28%) 100%
-    );
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-semantic-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent) 40%, var(--theme-bg-soft) 60%) 0%,
-      color-mix(in srgb, var(--theme-bg) 72%, var(--theme-accent) 28%) 100%
-    );
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-mode-shell-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 26%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.68) 42%, var(--theme-primary) 58%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-mode-shell-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 26%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.68) 42%, var(--theme-accent) 58%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-soft-control-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.64) 36%, var(--theme-primary) 64%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-soft-control-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.64) 36%, var(--theme-accent) 64%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-file-meta-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.66) 40%, var(--theme-primary) 60%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-file-meta-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.66) 40%, var(--theme-accent) 60%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .mediscan-primary-surface,
-[data-theme="dark"][data-palette="clinical-tech"] .mediscan-accent-surface {
-  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.22);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-hub-card {
-  background: rgba(12, 18, 29, 0.96);
-  border-color: color-mix(in srgb, var(--theme-border) 78%, transparent);
-  box-shadow:
-    0 10px 20px -14px rgba(2, 6, 23, 0.22),
-    0 22px 42px -28px rgba(2, 6, 23, 0.28);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-hub-card::after {
-  background: rgba(2, 6, 23, 0.44);
-  opacity: 0.16;
-  filter: blur(18px);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-hub-card-primary {
-  border-color: color-mix(in srgb, var(--home-tree-blue-border) 88%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 24, 0.86) 74%, var(--home-tree-blue-bg-mid) 26%);
-  box-shadow: 0 14px 28px -22px color-mix(in srgb, var(--home-tree-blue-shadow) 52%, transparent);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-hub-card-primary:hover {
-  background: color-mix(in srgb, rgba(10, 16, 24, 0.8) 68%, var(--home-tree-blue-bg-mid) 32%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-hub-card-accent {
-  border-color: color-mix(in srgb, var(--home-tree-accent-border) 88%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 24, 0.86) 74%, var(--home-tree-accent-bg-mid) 26%);
-  box-shadow: 0 14px 28px -22px color-mix(in srgb, var(--home-tree-accent-shadow) 52%, transparent);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-hub-card-accent:hover {
-  background: color-mix(in srgb, rgba(10, 16, 24, 0.8) 68%, var(--home-tree-accent-bg-mid) 32%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-visual-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-primary) 28%, var(--theme-bg-soft) 72%) 0%,
-      color-mix(in srgb, var(--theme-bg) 84%, var(--theme-primary) 16%) 100%
-    );
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-visual-surface-accent {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent) 28%, var(--theme-bg-soft) 72%) 0%,
-      color-mix(in srgb, var(--theme-bg) 84%, var(--theme-accent) 16%) 100%
-    );
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .search-semantic-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent) 28%, var(--theme-bg-soft) 72%) 0%,
-      color-mix(in srgb, var(--theme-bg) 84%, var(--theme-accent) 16%) 100%
-    );
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-mode-shell-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.76) 58%, var(--theme-primary) 42%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-mode-shell-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.76) 58%, var(--theme-accent) 42%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-soft-control-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 22%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.72) 52%, var(--theme-primary) 48%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-soft-control-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.72) 52%, var(--theme-accent) 48%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-file-meta-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 22%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.74) 56%, var(--theme-primary) 44%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .image-search-file-meta-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 22%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.74) 56%, var(--theme-accent) 44%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .home-retrieval-card {
-  border-color: color-mix(in srgb, var(--home-tree-card-border) 82%, var(--home-tree-card-bg-mid));
-  box-shadow: 0 16px 26px -24px rgba(2, 6, 23, 0.28);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .home-hero-button-primary {
-  background: color-mix(in srgb, rgba(10, 16, 24, 0.94) 72%, var(--theme-primary) 28%);
-  border-color: color-mix(in srgb, var(--theme-primary) 24%, transparent);
-  box-shadow: 0 14px 24px rgba(2, 6, 23, 0.26);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .home-hero-button-primary:hover {
-  background: color-mix(in srgb, rgba(10, 16, 24, 0.9) 62%, var(--theme-primary) 38%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .home-hero-button-secondary {
-  background: rgba(12, 18, 29, 0.92);
-  border-color: color-mix(in srgb, var(--theme-border) 72%, var(--theme-primary) 28%);
-  color: rgba(220, 230, 243, 0.92);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .home-hero-button-secondary:hover {
-  background: rgba(14, 21, 33, 0.96);
-  border-color: color-mix(in srgb, var(--theme-border) 62%, var(--theme-primary) 38%);
-}
-
-[data-theme="dark"][data-palette="clinical-tech"] .nav-shell-default,
-[data-theme="dark"][data-palette="clinical-tech"] .settings-trigger {
-  background: rgba(12, 18, 29, 0.94);
-  border-color: color-mix(in srgb, var(--theme-border) 78%, var(--theme-primary) 22%);
-  box-shadow: 0 14px 28px rgba(2, 6, 23, 0.24);
-}
-
 @theme {
   --color-title: var(--theme-title);
   --color-primary: var(--theme-primary);
@@ -783,6 +349,12 @@ body {
     background-color 200ms ease,
     color 200ms ease,
     border-color 200ms ease;
+}
+
+body.search-modal-open nav.sticky {
+  opacity: 0 !important;
+  transform: translateY(-100%) !important;
+  pointer-events: none !important;
 }
 
 
@@ -866,6 +438,235 @@ body {
 
 .by-image-panel-enter-up {
   animation: by-image-panel-enter-up 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mediscan-upload-preview-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.965);
+    filter: saturate(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(1);
+  }
+}
+
+@keyframes mediscan-upload-preview-image-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mediscan-stage-panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.988);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes mediscan-results-stage-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.988);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes mediscan-results-card-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+    filter: saturate(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(1);
+  }
+}
+
+.mediscan-upload-preview-enter {
+  animation: mediscan-upload-preview-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-upload-preview-image {
+  animation: mediscan-upload-preview-image-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-stage-panel-enter {
+  animation: mediscan-stage-panel-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-results-stage-enter {
+  animation: mediscan-results-stage-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-results-card-enter {
+  animation: mediscan-results-card-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes quick-note-heading-glow-primary {
+  0%, 100% {
+    filter: none;
+    transform: translate3d(0, 0, 0);
+  }
+  38% {
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--theme-primary) 18%, transparent));
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-heading-glow-accent {
+  0%, 100% {
+    filter: none;
+    transform: translate3d(0, 0, 0);
+  }
+  38% {
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--theme-accent) 18%, transparent));
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-title-glow-primary {
+  0%, 100% {
+    color: var(--theme-title);
+    text-shadow: none;
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    color: color-mix(in srgb, var(--theme-title) 66%, var(--theme-primary) 34%);
+    text-shadow:
+      0 0 12px color-mix(in srgb, var(--theme-primary) 20%, transparent),
+      0 0 22px color-mix(in srgb, var(--theme-primary) 14%, transparent);
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-title-glow-accent {
+  0%, 100% {
+    color: var(--theme-title);
+    text-shadow: none;
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    color: color-mix(in srgb, var(--theme-title) 66%, var(--theme-accent) 34%);
+    text-shadow:
+      0 0 12px color-mix(in srgb, var(--theme-accent) 20%, transparent),
+      0 0 22px color-mix(in srgb, var(--theme-accent) 14%, transparent);
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-icon-glow-primary {
+  0%, 100% {
+    box-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-primary) 16%, transparent),
+      0 0 22px color-mix(in srgb, var(--theme-primary) 22%, transparent),
+      0 0 34px color-mix(in srgb, var(--theme-primary) 10%, transparent);
+    transform: translate3d(0, -2px, 0) scale(1.04);
+  }
+}
+
+@keyframes quick-note-icon-glow-accent {
+  0%, 100% {
+    box-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-accent) 16%, transparent),
+      0 0 22px color-mix(in srgb, var(--theme-accent) 22%, transparent),
+      0 0 34px color-mix(in srgb, var(--theme-accent) 10%, transparent);
+    transform: translate3d(0, -2px, 0) scale(1.04);
+  }
+}
+
+@keyframes quick-note-chip-glow-primary {
+  0%, 100% {
+    box-shadow: none;
+    text-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-primary) 16%, transparent),
+      0 0 18px color-mix(in srgb, var(--theme-primary) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--theme-primary) 8%, transparent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--theme-primary) 18%, transparent);
+    transform: translate3d(0, -1px, 0) scale(1.02);
+  }
+}
+
+@keyframes quick-note-chip-glow-accent {
+  0%, 100% {
+    box-shadow: none;
+    text-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-accent) 16%, transparent),
+      0 0 18px color-mix(in srgb, var(--theme-accent) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--theme-accent) 8%, transparent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--theme-accent) 18%, transparent);
+    transform: translate3d(0, -1px, 0) scale(1.02);
+  }
+}
+
+.quick-note-heading-glow-primary {
+  animation: quick-note-heading-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-heading-glow-accent {
+  animation: quick-note-heading-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-title-glow-primary {
+  display: inline-block;
+  animation: quick-note-title-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-title-glow-accent {
+  display: inline-block;
+  animation: quick-note-title-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-icon-glow-primary {
+  animation: quick-note-icon-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-icon-glow-accent {
+  animation: quick-note-icon-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-chip-glow-primary {
+  animation: quick-note-chip-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-chip-glow-accent {
+  animation: quick-note-chip-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* ── Animation label langue (EN / FR) ── */
@@ -1504,130 +1305,10 @@ button {
   transition: background 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.search-visual-surface {
-  background-color: color-mix(in srgb, var(--mediscan-visual-block-base) 10%, #f5f9ff 90%);
-  transition: background-color 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.search-visual-surface-accent {
-  background-color: color-mix(in srgb, var(--home-tree-accent-icon-color) 10%, #f4fbfa 90%);
-  transition: background-color 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.image-search-page {
-  position: relative;
-  isolation: isolate;
-  min-height: 100%;
-  background: var(--image-search-page-bg, var(--theme-bg));
-}
-
-.image-search-page::before,
-.image-search-page::after {
-  content: none;
-}
-
-:root:not([data-theme="dark"]) .image-search-page-primary {
-  --theme-primary: var(--mediscan-visual-block-base);
-  --theme-primary-light: var(--mediscan-visual-block-light);
-  --theme-primary-pale: var(--mediscan-visual-block-pale);
-  --color-primary: var(--theme-primary);
-  --color-primary-light: var(--theme-primary-light);
-  --color-primary-pale: var(--theme-primary-pale);
-  --image-search-page-bg: color-mix(in srgb, var(--mediscan-visual-block-base) 10%, #f5f9ff 90%);
-}
-
-:root:not([data-theme="dark"]) .image-search-page-accent {
-  --image-search-page-bg: color-mix(in srgb, var(--home-tree-accent-icon-color) 10%, #f4fbfa 90%);
-}
-
-.image-search-panel {
-  transition:
-    background-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 720ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.image-search-mode-shell {
-  transition:
-    background-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 720ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.image-search-mode-shell-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 16%, transparent);
-  background: color-mix(in srgb, white 82%, var(--theme-primary) 18%);
-}
-
-.image-search-mode-shell-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 16%, transparent);
-  background: color-mix(in srgb, white 82%, var(--theme-accent) 18%);
-}
-
-.image-search-soft-control {
-  color: var(--theme-muted);
-}
-
-.image-search-soft-control-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 14%, transparent);
-  background: color-mix(in srgb, white 74%, var(--theme-primary) 26%);
-}
-
-.image-search-soft-control-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 14%, transparent);
-  background: color-mix(in srgb, white 74%, var(--theme-accent) 26%);
-}
-
-.image-search-file-meta {
-  transition:
-    background-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 720ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.image-search-file-meta-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 14%, transparent);
-  background: color-mix(in srgb, white 78%, var(--theme-primary) 22%);
-}
-
-.image-search-file-meta-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 14%, transparent);
-  background: color-mix(in srgb, white 78%, var(--theme-accent) 22%);
-}
-
 .search-hub-page {
   position: relative;
   color: var(--theme-text);
   background: transparent;
-}
-
-.search-semantic-theme {
-  --theme-accent: var(--semantic-accent);
-  --theme-accent-light: var(--semantic-accent-light);
-  --theme-accent-pale: var(--semantic-accent-pale);
-  --color-accent: var(--theme-accent);
-  --color-accent-light: var(--theme-accent-light);
-  --color-accent-pale: var(--theme-accent-pale);
-}
-
-.search-semantic-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--semantic-accent-pale) 20%, var(--theme-bg-soft) 80%) 0%,
-      color-mix(in srgb, var(--theme-bg) 94%, #f3f7f8 6%) 100%
-    );
-  transition: background 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.search-tone-transition {
-  transition:
-    background-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 720ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .search-hub-shell {
@@ -2891,128 +2572,6 @@ button {
     radial-gradient(circle at 88% 16%, rgba(51, 65, 85, 0.26) 0%, rgba(51, 65, 85, 0) 22%),
     linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0) 30%),
     var(--theme-bg-soft);
-}
-
-[data-theme="dark"] .search-visual-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-primary-pale) 84%, rgba(6, 13, 25, 0.16)) 0%,
-      color-mix(in srgb, var(--theme-primary-pale) 48%, transparent) 22%,
-      rgba(6, 13, 25, 0) 100%
-    ),
-    var(--theme-bg-soft);
-}
-
-[data-theme="dark"] .search-visual-surface-accent {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent-pale) 84%, rgba(6, 13, 25, 0.16)) 0%,
-      color-mix(in srgb, var(--theme-accent-pale) 48%, transparent) 22%,
-      rgba(6, 13, 25, 0) 100%
-    ),
-    var(--theme-bg-soft);
-}
-
-[data-theme="dark"] .search-semantic-theme {
-  --theme-accent: var(--semantic-accent);
-  --theme-accent-light: var(--semantic-accent-light);
-  --theme-accent-pale: var(--semantic-accent-pale);
-  --color-accent: var(--theme-accent);
-  --color-accent-light: var(--theme-accent-light);
-  --color-accent-pale: var(--theme-accent-pale);
-}
-
-[data-theme="dark"] .search-semantic-surface {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--semantic-accent-pale) 84%, rgba(6, 13, 25, 0.16)) 0%,
-      color-mix(in srgb, var(--semantic-accent-pale) 48%, transparent) 22%,
-      rgba(6, 13, 25, 0) 100%
-    ),
-    var(--theme-bg-soft);
-}
-
-[data-theme="dark"] .image-search-page {
-  background:
-    linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0) 30%),
-    var(--theme-bg-soft);
-}
-
-[data-theme="dark"] .image-search-page::before,
-[data-theme="dark"] .image-search-page::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  transition: opacity 720ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-[data-theme="dark"] .image-search-page::before {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-primary-pale) 38%, var(--theme-bg-soft) 62%) 0%,
-      color-mix(in srgb, var(--theme-primary-pale) 14%, var(--theme-bg) 86%) 100%
-    );
-}
-
-[data-theme="dark"] .image-search-page::after {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--theme-accent-pale) 38%, var(--theme-bg-soft) 62%) 0%,
-      color-mix(in srgb, var(--theme-accent-pale) 14%, var(--theme-bg) 86%) 100%
-    );
-}
-
-[data-theme="dark"] .image-search-page-primary::before {
-  opacity: 1;
-}
-
-[data-theme="dark"] .image-search-page-primary::after {
-  opacity: 0;
-}
-
-[data-theme="dark"] .image-search-page-accent::before {
-  opacity: 0;
-}
-
-[data-theme="dark"] .image-search-page-accent::after {
-  opacity: 1;
-}
-
-[data-theme="dark"] .image-search-mode-shell-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 18%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.84) 76%, var(--theme-primary) 24%);
-}
-
-[data-theme="dark"] .image-search-mode-shell-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 18%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.84) 76%, var(--theme-accent) 24%);
-}
-
-[data-theme="dark"] .image-search-soft-control-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 18%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.8) 70%, var(--theme-primary) 30%);
-}
-
-[data-theme="dark"] .image-search-soft-control-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 18%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.8) 70%, var(--theme-accent) 30%);
-}
-
-[data-theme="dark"] .image-search-file-meta-primary {
-  border-color: color-mix(in srgb, var(--theme-primary) 18%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.82) 72%, var(--theme-primary) 28%);
-}
-
-[data-theme="dark"] .image-search-file-meta-accent {
-  border-color: color-mix(in srgb, var(--theme-accent) 18%, transparent);
-  background: color-mix(in srgb, rgba(10, 16, 28, 0.82) 72%, var(--theme-accent) 28%);
 }
 
 [data-theme="dark"] .search-hub-card-primary {

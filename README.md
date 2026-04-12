@@ -126,7 +126,12 @@ cp .env.example .env
 |------------------------|-------------|-------------|
 | `GROQ_KEY_API`         | **Oui**     | Clé API Groq pour la fonctionnalité "Analyse IA". Créer une clé sur [console.groq.com](https://console.groq.com) → API Keys. Sans cette clé, le bouton "Analyse IA" retournera une erreur mais le reste du site fonctionne normalement. |
 | `MONGO_URI`            | Non         | URI MongoDB Atlas pour l'enrichissement des métadonnées. Si absent, la recherche fonctionne normalement sans enrichissement. |
-| `BACKEND_PORT`         | Non         | Port FastAPI (défaut : 8000) |
+| `BACKEND_PORT`         | Non         | Port FastAPI (défaut : 8000), lu par `run.sh` et `run.bat`. |
+| `MEDISCAN_CORS_ORIGINS`| Non         | Origines autorisées pour le frontend en développement. |
+| `MEDISCAN_MAX_UPLOAD_BYTES` | Non    | Taille maximale d'image acceptée par l'API (défaut : 10 Mo). |
+| `MEDISCAN_REMOTE_IMAGE_TIMEOUT_SECONDS` | Non | Timeout des téléchargements d'images distantes (défaut : 15 s). |
+| `MEDISCAN_GROQ_MODEL`  | Non         | Modèle Groq utilisé pour la synthèse IA. |
+| `MEDISCAN_MAX_CONCLUSION_RESULTS` | Non | Nombre maximum de résultats injectés dans la synthèse IA. |
 
 **Sans `GROQ_KEY_API`** : la recherche visuelle et textuelle fonctionnent normalement. Seul le bouton "Analyse IA" sera non fonctionnel.
 
@@ -354,7 +359,7 @@ MongoDB Atlas (optionnel) — enrichissement métadonnées
         ↓
 Images  ←  HuggingFace CDN (Mediscan-Team/mediscan-data)
         ↓
-Groq LLM (llama-3.3-70b) — Analyse IA des résultats (nécessite GROQ_KEY_API)
+Groq LLM (llama-3.3-70b) — synthèse prudente et non clinique des résultats (nécessite GROQ_KEY_API)
 ```
 
 Trois modes de recherche :

@@ -1,10 +1,11 @@
 import { useState, useContext } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
 import { Plus, Minus, ArrowRight } from "lucide-react";
+import Spinner from "./Spinner";
 
 export default function FAQPage({ onPageChange }) {
   const { t } = useContext(LangContext);
-  const content = t?.faq;
+  const content = t.faq;
 
   const [activeTab, setActiveTab] = useState("general");
   const [openIndex, setOpenIndex] = useState(null);
@@ -12,10 +13,7 @@ export default function FAQPage({ onPageChange }) {
   if (!content || !content.items) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-7 h-7 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <p className="text-muted text-sm">Chargement…</p>
-        </div>
+        <Spinner label="Chargement…" />
       </div>
     );
   }

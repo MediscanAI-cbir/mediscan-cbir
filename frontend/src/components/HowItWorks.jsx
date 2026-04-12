@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
 
 export default function HowItWorks() {
   const { t } = useContext(LangContext);
@@ -18,7 +18,7 @@ export default function HowItWorks() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[content.modes.visual, content.modes.semantic].map((mode, idx) => (
-              <div key={idx} className={`bg-gradient-to-br ${idx === 0 ? "from-primary-pale to-surface border-primary/20" : "from-accent-pale to-surface border-accent/20"} border rounded-2xl p-8`}>
+              <div key={idx} className={`${idx === 0 ? "mediscan-primary-surface" : "mediscan-accent-surface"} border rounded-2xl p-8`}>
                 <h3 className={`text-xl font-bold mb-1 ${idx === 0 ? "text-primary" : "text-accent"}`}>{mode.name}</h3>
                 <p className="text-xs text-muted mb-4 font-mono">{mode.model}</p>
                 <p className="text-muted mb-6">{mode.desc}</p>

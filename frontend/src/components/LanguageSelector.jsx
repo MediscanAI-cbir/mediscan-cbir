@@ -1,15 +1,14 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import { Moon, Sun, Globe, ChevronDown, Check } from "lucide-react";
-import { LangContext } from "../context/lang-context";
-import { useTheme } from "../context/useTheme";
+import { LangContext } from "../context/LangContext";
+import { useTheme } from "../context/ThemeContext";
 
-export default function SettingsMenu() {
+export default function LanguageSelector() {
   const { lang, setLanguage } = useContext(LangContext);
   const { theme, setTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  // Ferme le menu si clic en dehors
   useEffect(() => {
     function handleClickOutside(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);

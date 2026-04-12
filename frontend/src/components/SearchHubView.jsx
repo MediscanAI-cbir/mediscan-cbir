@@ -1,28 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { LangContext } from "../context/lang-context";
-
-function getFeatureTone(feature, tone) {
-  const normalized = feature
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-
-  if (normalized.includes("semantic image comparison")) {
-    return "search-hub-chip search-hub-chip-primary";
-  }
-
-  return tone === "primary"
-    ? "search-hub-chip search-hub-chip-primary"
-    : "search-hub-chip search-hub-chip-accent";
-}
-
-function isSemanticImageComparison(feature) {
-  return feature
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .includes("semantic image comparison");
-}
+import { LangContext } from "../context/LangContext";
 
 function SearchChoiceCard({
   onClick,
@@ -41,11 +18,13 @@ function SearchChoiceCard({
           shell: "search-hub-card search-hub-card-primary",
           iconShell: "search-hub-card-icon search-hub-card-icon-primary",
           cta: "search-hub-cta search-hub-cta-primary",
+          chip: "search-hub-chip search-hub-chip-primary",
         }
       : {
           shell: "search-hub-card search-hub-card-accent",
           iconShell: "search-hub-card-icon search-hub-card-icon-accent",
           cta: "search-hub-cta search-hub-cta-accent",
+          chip: "search-hub-chip search-hub-chip-accent",
         };
 
   return (
@@ -62,32 +41,19 @@ function SearchChoiceCard({
         willChange: "opacity, transform, translate, border-color",
       }}
     >
-      <div className="relative z-10">
+      <div className="search-hub-card-content">
         <div className={`mb-6 ${toneClasses.iconShell}`}>
           {icon}
         </div>
 
         <h2 className="search-hub-card-title mb-3 text-2xl font-bold">{title}</h2>
-        <p className="mb-6 text-muted leading-relaxed">{description}</p>
+        <p className="search-hub-card-description mb-6">{description}</p>
 
         <div className="mb-8 flex flex-wrap gap-2">
           {features.map((feature) => (
-            isSemanticImageComparison(feature) ? (
-              <span key={feature} className="basis-full">
-                <span
-                    className={getFeatureTone(feature, tone)}
-                >
-                  {feature}
-                </span>
-              </span>
-            ) : (
-              <span
-                key={feature}
-                className={getFeatureTone(feature, tone)}
-              >
-                {feature}
-              </span>
-            )
+            <span key={feature} className={toneClasses.chip}>
+              {feature}
+            </span>
           ))}
         </div>
 
@@ -116,7 +82,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
   }, []);
 
   return (
-    <div className={`${useSharedSurface ? "bg-transparent" : "search-hub-surface"} relative box-border h-[calc(100dvh-4rem)] overflow-hidden px-6 py-8 md:h-[calc(100dvh-5rem)] md:py-12`}>
+    <div className={`${useSharedSurface ? "bg-transparent" : "search-hub-surface"} relative box-border h-[calc(100dvh-4rem)] overflow-x-hidden overflow-y-auto px-6 py-8 md:h-[calc(100dvh-5rem)] md:py-12`}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-8%] top-[10%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute right-[-6%] top-[20%] h-80 w-80 rounded-full bg-accent/12 blur-3xl" />
@@ -125,7 +91,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
 
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[1120px] flex-col items-center justify-start pt-10 md:pt-14">
         <section
-          className="mb-14 w-full max-w-[760px] text-center"
+          className="mb-10 w-full max-w-[760px] text-center md:mb-12"
           style={{
             opacity: ready ? 1 : 0,
             transform: ready ? "translateY(0)" : "translateY(18px)",
@@ -133,7 +99,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
             willChange: "opacity, transform",
           }}
         >
-          <div className="mx-auto mb-5 h-px w-28 bg-gradient-to-r from-transparent via-border to-transparent" />
+          <div className="mx-auto mb-5 h-px w-28 rounded-full bg-border/80" />
           <h1 className="search-hub-card-title mb-4 text-4xl font-bold tracking-tight md:text-5xl">
             {hub.headline}
           </h1>
@@ -142,7 +108,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
           </p>
         </section>
 
-        <div className="grid w-full max-w-[980px] grid-cols-1 gap-10 md:grid-cols-2">
+        <div className="grid w-full max-w-[1080px] grid-cols-1 gap-10 md:grid-cols-2 lg:gap-12">
           <SearchChoiceCard
             onClick={onChooseImage}
             title={hub.imageCard.title}

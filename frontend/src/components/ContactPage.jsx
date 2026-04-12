@@ -1,12 +1,15 @@
 import { Mail, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 import { useState, useContext, useEffect } from "react";
-import { LangContext } from "../context/lang-context";
+import { LangContext } from "../context/LangContext";
+import { sendContactMessage } from "../api";
 
 export default function ContactPage() {
   const { t } = useContext(LangContext);
   const content = t.contact;
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [focused, setFocused] = useState(null);
   const [ready, setReady] = useState(false);
 
@@ -20,20 +23,25 @@ export default function ContactPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const subject = encodeURIComponent(form.subject.trim());
-    const body = encodeURIComponent(
-      [
-        `${content.formName}: ${form.name.trim()}`,
-        `${content.formEmail}: ${form.email.trim()}`,
-        "",
-        form.message.trim(),
-      ].join("\n")
-    );
-    window.location.href = `mailto:${content.supportAddr}?subject=${subject}&body=${body}`;
-    setSent(true);
-    setForm({ name: "", email: "", subject: "", message: "" });
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      await sendContactMessage({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        subject: form.subject.trim(),
+        message: form.message.trim(),
+      });
+      setSent(true);
+      setForm({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      setError(err.message || content.errorGeneric);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inputClass = (name) =>
@@ -110,7 +118,10 @@ export default function ContactPage() {
                   <p className="text-muted text-sm max-w-xs leading-relaxed">{content.sentDesc}</p>
                 </div>
                 <button
-                  onClick={() => setSent(false)}
+                  onClick={() => {
+                    setSent(false);
+                    setError("");
+                  }}
                   className="mt-2 px-5 py-2.5 rounded-xl border border-border text-sm text-muted hover:text-text hover:border-text/30 transition-all duration-200"
                 >
                   {content.sentAnother}
@@ -203,11 +214,17 @@ export default function ContactPage() {
 
                 {/* Submit */}
                 <div className="pt-1">
+                  {error ? (
+                    <p className="mb-3 rounded-xl border border-danger/20 bg-danger/8 px-4 py-3 text-sm text-danger">
+                      {error}
+                    </p>
+                  ) : null}
                   <button
                     type="submit"
-                    className="home-hero-button-primary w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 group"
+                    disabled={isSubmitting}
+                    className="contact-submit-button home-hero-button-primary w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 group"
                   >
-                    {content.formSubmit}
+                    {isSubmitting ? content.formSending : content.formSubmit}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" strokeWidth={2} />
                   </button>
                   <p className="text-xs text-muted/50 text-center mt-4">{content.formPrivacy}</p>

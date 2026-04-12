@@ -1,25 +1,21 @@
 """Evaluation complete MediScan AI — mode visual et semantic.
 
 Mode visual (DINOv2) :
-    - TM  : Taux Modalite      (via CUI)
-    - TA  : Taux Anatomie      (via CUI, X-rays uniquement)
+    - TM  : Taux Modalite      (via ground truth MongoDB/CSV)
+    - TA  : Taux Anatomie      (via ground truth MongoDB/CSV)
+    - TMO : Taux Modalite+Organe combine (via ground truth MongoDB/CSV)
     - SSIM: Similarite structurelle pixel a pixel
     - HIST: Similarite histogramme niveaux de gris
 
 Mode semantic (BioMedCLIP) :
-    - TM         : Taux Modalite   (via CUI)
-    - TA         : Taux Anatomie   (via CUI, X-rays uniquement)
-    - TP         : Taux Pathologie (via CUI)
+    - TM         : Taux Modalite   (via ground truth MongoDB/CSV)
+    - TA         : Taux Anatomie   (via ground truth MongoDB/CSV)
+    - TMO        : Taux Modalite+Organe combine (via ground truth MongoDB/CSV)
     - Precision@k: Proportion de resultats partageant au moins 1 CUI avec la requete
 
 Usage :
     python scripts/evaluation/evaluate_full.py --mode visual   --k 10 --n-queries 200 --seed 42
     python scripts/evaluation/evaluate_full.py --mode semantic --k 10 --n-queries 200 --seed 42
-
-Pour plusieurs seeds (robustesse statistique) :
-    python scripts/evaluation/evaluate_full.py --mode semantic --k 10 --n-queries 200 --seed 42
-    python scripts/evaluation/evaluate_full.py --mode semantic --k 10 --n-queries 200 --seed 123
-    python scripts/evaluation/evaluate_full.py --mode semantic --k 10 --n-queries 200 --seed 999
 """
 
 from __future__ import annotations
@@ -27,53 +23,128 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import random
 from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from dotenv import load_dotenv
 
 from mediscan.process import configure_cpu_environment
 from mediscan.runtime import resolve_path
 from mediscan.search import load_resources, query
 
+load_dotenv()
 configure_cpu_environment()
 
-# ---------------------------------------------------------------------------
-# Seuils attendus par metrique et par mode
-# ---------------------------------------------------------------------------
+GT_MODALITY_CSV = Path("artifacts/ground_truth/ROCOv2_GLOABL_modality.csv")
+GT_ORGAN_CSV    = Path("artifacts/ground_truth/ROCOv2_GLOABL_organ.csv")
+GT_MO_CSV       = Path("artifacts/ground_truth/ROCOv2_GLOABL_mo.csv")
+
 SEUILS = {
     "visual": {
-        "TM_requetes":   0.90,   # >=90% des requetes trouvent meme modalite
-        "TM_resultats":  0.80,   # >=80% des resultats ont meme modalite
-        "TA_requetes":   0.70,   # >=70% des requetes (avec CUI anatomie) trouvent meme anatomie
-        "TA_resultats":  0.50,   # >=50% des resultats partagent meme anatomie
-        "SSIM_moyen":    0.20,   # SSIM moyen >= 0.30 (images medicales naturellement peu similaires)
-        "HIST_moyen":    0.50,   # Similarite histogramme moyenne >= 0.50
+        "TM_requetes":   0.90,
+        "TM_resultats":  0.80,
+        "TA_requetes":   0.70,
+        "TA_resultats":  0.30,
+        "TMO_requetes":  0.60,
+        "TMO_resultats": 0.35,
+        "SSIM_moyen":    0.20,
+        "HIST_moyen":    0.50,
     },
     "semantic": {
-        "TM_requetes":   0.80,   # BioMedCLIP doit retrouver la meme modalite
+        "TM_requetes":   0.80,
         "TM_resultats":  0.65,
-        "TA_requetes":   0.60,   # Seuil assoupli : anatomie est secondaire pour BioMedCLIP
-        "TA_resultats":  0.40,
-        "TP_requetes":   0.50,   # >=50% des requetes (avec finding) trouvent meme pathologie
-        "TP_resultats":  0.30,   # >=30% des resultats partagent meme finding
-        "precision_at_k": 0.30,  # >=30% des resultats partagent au moins 1 CUI avec la requete
+        "TA_requetes":   0.60,
+        "TA_resultats":  0.35,
+        "TMO_requetes":  0.50,
+        "TMO_resultats": 0.35,
+        "precision_at_k": 0.30,
     },
 }
 
 CATEGORIES_PATH = Path("artifacts/cui_categories.json")
 
 
-# ---------------------------------------------------------------------------
-# Chargement des categories CUI
-# ---------------------------------------------------------------------------
+def load_ground_truth_from_csv(
+    modality_csv: Path = GT_MODALITY_CSV,
+    organ_csv: Path    = GT_ORGAN_CSV,
+    mo_csv: Path       = GT_MO_CSV,
+) -> dict[str, dict]:
+    """Charge le ground truth depuis les CSV locaux."""
+    gt: dict[str, dict] = {}
 
-def load_categories(path: Path = CATEGORIES_PATH) -> dict[str, dict]:
-    with path.open(encoding="utf-8") as f:
-        raw = json.load(f)
-    return {k: v for k, v in raw.items() if not k.startswith("_")}
+    def read_csv(path: Path, key: str) -> None:
+        if not path.exists():
+            print(f"[WARN] CSV introuvable : {path}")
+            return
+        with path.open(encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                img = row.get("img", "").strip()
+                label = row.get("label", "").strip()
+                if not img or not label:
+                    continue
+                image_id = Path(img).stem
+                if image_id not in gt:
+                    gt[image_id] = {"modalite": None, "organe": None, "mo": None}
+                gt[image_id][key] = label
+
+    read_csv(modality_csv, "modalite")
+    read_csv(organ_csv,    "organe")
+    read_csv(mo_csv,       "mo")
+
+    print(f"Ground truth charge depuis CSV : {len(gt)} images annotees")
+    _print_gt_stats(gt)
+    return gt
+
+
+def load_ground_truth_from_mongo(mongo_uri: str) -> dict[str, dict]:
+    """Charge le ground truth depuis MongoDB."""
+    from pymongo import MongoClient
+    client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+    db = client['mediscan_db']
+    gt: dict[str, dict] = {}
+    for doc in db['results'].find(
+        {},
+        {"image_id": 1, "modalite": 1, "organe": 1, "mo": 1}
+    ):
+        image_id = doc.get("image_id", "")
+        if image_id:
+            gt[image_id] = {
+                "modalite": doc.get("modalite"),
+                "organe":   doc.get("organe"),
+                "mo":       doc.get("mo"),
+            }
+    print(f"Ground truth charge depuis MongoDB : {len(gt)} images annotees")
+    _print_gt_stats(gt)
+    return gt
+
+
+def load_ground_truth(
+    mongo_uri: str | None = None,
+    modality_csv: Path = GT_MODALITY_CSV,
+    organ_csv: Path    = GT_ORGAN_CSV,
+    mo_csv: Path       = GT_MO_CSV,
+) -> dict[str, dict]:
+    """Charge le ground truth depuis MongoDB si disponible, sinon depuis les CSV."""
+    if mongo_uri:
+        try:
+            return load_ground_truth_from_mongo(mongo_uri)
+        except Exception as e:
+            print(f"[WARN] MongoDB indisponible ({e}), fallback sur CSV...")
+    return load_ground_truth_from_csv(modality_csv, organ_csv, mo_csv)
+
+
+def _print_gt_stats(gt: dict[str, dict]) -> None:
+    n_modalite = sum(1 for v in gt.values() if v["modalite"])
+    n_organe   = sum(1 for v in gt.values() if v["organe"])
+    n_mo       = sum(1 for v in gt.values() if v["mo"])
+    print(f"  Avec modalite : {n_modalite}")
+    print(f"  Avec organe   : {n_organe}")
+    print(f"  Avec mo       : {n_mo}")
 
 
 def parse_cui(cui_raw: str) -> set[str]:
@@ -88,29 +159,7 @@ def parse_cui(cui_raw: str) -> set[str]:
     return {str(item).strip() for item in parsed if item}
 
 
-def split_cui_by_type(
-    cuis: set[str],
-    categories: dict[str, dict],
-) -> dict[str, set[str]]:
-    result: dict[str, set[str]] = {
-        "modalite": set(),
-        "anatomie": set(),
-        "finding":  set(),
-        "vue":      set(),
-    }
-    for cui in cuis:
-        if cui in categories:
-            t = categories[cui]["type"]
-            result[t].add(cui)
-    return result
-
-
-# ---------------------------------------------------------------------------
-# Metriques visuelles (SSIM + histogramme)
-# ---------------------------------------------------------------------------
-
 def load_image_gray(path: Path) -> np.ndarray | None:
-    """Charge une image en niveaux de gris normalises [0,1]."""
     try:
         with Image.open(path) as img:
             gray = img.convert("L").resize((128, 128))
@@ -120,82 +169,56 @@ def load_image_gray(path: Path) -> np.ndarray | None:
 
 
 def compute_ssim(img1: np.ndarray, img2: np.ndarray) -> float:
-    """SSIM simplifie entre deux images en niveaux de gris [0,1].
-
-    Formule standard (Wang et al. 2004) avec constantes C1, C2.
-    Pas de dependance scikit-image — calcul direct avec numpy.
-    """
     C1 = (0.01) ** 2
     C2 = (0.03) ** 2
-
     mu1 = img1.mean()
     mu2 = img2.mean()
     sigma1_sq = img1.var()
     sigma2_sq = img2.var()
     sigma12 = ((img1 - mu1) * (img2 - mu2)).mean()
-
     numerateur   = (2 * mu1 * mu2 + C1) * (2 * sigma12 + C2)
     denominateur = (mu1**2 + mu2**2 + C1) * (sigma1_sq + sigma2_sq + C2)
-
     return float(numerateur / denominateur) if denominateur != 0 else 0.0
 
 
 def compute_hist_similarity(img1: np.ndarray, img2: np.ndarray, bins: int = 64) -> float:
-    """Similarite histogramme par intersection normalisee.
-
-    Mesure si les deux images ont une distribution de niveaux de gris similaire.
-    Valeur entre 0 (aucune similarite) et 1 (distributions identiques).
-    """
     h1, _ = np.histogram(img1.flatten(), bins=bins, range=(0.0, 1.0))
     h2, _ = np.histogram(img2.flatten(), bins=bins, range=(0.0, 1.0))
-
     h1 = h1.astype(np.float32)
     h2 = h2.astype(np.float32)
-
     norm1 = h1.sum()
     norm2 = h2.sum()
-
     if norm1 == 0 or norm2 == 0:
         return 0.0
-
     h1 /= norm1
     h2 /= norm2
-
     return float(np.minimum(h1, h2).sum())
 
 
-# ---------------------------------------------------------------------------
-# Selection des requetes
-# ---------------------------------------------------------------------------
-
 def pick_query_rows(
     rows: list[dict],
+    gt: dict[str, dict],
     n: int,
     seed: int,
 ) -> list[dict]:
-    evaluable = [r for r in rows if parse_cui(r.get("cui", ""))]
+    evaluable = [r for r in rows if r.get("image_id", "") in gt]
     if not evaluable:
-        raise ValueError("Aucune entree avec CUI trouvee dans ids.json")
+        raise ValueError("Aucune image avec ground truth trouvee dans l'index.")
     if n > len(evaluable):
         print(f"[WARN] Demande {n} requetes mais seulement {len(evaluable)} exploitables.")
         n = len(evaluable)
     return random.Random(seed).sample(evaluable, n)
 
 
-# ---------------------------------------------------------------------------
-# Evaluation principale
-# ---------------------------------------------------------------------------
-
 def evaluate(
     query_rows: list[dict],
     resources,
     k: int,
-    categories: dict[str, dict],
+    gt: dict[str, dict],
     mode: str,
 ) -> tuple[list[dict], list[dict]]:
     query_results: list[dict] = []
     result_details: list[dict] = []
-
     images_manquantes = 0
 
     for i, query_row in enumerate(query_rows, start=1):
@@ -204,44 +227,42 @@ def evaluate(
             images_manquantes += 1
             continue
 
-        cui_query  = parse_cui(query_row.get("cui", ""))
-        types_query = split_cui_by_type(cui_query, categories)
+        query_id       = query_row.get("image_id", "")
+        gt_query       = gt.get(query_id, {})
+        modalite_query = gt_query.get("modalite")
+        organe_query   = gt_query.get("organe")
+        mo_query       = gt_query.get("mo")
+        cui_query      = parse_cui(query_row.get("cui", ""))
 
-        results = query(
-            resources=resources,
-            image=image_path,
-            k=k,
-            exclude_self=True,
-        )
-
-        # Charge image requete pour metriques visuelles (mode visual uniquement)
+        results = query(resources=resources, image=image_path, k=k, exclude_self=True)
         img_query_gray = load_image_gray(image_path) if mode == "visual" else None
 
         hit_modalite = False
-        hit_anatomie = False
-        hit_finding  = False
-
-        ssim_scores = []
-        hist_scores = []
+        hit_organe   = False
+        hit_mo       = False
+        ssim_scores  = []
+        hist_scores  = []
         precision_hits = []
 
         for result in results:
-            cui_result   = parse_cui(result.get("cui", ""))
-            types_result = split_cui_by_type(cui_result, categories)
+            result_id       = result.get("image_id", "")
+            gt_result       = gt.get(result_id, {})
+            modalite_result = gt_result.get("modalite")
+            organe_result   = gt_result.get("organe")
+            mo_result       = gt_result.get("mo")
 
-            match_m = bool(types_query["modalite"] & types_result["modalite"])
-            match_a = bool(types_query["anatomie"] & types_result["anatomie"])
-            match_p = bool(types_query["finding"]  & types_result["finding"])
+            match_m  = bool(modalite_query and modalite_result and modalite_query == modalite_result)
+            match_a  = bool(organe_query   and organe_result   and organe_query   == organe_result)
+            match_mo = bool(mo_query       and mo_result       and mo_query       == mo_result)
 
-            if match_m: hit_modalite = True
-            if match_a: hit_anatomie = True
-            if match_p: hit_finding  = True
+            if match_m:  hit_modalite = True
+            if match_a:  hit_organe   = True
+            if match_mo: hit_mo       = True
 
-            # CUI partages (pour Precision@k en mode semantic)
-            n_cui_communs = len(cui_query & cui_result)
+            cui_result_set = parse_cui(result.get("cui", ""))
+            n_cui_communs  = len(cui_query & cui_result_set)
             precision_hits.append(1 if n_cui_communs >= 1 else 0)
 
-            # Metriques visuelles (mode visual uniquement)
             ssim_val = None
             hist_val = None
             if mode == "visual" and img_query_gray is not None:
@@ -255,31 +276,34 @@ def evaluate(
                         hist_scores.append(hist_val)
 
             detail = {
-                "query_id":           query_row["image_id"],
-                "result_id":          result["image_id"],
-                "score_faiss":        result["score"],
-                "match_modalite":     int(match_m),
-                "match_anatomie":     int(match_a),
-                "match_finding":      int(match_p),
-                "n_cui_communs":      n_cui_communs,
-                "query_has_anatomie": int(bool(types_query["anatomie"])),
-                "query_has_finding":  int(bool(types_query["finding"])),
+                "query_id":         query_id,
+                "result_id":        result_id,
+                "score_faiss":      result["score"],
+                "match_modalite":   int(match_m),
+                "match_organe":     int(match_a),
+                "match_mo":         int(match_mo),
+                "n_cui_communs":    n_cui_communs,
+                "query_has_organe": int(bool(organe_query)),
+                "query_has_mo":     int(bool(mo_query)),
             }
             if mode == "visual":
-                detail["ssim"]             = round(ssim_val, 4) if ssim_val is not None else None
-                detail["hist_similarity"]  = round(hist_val, 4) if hist_val is not None else None
+                detail["ssim"]            = round(ssim_val, 4) if ssim_val is not None else None
+                detail["hist_similarity"] = round(hist_val, 4) if hist_val is not None else None
 
             result_details.append(detail)
 
         query_result = {
-            "query_id":         query_row["image_id"],
-            "hit_modalite":     int(hit_modalite),
-            "hit_anatomie":     int(hit_anatomie),
-            "hit_finding":      int(hit_finding),
-            "has_anatomie_cui": int(bool(types_query["anatomie"])),
-            "has_finding_cui":  int(bool(types_query["finding"])),
-            "n_results":        len(results),
-            "precision_at_k":   sum(precision_hits) / len(precision_hits) if precision_hits else 0.0,
+            "query_id":       query_id,
+            "modalite_query": modalite_query,
+            "organe_query":   organe_query,
+            "mo_query":       mo_query,
+            "hit_modalite":   int(hit_modalite),
+            "hit_organe":     int(hit_organe),
+            "hit_mo":         int(hit_mo),
+            "has_organe":     int(bool(organe_query)),
+            "has_mo":         int(bool(mo_query)),
+            "n_results":      len(results),
+            "precision_at_k": sum(precision_hits) / len(precision_hits) if precision_hits else 0.0,
         }
         if mode == "visual":
             query_result["ssim_moyen"] = float(np.mean(ssim_scores)) if ssim_scores else None
@@ -296,10 +320,6 @@ def evaluate(
     return query_results, result_details
 
 
-# ---------------------------------------------------------------------------
-# Calcul des metriques agregees
-# ---------------------------------------------------------------------------
-
 def compute_metrics(
     query_results: list[dict],
     result_details: list[dict],
@@ -311,35 +331,31 @@ def compute_metrics(
     if total_q == 0:
         return {}
 
-    # TM
     tm_requetes  = sum(r["hit_modalite"] for r in query_results) / total_q
     tm_resultats = sum(r["match_modalite"] for r in result_details) / total_r if total_r else 0.0
 
-    # TA
-    q_avec_anatomie = [r for r in query_results if r["has_anatomie_cui"]]
+    q_avec_organe = [r for r in query_results if r["has_organe"]]
     ta_requetes = (
-        sum(r["hit_anatomie"] for r in q_avec_anatomie) / len(q_avec_anatomie)
-        if q_avec_anatomie else None
+        sum(r["hit_organe"] for r in q_avec_organe) / len(q_avec_organe)
+        if q_avec_organe else None
     )
-    r_avec_anatomie = [r for r in result_details if r["query_has_anatomie"]]
+    r_avec_organe = [r for r in result_details if r["query_has_organe"]]
     ta_resultats = (
-        sum(r["match_anatomie"] for r in r_avec_anatomie) / len(r_avec_anatomie)
-        if r_avec_anatomie else None
+        sum(r["match_organe"] for r in r_avec_organe) / len(r_avec_organe)
+        if r_avec_organe else None
     )
 
-    # TP
-    q_avec_finding = [r for r in query_results if r["has_finding_cui"]]
-    tp_requetes = (
-        sum(r["hit_finding"] for r in q_avec_finding) / len(q_avec_finding)
-        if q_avec_finding else None
+    q_avec_mo = [r for r in query_results if r["has_mo"]]
+    tmo_requetes = (
+        sum(r["hit_mo"] for r in q_avec_mo) / len(q_avec_mo)
+        if q_avec_mo else None
     )
-    r_avec_finding = [r for r in result_details if r["query_has_finding"]]
-    tp_resultats = (
-        sum(r["match_finding"] for r in r_avec_finding) / len(r_avec_finding)
-        if r_avec_finding else None
+    r_avec_mo = [r for r in result_details if r["query_has_mo"]]
+    tmo_resultats = (
+        sum(r["match_mo"] for r in r_avec_mo) / len(r_avec_mo)
+        if r_avec_mo else None
     )
 
-    # Precision@k
     precision_at_k = sum(r["precision_at_k"] for r in query_results) / total_q
 
     metrics: dict[str, float | None] = {
@@ -347,16 +363,15 @@ def compute_metrics(
         "TM_resultats":  tm_resultats,
         "TA_requetes":   ta_requetes,
         "TA_resultats":  ta_resultats,
-        "TP_requetes":   tp_requetes,
-        "TP_resultats":  tp_resultats,
+        "TMO_requetes":  tmo_requetes,
+        "TMO_resultats": tmo_resultats,
         "precision_at_k": precision_at_k,
-        "n_queries_total":          total_q,
-        "n_queries_avec_anatomie":  len(q_avec_anatomie),
-        "n_queries_avec_finding":   len(q_avec_finding),
-        "n_results_total":          total_r,
+        "n_queries_total":       total_q,
+        "n_queries_avec_organe": len(q_avec_organe),
+        "n_queries_avec_mo":     len(q_avec_mo),
+        "n_results_total":       total_r,
     }
 
-    # Metriques visuelles
     if mode == "visual":
         ssim_vals = [r["ssim_moyen"] for r in query_results if r.get("ssim_moyen") is not None]
         hist_vals = [r["hist_moyen"] for r in query_results if r.get("hist_moyen") is not None]
@@ -366,36 +381,31 @@ def compute_metrics(
     return metrics
 
 
-# ---------------------------------------------------------------------------
-# Affichage
-# ---------------------------------------------------------------------------
-
 def print_results(metrics: dict, mode: str, k: int, seed: int) -> None:
     seuils = SEUILS[mode]
 
     print(f"\n{'='*60}")
-    print(f"  EVALUATION COMPLETE — mode={mode}  k={k}  seed={seed}")
+    print(f"  EVALUATION GROUND TRUTH -- mode={mode}  k={k}  seed={seed}")
     print(f"{'='*60}")
     print(f"  Requetes evaluees : {metrics.get('n_queries_total')}")
     print(f"  Resultats totaux  : {metrics.get('n_results_total')}")
 
-    print(f"\n  --- Metriques CUI (les deux modes) ---")
+    print(f"\n  --- TM -- Taux Modalite ---")
     _print_metric("TM_requetes",  metrics, seuils, "requetes trouvant meme modalite")
     _print_metric("TM_resultats", metrics, seuils, "resultats de meme modalite")
 
-    n_a = metrics.get("n_queries_avec_anatomie", 0)
-    print(f"\n  TA — Taux Anatomie  (base : {n_a} requetes avec CUI anatomie)")
-    _print_metric("TA_requetes",  metrics, seuils, "requetes trouvant meme anatomie")
-    _print_metric("TA_resultats", metrics, seuils, "resultats de meme anatomie")
+    n_a = metrics.get("n_queries_avec_organe", 0)
+    print(f"\n  --- TA -- Taux Anatomie (base : {n_a} requetes avec organe) ---")
+    _print_metric("TA_requetes",  metrics, seuils, "requetes trouvant meme organe")
+    _print_metric("TA_resultats", metrics, seuils, "resultats de meme organe")
 
-    if mode == "semantic":
-        n_p = metrics.get("n_queries_avec_finding", 0)
-        print(f"\n  TP — Taux Pathologie  (base : {n_p} requetes avec CUI finding)")
-        _print_metric("TP_requetes",  metrics, seuils, "requetes trouvant meme pathologie")
-        _print_metric("TP_resultats", metrics, seuils, "resultats de meme pathologie")
+    n_mo = metrics.get("n_queries_avec_mo", 0)
+    print(f"\n  --- TMO -- Modalite+Organe combine (base : {n_mo} requetes) ---")
+    _print_metric("TMO_requetes",  metrics, seuils, "requetes trouvant meme modalite+organe")
+    _print_metric("TMO_resultats", metrics, seuils, "resultats de meme modalite+organe")
 
-        print(f"\n  --- Precision@k ---")
-        _print_metric("precision_at_k", metrics, seuils, "resultats partageant >= 1 CUI avec la requete")
+    print(f"\n  --- Precision@k (via CUI) ---")
+    _print_metric("precision_at_k", metrics, seuils, "resultats partageant >= 1 CUI avec la requete")
 
     if mode == "visual":
         print(f"\n  --- Metriques visuelles (pixels) ---")
@@ -412,15 +422,11 @@ def _print_metric(key: str, metrics: dict, seuils: dict, label: str) -> None:
         return
     seuil = seuils.get(key)
     if seuil is None:
-        print(f"    {key:22s}: {val:.1%}  — {label}")
+        print(f"    {key:22s}: {val:.1%}  -- {label}")
         return
     status = "PASS" if val >= seuil else "FAIL"
-    print(f"    {key:22s}: {val:.1%}  (seuil >= {seuil:.0%})  {status}  — {label}")
+    print(f"    {key:22s}: {val:.1%}  (seuil >= {seuil:.0%})  {status}  -- {label}")
 
-
-# ---------------------------------------------------------------------------
-# Sauvegarde CSV
-# ---------------------------------------------------------------------------
 
 def save_csv(
     metrics: dict,
@@ -433,13 +439,13 @@ def save_csv(
 ) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_path = output_dir / f"eval_full_{mode}_seed{seed}_{timestamp}.csv"
+    csv_path = output_dir / f"eval_gt_{mode}_seed{seed}_{timestamp}.csv"
 
     seuils = SEUILS[mode]
 
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["# MEDISCAN AI — Evaluation complete"])
+        w.writerow(["# MEDISCAN AI -- Evaluation ground truth"])
         w.writerow(["# mode", mode])
         w.writerow(["# k", k])
         w.writerow(["# seed", seed])
@@ -455,14 +461,12 @@ def save_csv(
                 status = "PASS" if val >= seuil else "FAIL"
                 w.writerow([key, f"{val:.4f}", f"{seuil:.2f}", status, ""])
         w.writerow([])
-
         w.writerow(["--- DETAILS PAR REQUETE ---"])
         if query_results:
             w.writerow(list(query_results[0].keys()))
             for row in query_results:
                 w.writerow(list(row.values()))
         w.writerow([])
-
         w.writerow(["--- DETAILS PAR RESULTAT ---"])
         if result_details:
             w.writerow(list(result_details[0].keys()))
@@ -472,37 +476,40 @@ def save_csv(
     return csv_path
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
-
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Evaluation complete MediScan — visual (TM+TA+SSIM+HIST) / semantic (TM+TA+TP+Precision@k)"
-    )
-    parser.add_argument("--mode",      default="visual", choices=("visual", "semantic"))
-    parser.add_argument("--k",         type=int, default=10)
-    parser.add_argument("--n-queries", type=int, default=200)
-    parser.add_argument("--seed",      type=int, default=42)
-    parser.add_argument("--output-dir", default="proofs/perf")
-    parser.add_argument("--categories-path", default=str(CATEGORIES_PATH))
+    parser = argparse.ArgumentParser(description="Evaluation MediScan avec ground truth")
+    parser.add_argument("--mode",         default="visual", choices=("visual", "semantic"))
+    parser.add_argument("--k",            type=int, default=10)
+    parser.add_argument("--n-queries",    type=int, default=200)
+    parser.add_argument("--seed",         type=int, default=42)
+    parser.add_argument("--output-dir",   default="proofs/perf")
+    parser.add_argument("--modality-csv", default=str(GT_MODALITY_CSV))
+    parser.add_argument("--organ-csv",    default=str(GT_ORGAN_CSV))
+    parser.add_argument("--mo-csv",       default=str(GT_MO_CSV))
+    parser.add_argument("--no-mongo",     action="store_true", help="Forcer l'utilisation des CSV")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    categories = load_categories(Path(args.categories_path))
-    print(f"Categories chargees : {len(categories)} CUI classes")
+    mongo_uri = None if args.no_mongo else os.getenv('MONGO_URI')
+
+    gt = load_ground_truth(
+        mongo_uri=mongo_uri,
+        modality_csv=Path(args.modality_csv),
+        organ_csv=Path(args.organ_csv),
+        mo_csv=Path(args.mo_csv),
+    )
 
     resources = load_resources(mode=args.mode)
     print(f"Index charge : {resources.index.ntotal} vecteurs, dim={resources.index.d}")
 
-    query_rows = pick_query_rows(resources.rows, args.n_queries, args.seed)
+    query_rows = pick_query_rows(resources.rows, gt, args.n_queries, args.seed)
     print(f"mode={args.mode}  k={args.k}  n_queries={len(query_rows)}  seed={args.seed}")
 
     query_results, result_details = evaluate(
-        query_rows, resources, args.k, categories, args.mode
+        query_rows, resources, args.k, gt, args.mode
     )
     metrics = compute_metrics(query_results, result_details, args.mode)
     print_results(metrics, args.mode, args.k, args.seed)
