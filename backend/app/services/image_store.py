@@ -70,4 +70,4 @@ def build_centroid_embedding(
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
         embeddings = list(executor.map(partial(encode_remote_image, embedder=embedder), image_ids))
 
-    return np.mean(np.stack(embeddings, axis=0), axis=0).reshape(1, -1).astype(np.float32)
+    return np.max(np.stack(embeddings, axis=0), axis=0).reshape(1, -1).astype(np.float32)
