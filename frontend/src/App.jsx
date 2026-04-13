@@ -15,6 +15,8 @@ const AboutPage = lazy(() => import("./components/AboutPage"));
 
 const lazyPagePreloaders = [
   () => import("./components/SearchPage"),
+  () => import("./components/ImageSearchView"),
+  () => import("./components/TextSearchView"),
   () => import("./components/ContactPage"),
   () => import("./components/HowItWorks"),
   () => import("./components/FAQPage"),

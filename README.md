@@ -1,9 +1,24 @@
-# MEDISCAN AI — README développeur
+# MediScan AI
 
-Prototype universitaire de recherche d'images médicales par similarité visuelle et sémantique.
-Projet non clinique.
+> Prototype universitaire de recherche d'images médicales par similarité visuelle et sémantique. Projet non clinique.
 
-Ce guide est orienté développement local et vise un objectif simple :
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![Node](https://img.shields.io/badge/Node.js-22%20LTS-green?logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![FAISS](https://img.shields.io/badge/FAISS-CPU-orange)
+![Groq](https://img.shields.io/badge/LLM-Groq-purple)
+![Git LFS](https://img.shields.io/badge/Git%20LFS-required-lightgrey?logo=git)
+
+MediScan AI permet de rechercher des images médicales (radiographies, IRM, scanner…) par **similarité visuelle** (upload d'image ou URL) ou par **requête textuelle sémantique**. Les résultats peuvent être synthétisés par un LLM via Groq.
+
+**Stack** : FastAPI · React 19 + Vite · FAISS (BioMedCLIP + DINOv2) · Groq (llama-3.3-70b) · MongoDB optionnel
+
+---
+
+## README développeur
+
+Ce guide vise un objectif simple :
 lancer le backend, le frontend et la fonctionnalité LLM sans friction, en une seule séquence.
 
 ---
@@ -64,6 +79,23 @@ Les scripts `run.sh` et `run.bat` :
 7. démarrent le frontend
 
 L’objectif est de permettre un lancement complet en une commande.
+
+---
+
+## Vérification après clone
+
+Après `git lfs pull`, confirmer que les index FAISS sont bien des fichiers binaires réels (et non des pointeurs LFS de 134 bytes) :
+
+```bash
+ls -lh artifacts/
+# index.faiss et index_semantic.faiss doivent afficher ~100–350 MB
+```
+
+Si la taille affichée est ~134 bytes, les fichiers LFS ne sont pas récupérés :
+
+```bash
+git lfs pull
+```
 
 ---
 

@@ -468,12 +468,10 @@ body.search-modal-open nav.sticky {
   from {
     opacity: 0;
     transform: translate3d(0, 18px, 0) scale(0.988);
-    filter: blur(5px);
   }
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -481,12 +479,10 @@ body.search-modal-open nav.sticky {
   from {
     opacity: 0;
     transform: translate3d(0, 18px, 0) scale(0.988);
-    filter: blur(5px);
   }
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -494,12 +490,10 @@ body.search-modal-open nav.sticky {
   from {
     opacity: 0;
     transform: translate3d(0, 22px, 0) scale(0.985);
-    filter: saturate(0.94);
   }
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
-    filter: saturate(1);
   }
 }
 
@@ -512,15 +506,15 @@ body.search-modal-open nav.sticky {
 }
 
 .mediscan-stage-panel-enter {
-  animation: mediscan-stage-panel-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: mediscan-stage-panel-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .mediscan-results-stage-enter {
-  animation: mediscan-results-stage-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: mediscan-results-stage-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .mediscan-results-card-enter {
-  animation: mediscan-results-card-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: mediscan-results-card-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes search-conclusion-body-in {

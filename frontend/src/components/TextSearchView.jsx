@@ -15,7 +15,7 @@ import {
   getResultCuiSet,
   getSuggestedCaptionFilters,
 } from "../utils/searchResults";
-import { getResultsGridScrollTargetY } from "../utils/resultsScroll";
+import { getResultsGridScrollTargetY, smoothScrollTo } from "../utils/resultsScroll";
 import { CUI_TYPES } from "../data/cuiCategories";
 
 function getFilterToggleStateClasses(isActive) {
@@ -51,6 +51,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const filterNoteHighlightTimerRef = useRef(null);
   const scrollTimerRef = useRef(0);
   const resultsAutoScrollTimerRef = useRef(0);
+  const scrollCancelRef = useRef(null);
   const pendingSearchScrollRef = useRef(false);
   const resultsGridRef = useRef(null);
 
@@ -60,6 +61,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
       window.clearTimeout(filterNoteHighlightTimerRef.current);
       window.clearTimeout(scrollTimerRef.current);
       window.clearTimeout(resultsAutoScrollTimerRef.current);
+      scrollCancelRef.current?.();
     };
   }, [onChromeToneChange]);
 
@@ -87,7 +89,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
           // Ajuste cet offset pour modifier la position de scroll (positif = plus bas, negatif = plus haut).
           const TEXT_SEARCH_SCROLL_OFFSET = 65;
           const boundedTargetY = getResultsGridScrollTargetY(gridNode, TEXT_SEARCH_SCROLL_OFFSET);
-          window.clearTimeout(resultsAutoScrollTimerRef.current);
+          scrollCancelRef.current?.();
 
           if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
             window.scrollTo(0, boundedTargetY);
@@ -95,12 +97,11 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
             return;
           }
 
-          window.scrollTo({ top: boundedTargetY, behavior: "smooth" });
-          resultsAutoScrollTimerRef.current = window.setTimeout(() => {
-            resultsAutoScrollTimerRef.current = 0;
+          scrollCancelRef.current = smoothScrollTo(boundedTargetY, 1100, () => {
+            scrollCancelRef.current = null;
             pendingSearchScrollRef.current = false;
-          }, 760);
-        }, 40);
+          });
+        }, 100);
       });
     });
 
@@ -108,7 +109,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
       cancelAnimationFrame(firstFrame);
       cancelAnimationFrame(secondFrame);
       window.clearTimeout(settleTimer);
-      window.clearTimeout(resultsAutoScrollTimerRef.current);
+      scrollCancelRef.current?.();
     };
   }, [loading, results]);
 
@@ -122,8 +123,10 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     resetFilters();
     pendingSearchScrollRef.current = true;
 
+    const minDelay = new Promise((resolve) => window.setTimeout(resolve, 700));
+
     try {
-      const data = await apiSearchText(trimmed, k);
+      const [data] = await Promise.all([apiSearchText(trimmed, k), minDelay]);
       setResults(data);
       setStatus(null);
     } catch (err) {

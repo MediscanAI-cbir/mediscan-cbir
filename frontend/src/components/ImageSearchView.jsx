@@ -16,7 +16,7 @@ import {
   getResultCuiSet,
   getSuggestedCaptionFilters,
 } from "../utils/searchResults";
-import { getResultsGridScrollTargetY } from "../utils/resultsScroll";
+import { getResultsGridScrollTargetY, smoothScrollTo } from "../utils/resultsScroll";
 import { VisualModeIcon, InterpretiveModeIcon } from "./icons";
 import { CUI_TYPES } from "../data/cuiCategories";
 
@@ -89,6 +89,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
   const filterNoteHighlightTimerRef = useRef(null);
   const quickNoteScrollTimerRef = useRef(0);
   const resultsAutoScrollTimerRef = useRef(0);
+  const scrollCancelRef = useRef(null);
   const resultsCardsGridRef = useRef(null);
   const pendingSearchScrollRef = useRef(false);
   const [referenceFilter, setReferenceFilter] = useState("");
@@ -99,6 +100,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
       window.clearTimeout(filterNoteHighlightTimerRef.current);
       window.clearTimeout(quickNoteScrollTimerRef.current);
       window.clearTimeout(resultsAutoScrollTimerRef.current);
+      scrollCancelRef.current?.();
       if (queryPreviewUrl) {
         URL.revokeObjectURL(queryPreviewUrl);
       }
@@ -140,8 +142,10 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
     setStatus(null);
     clearResults();
 
+    const minDelay = new Promise((resolve) => window.setTimeout(resolve, 700));
+
     try {
-      await action();
+      await Promise.all([action(), minDelay]);
       setStatus(null);
     } catch (err) {
       setStatus({
@@ -601,7 +605,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
           // Ajuste cette valeur selon le rendu souhaite: negatif = moins bas, positif = plus bas.
           const IMAGE_SEARCH_SCROLL_OFFSET = 20;
           const boundedTargetY = getResultsGridScrollTargetY(gridNode, IMAGE_SEARCH_SCROLL_OFFSET);
-          window.clearTimeout(resultsAutoScrollTimerRef.current);
+          scrollCancelRef.current?.();
 
           if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
             window.scrollTo(0, boundedTargetY);
@@ -609,12 +613,11 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
             return;
           }
 
-          window.scrollTo({ top: boundedTargetY, behavior: "smooth" });
-          resultsAutoScrollTimerRef.current = window.setTimeout(() => {
-            resultsAutoScrollTimerRef.current = 0;
+          scrollCancelRef.current = smoothScrollTo(boundedTargetY, 1100, () => {
+            scrollCancelRef.current = null;
             pendingSearchScrollRef.current = false;
-          }, 760);
-        }, 40);
+          });
+        }, 100);
       });
     });
 
@@ -622,7 +625,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
       cancelAnimationFrame(firstFrame);
       cancelAnimationFrame(secondFrame);
       window.clearTimeout(settleTimer);
-      window.clearTimeout(resultsAutoScrollTimerRef.current);
+      scrollCancelRef.current?.();
     };
   }, [loading, hasSearchResults, singleResultCount, visualResultCount, semanticResultCount]);
 
