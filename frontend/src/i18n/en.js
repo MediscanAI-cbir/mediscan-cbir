@@ -140,8 +140,8 @@ export const en = {
     },
 
     footer: {
-      tagline: "University Medical Image Retrieval Prototype.",
-      compliance: "University prototype · Non-clinical · Local demo",
+      tagline: "Medical Image Retrieval Research Platform.",
+      compliance: "Research use only · Non-clinical",
       contact: "Contact Us",
       rights: "All rights reserved.",
       privacy : "Privacy",
@@ -244,7 +244,7 @@ export const en = {
       browseAction: "browse",
       acceptedFormats: "JPEG or PNG only",
       previewAlt: "Selected image preview",
-      legendEyebrow: "Quick Note",
+      legendEyebrow: "Analysis mode guide",
       legendTitle: "Choose the right analysis mode for your goal",
       legendDescription: "The two modes do not serve the same purpose: one helps you compare what you see in the image, while the other helps you retrieve cases that are closer in medical meaning. Use this note to choose the most relevant mode before running the search.",
       legend: {
@@ -301,7 +301,7 @@ export const en = {
       pendingTitle: "Your query is ready",
       pendingDescription: "Adjust the number of results, then click Search to retrieve the closest interpretive matches.",
       modeInfoLabel: "Open the quick note about interpretive analysis",
-      legendEyebrow: "Quick note",
+      legendEyebrow: "Analysis mode guide",
       legendTitle: "Understand text-guided interpretive analysis",
       legendDescription: "This search does not start from an image but from a medical description. MediScan matches your English query against indexed clinical captions to retrieve cases that are close in medical meaning, not only in visual appearance.",
       legend: {

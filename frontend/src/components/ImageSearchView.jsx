@@ -546,17 +546,10 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
     : mode === "visual"
       ? content.modeVisual
       : content.modeSemantic;
-  const detailChips = file
-    ? [
-        { id: "mode", label: detailModeLabel },
-        { id: "count", label: `${content.numResults}: ${k}` },
-        { id: "action", label: content.search },
-      ]
-    : [
-        { id: "formats", label: content.image.acceptedFormats },
-        { id: "count", label: `${content.numResults}: ${k}` },
-        { id: "mode", label: detailModeLabel },
-      ];
+  const detailChips = [
+    { id: "mode", label: detailModeLabel },
+    { id: "count", label: `${content.numResults}: ${String(k).padStart(2, "\u2007")}` },
+  ];
 
   const highlightCaptionGuide = filterNoteHighlighted;
   const highlightScoreGuide = filterNoteHighlighted;
@@ -826,8 +819,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
               enableToneTransition={toneTransitionReady}
             />
 
-            {!hasSearchResults && (
-              <div className={`${toneTransitionClass} image-search-panel mediscan-stage-panel-enter ${launchEntryClass} rounded-2xl p-6 md:p-7 border shadow-sm ${detailStagePanelHeightClass} ${isAccent || useHomeVisualTone ? (isAccent ? "mediscan-accent-surface" : "mediscan-primary-surface") : "ui-surface"} flex flex-col justify-between text-left`}>
+            <div className={`${toneTransitionClass} image-search-panel mediscan-stage-panel-enter ${launchEntryClass} rounded-2xl p-6 md:p-7 border shadow-sm ${detailStagePanelHeightClass} ${isAccent || useHomeVisualTone ? (isAccent ? "mediscan-accent-surface" : "mediscan-primary-surface") : "ui-surface"} flex flex-col justify-between text-left`}>
                 <div>
                   <StepBadge
                     label={content.image.detailStep}
@@ -870,6 +862,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
                               ? "mediscan-primary-chip"
                               : "border-primary/20 bg-primary-pale text-primary"
                         }`}
+                        style={chip.id === "count" ? { fontVariantNumeric: "tabular-nums" } : undefined}
                       >
                         {chip.label}
                       </span>
@@ -877,7 +870,6 @@ export default function ImageSearchView({ onBack, onChromeToneChange, useSharedS
                   </div>
                 </div>
               </div>
-            )}
           </div>
 
           {hasSearchResults && (

@@ -140,8 +140,8 @@ export const fr = {
     },
 
     footer: {
-      tagline: "Prototype universitaire de recherche d'images médicales.",
-      compliance: "Prototype universitaire · Non clinique · Démo locale",
+      tagline: "Plateforme de recherche en imagerie médicale.",
+      compliance: "Usage recherche uniquement · Non clinique",
       contact: "Contactez-nous",
       rights: "Tous droits réservés.",
       privacy : "Confidentialité",
@@ -244,7 +244,7 @@ export const fr = {
       browseAction: "parcourir",
       acceptedFormats: "JPEG ou PNG uniquement",
       previewAlt: "Aperçu de l'image sélectionnée",
-      legendEyebrow: "À lire",
+      legendEyebrow: "Guide des modes d'analyse",
       legendTitle: "Choisir le bon mode d’analyse selon votre objectif",
       legendDescription: "Les deux modes n’ont pas la même utilité : l’un aide à comparer rapidement ce que vous voyez dans l’image, l’autre aide à retrouver des cas proches par leur sens médical. Utilisez cette note pour choisir le mode le plus pertinent avant de lancer la recherche.",
       legend: {
@@ -301,7 +301,7 @@ export const fr = {
       pendingTitle: "Votre requête est prête",
       pendingDescription: "Ajustez le nombre de résultats, puis cliquez sur Chercher pour retrouver les correspondances interprétatives les plus proches.",
       modeInfoLabel: "Voir l’aide rapide sur l’analyse interprétative",
-      legendEyebrow: "À lire",
+      legendEyebrow: "Guide des modes d'analyse",
       legendTitle: "Comprendre l’analyse interprétative guidée par texte",
       legendDescription: "Ici, la recherche ne part pas d’une image mais d’une description médicale. MediScan rapproche votre requête en anglais des légendes cliniques indexées pour retrouver des cas proches par leur sens médical, pas uniquement par leur apparence visuelle.",
       legend: {
