@@ -258,19 +258,19 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6 sm:py-6"
       role="dialog"
       aria-modal="true"
       aria-label={content.detailsTitle}
       onClick={requestClose}
       style={{
-        backgroundColor: isOpen ? "rgba(6, 12, 21, 0.96)" : "rgba(6, 12, 21, 0)",
+        paddingTop: "max(24px, env(safe-area-inset-top))", backgroundColor: isOpen ? "rgba(6, 12, 21, 0.96)" : "rgba(6, 12, 21, 0)",
         transition: `background-color ${DETAIL_MODAL_TRANSITION_MS}ms ${DETAIL_MODAL_BACKDROP_EASE}`,
       }}
     >
       <div
         ref={modalRef}
-        className={`search-detail-modal search-detail-modal-${tone} relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[1.75rem] border lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]`}
+        className={`search-detail-modal search-detail-modal-${tone} relative flex max-h-[88vh] sm:max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[1.75rem] border lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]`}
         onClick={(event) => event.stopPropagation()}
         style={{
           opacity: isOpen ? 1 : 0,
@@ -285,13 +285,13 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
         <button
           type="button"
           onClick={requestClose}
-          className="search-modal-close absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all"
+          className="search-modal-close absolute right-4 top-4 z-55 flex h-10 w-10 items-center justify-center rounded-full transition-all"
           aria-label={content.closeDetails}
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className={`search-detail-media search-detail-media-${tone} relative flex min-h-[300px] items-center justify-center overflow-hidden p-6 lg:min-h-[72vh] lg:p-8`}>
+        <div className={`search-detail-media search-detail-media-${tone} relative flex min-h-[300px] items-center justify-center overflow-hidden p-6 lg:min-h-[72vh] lg:p-8 mt-12 mx-4 mb-4 rounded-[1.35rem] lg:mt-0 lg:mx-0 lg:mb-0 lg:rounded-none`}>
           <img
             src={imageSrc}
             alt={result.caption || result.image_id}
@@ -299,7 +299,7 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
           />
         </div>
 
-        <div className="flex max-h-[92vh] flex-col overflow-y-auto px-5 pb-5 pt-16 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
+        <div className="flex max-h-[88vh] sm:max-h-[92vh] flex-col overflow-y-auto px-5 pb-8 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
               {modeLabel}
@@ -463,7 +463,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-10 sm:py-6 pb-4 sm:pt-0"
       role="dialog"
       aria-modal="true"
       aria-label={content.compareTitle}
@@ -475,7 +475,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
     >
       <div
         ref={modalRef}
-        className={`search-compare-modal search-compare-modal-${tone} relative flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-[1.75rem] border`}
+        className={`search-compare-modal search-compare-modal-${tone} relative flex max-h-[88vh] sm:max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-[1.75rem] border`}
         onClick={(event) => event.stopPropagation()}
         style={{
           opacity: isOpen ? 1 : 0,
@@ -489,13 +489,14 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
         <button
           type="button"
           onClick={requestClose}
-          className="search-modal-close absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all"
-          aria-label={content.closeCompare}
+          className="search-modal-close absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full transition-all lg:right-4 lg:top-4"
+          style={{ top: "env(safe-area-inset-top, 12px)", margin: "8px" }}
+          aria-label={content.closeDetails}
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className={`search-modal-banner search-compare-banner search-compare-banner-${tone} relative px-5 py-5 sm:px-6 lg:px-8 lg:py-6`}>
+        <div className={`search-modal-banner search-compare-banner search-compare-banner-${tone} relative px-5 pt-14 pb-4 sm:pt-5 sm:pb-5 sm:px-6 lg:px-8 lg:py-6`}>
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
               {content.compareAction}
@@ -512,11 +513,11 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
           </h3>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 pb-5 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
+        <div className="flex-1 overflow-y-auto px-5 pb-10 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
           <div className="grid gap-5 lg:grid-cols-2">
             <div className="search-modal-panel rounded-[1.5rem] p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[8px] lg:text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
                   {content.queryImageLabel}
                 </span>
                 {comparisonSource.meta && (
@@ -525,8 +526,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
                   </span>
                 )}
               </div>
-              <div className={`search-compare-frame search-compare-frame-${tone} relative mt-4 flex min-h-[300px] items-center justify-center overflow-hidden rounded-[1.25rem] p-5`}>
-                <img
+                <div className={`search-compare-frame search-compare-frame-${tone} relative mt-4 flex min-h-[160px] sm:min-h-[300px] items-center justify-center overflow-hidden rounded-[1.25rem] p-5`}>                <img
                   src={comparisonSource.src}
                   alt={comparisonSource.alt}
                   className="search-detail-image relative z-10 max-h-[58vh] w-full rounded-[1.15rem] object-contain"
@@ -536,7 +536,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
 
             <div className="search-modal-panel rounded-[1.5rem] p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[8px] lg:text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
                   {content.selectedImageLabel}
                 </span>
                 <span className="max-w-[60%] truncate text-[11px] font-medium text-muted">
@@ -659,7 +659,7 @@ function ResultCard({
           : undefined
       }
     >
-      <div ref={previewRef} className="search-result-preview bg-bg border-b border-border relative h-56 shrink-0">
+      <div ref={previewRef} className="search-result-preview bg-bg border-b border-border relative h-44 sm:h-56 shrink-0">
         {imageFailed ? (
           <div className="w-full h-full flex items-center justify-center text-[11px] text-muted bg-bg px-4 text-center">
             Image indisponible

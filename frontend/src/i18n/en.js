@@ -445,25 +445,79 @@ export const en = {
   // About Page
   about: {
     headline: "About MEDISCAN AI",
+    eyebrow: "University Prototype",
     description:
-      "MEDISCAN AI is a university prototype focused on medical image retrieval, fast experimentation, and code transparency.",
+      "A university project combining computer vision, vector search, and language models to assist medical image interpretation through similarity retrieval.",
+    missionVision: "Mission & Vision",
     mission: {
       title: "Our Mission",
-      text: "Make medical image search accessible and efficient — allowing clinicians and researchers to find relevant cases from large databases using either an image or a text description.",
+      image: "/mission.png",
+      image_d: "/mission_d.png",
+      text: "Enable healthcare professionals to search medical image archives by visual or semantic similarity, and obtain a fast, contextualized AI-assisted interpretation.",
     },
     vision: {
       title: "Our Goal",
-      text: "Bridge the gap between raw medical image archives and practical retrieval experiments through a fast and understandable biomedical search stack.",
+      image: "/goal.png",
+      image_d: "/goal_d.png",
+      text: "Build a first step toward AI-assisted diagnostic tools — respecting medical data confidentiality and improving continuously through new data.",
+    },
+    architecture: {
+      title: "How It Works",
+      cards: [
+        {
+          image: "/vector.png",
+          image_d: "/vector_d.png",
+          title: "Vector Encoding",
+          text: "Two modes: visual (DINOv2) for structural similarity, and semantic (BioMedCLIP) for medical meaning. Each image is embedded into a multidimensional vector space.",
+        },
+        {
+          image: "/faiss_about.png",
+          image_d: "/faiss_about_d.png",
+          title: "FAISS Similarity Search",
+          text: "High-performance vector engine retrieving the top-k closest images with similarity scores, captions, and file references.",
+        },
+        {
+          image: "/llm.png",
+          image_d: "/llm_d.png",
+          title: "LLM Interpretation",
+          text: "Captions from matched results are sent to a language model (Groq + LLaMA) to generate a synthetic medical conclusion with confidence level and recommendations.",
+        },
+        {
+          image: "/export.png",
+          image_d: "/export_d.png",
+          title: "Export",
+          text: "Results can be exported as JSON, CSV, or PDF with images for further analysis or reporting.",
+        },
+      ],
+    },      
+    pipeline: {
+      title: "Processing Pipeline",
+      steps: [
+        { title: "Image Upload", desc: "User sends a medical image via the React interface." },
+        { title: "Embedding", desc: "Image is transformed into a numerical vector (visual or semantic mode)." },
+        { title: "Similarity Search", desc: "FAISS compares the vector against the indexed database → top-k results." },
+        { title: "Display & Filtering", desc: "Interactive image grid with sorting, score filtering, and text search." },
+        { title: "AI Analysis", desc: "Result captions are sent to Groq + LLaMA for a synthetic medical conclusion." },
+        { title: "Export", desc: "Download results as JSON, CSV, or PDF with images." },
+      ],
+    },
+    stack: {
+      title: "Tech Stack",
+      items: ["React", "FastAPI", "FAISS", "DINOv2", "BioMedCLIP", "Groq", "LLaMA", "Python", "NumPy"],
     },
     team: {
       title: "Meet the Team",
-      members: [],
+      members: [
+        { name: "Taouache Rayane", color: "semantic", photo : "/photo-rayane.jpeg", github: "https://github.com/RayaneWebDev" },
+        { name: "Ozan Taskin",     color: "visual", photo : "/photo-ozan.jpeg", github: "https://github.com/OzanTaskin" },
+        { name: "Ales Ferhani",    color: "semantic", photo : "/photo-ales.jpeg", github: "https://github.com/ales-frhn" },
+        { name: "Maxime Huang",    color: "visual", photo : "/photo-maxime.jpeg", github: "https://github.com/Somixe" },
+      ],
     },
-    cta: {
-      title: "Want to Learn More?",
-      description: "Reach out to our team and discover how MEDISCAN AI can help your organization.",
-      buttonText: "Contact Us",
-    },
+    disclaimer: {
+      note : "Note:",
+      text: "This system is an assistive tool intended for qualified healthcare professionals. It does not replace clinical judgment and is not a certified medical device.",
+    }, 
   },
   // Contact Page
   contact: {
@@ -473,7 +527,7 @@ export const en = {
     supportDesc: "For any technical question or feedback about MediScan.",
     supportAddr: "mediscanaisupport@gmail.com",
     responseLabel: "Response time",
-    responseDesc: "We typically respond within 24 hours on business days.",
+    responseDesc: "Response within 24h (business days)",
     sentTitle: "Message sent",
     sentDesc: "Your message has been sent to the MEDISCAN team. We will get back to you shortly.",
     sentAnother: "Send another message",
@@ -582,7 +636,7 @@ export const en = {
     categories: {
       general: "General",
       technical: "Technical",
-      security: "Security & Privacy"
+      security: "Security"
     },
     items: [
       { 
@@ -590,6 +644,7 @@ export const en = {
         q: "What is the main purpose of MEDISCAN AI?", 
         r: "MEDISCAN AI is a university prototype for medical image retrieval. It helps explore visually or semantically similar cases from a dataset, but it is not a clinical decision system." 
       },
+
       { 
         category: "general",
         q: "Who can use the platform?", 
@@ -600,12 +655,39 @@ export const en = {
         q: "Is it a diagnostic tool?", 
         r: "No. It is a non-clinical prototype that returns similar cases and optional AI summaries for exploration only." 
       },
+
+      { category: "general", 
+        q: "What dataset is used?", 
+        r: "The prototype uses ROCO v2, a public medical imaging dataset (X-rays, CT scans, MRI), filtered and annotated for similarity search experiments. The dataset contains approximately 60,000 images stored and served from Hugging Face.",
+        link: { label: "Learn more about ROCO v2", url: "https://huggingface.co/datasets/eltorio/ROCO-radiology" }
+      },
+
+      { category: "general", 
+        q: "Is the project open source?", 
+        r: "Yes, the source code is available on GitHub. The project is developed within a university context.",
+        link: { label: "View on GitHub", url: "https://github.com/OzanTaskin/mediscan-cbir" }
+      },
       
+      // TECHNICAL
+
       { 
         category: "technical",
         q: "How does the 'Visual Search' differ from 'Interpretive Search'?", 
         r: "Visual Search focuses on structural similarity in the image. Interpretive Search relies on a semantic embedding space to retrieve cases with similar caption-level meaning." 
       },
+
+      { category: "technical", 
+        q: "What AI model is used for visual search?", 
+        r: "Visual search uses DINOv2 (Meta AI), a self-supervised Vision Transformer trained on 142 million images. It produces high-quality embeddings for visual similarity without requiring fine-tuning.",
+        link: { label: "Learn more about DINOv2", url: "https://ai.meta.com/blog/dino-v2-computer-vision-self-supervised-learning/" }
+      },
+
+      { category: "technical", 
+        q: "What AI model is used for semantic and text-image search?", 
+        r: "Interpretive search uses BiomedCLIP (Microsoft Research), a model trained on 15 million medical image-text pairs from PubMed Central. It provides rich semantic representations for radiology and histology images.",
+        link: { label: "Learn more about BiomedCLIP", url: "https://www.microsoft.com/en-us/research/publication/biomedclip-a-multimodal-biomedical-foundation-model-pretrained-from-fifteen-million-scientific-image-text-pairs/" }
+      },
+
       { 
         category: "technical",
         q: "Does it integrate with existing PACS/DICOM systems?", 
@@ -632,7 +714,13 @@ export const en = {
         category: "security",
         q: "How is the data encrypted?", 
         r: "Encryption depends on your deployment. Local development does not by itself guarantee TLS, encrypted storage, or regulated hosting controls." 
-      }
+      },
+
+      { category: "security", 
+        q: "Does the dataset contain patient data?", 
+        r: "No. The image dataset contains no directly identifiable data." 
+      },
+
     ],
     contactTitle: "Still have questions?",
     contactBtn: "Contact our team"

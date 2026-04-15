@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { LangContext } from "../context/LangContext";
-import { Plus, Minus, ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import Spinner from "./Spinner";
 
 export default function FAQPage({ onPageChange }) {
@@ -21,87 +21,91 @@ export default function FAQPage({ onPageChange }) {
   const filteredItems = content.items.filter(item => item.category === activeTab);
 
   return (
-    <div className="bg-transparent flex flex-col">
-      <section className="page-container py-24 flex-grow" style={{ maxWidth: '850px' }}>
+    <div className="bg-transparent">
+      <div className="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24">
 
-        <div className="mb-16">
-          <h1 className="text-4xl font-bold text-title tracking-tight mb-4">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-title tracking-tight mb-4 leading-tight">
             {content.headline}
           </h1>
-          <p className="text-lg text-muted/70 font-light">
+          <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
             {content.description}
           </p>
         </div>
 
-        {/* Tabs catégories */}
-        <div className="flex flex-wrap gap-8 mb-12 border-b border-border/40">
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 mb-10">
           {Object.entries(content.categories).map(([key, label]) => (
             <button
               key={key}
-              onClick={() => {
-                setActiveTab(key);
-                setOpenIndex(null);
-              }}
-              className={`pb-4 text-[15px] font-semibold transition-all relative ${
-                activeTab === key ? "text-primary" : "text-muted hover:text-text"
+              onClick={() => { setActiveTab(key); setOpenIndex(null); }}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                activeTab === key
+                  ? "bg-text text-bg"
+                  : "bg-transparent border border-border text-muted hover:text-text hover:border-text/30"
               }`}
             >
               {label}
-              {activeTab === key && (
-                <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-primary animate-in fade-in duration-300" />
-              )}
             </button>
           ))}
         </div>
 
         {/* Accordéon */}
-        <div className="min-h-[450px]">
+        <div className="flex flex-col gap-2">
           {filteredItems.map((item, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={index} className="border-b border-border/60 group">
+              <div
+                key={index}
+                className="rounded-2xl border border-border bg-bg overflow-hidden transition-all duration-200 hover:border-text/20"
+              >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full flex items-center justify-between py-8 text-left focus:outline-none transition-all"
+                  className="w-full flex items-center justify-between px-6 py-5 text-left focus:outline-none"
                 >
-                  <span className={`text-[18px] font-medium transition-colors duration-300 ${
-                    isOpen ? "text-primary" : "text-title group-hover:text-primary"
-                  }`}>
+                  <span className="text-base font-medium text-title pr-4">
                     {item.q}
                   </span>
-                  <div className="ml-4 flex-shrink-0">
-                    {isOpen ? (
-                      <Minus className="w-5 h-5 text-primary" strokeWidth={1.5} />
-                    ) : (
-                      <Plus className="w-5 h-5 text-muted group-hover:text-primary transition-all" strokeWidth={1.5} />
-                    )}
-                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-muted flex-shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                    strokeWidth={2}
+                  />
                 </button>
-                <div
-                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                    isOpen ? "max-h-80 pb-8 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-                >
-                  <p className="text-muted leading-relaxed text-[17px] max-w-[95%]">
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-80" : "max-h-0"}`}>
+                  <p className="px-6 pb-2 text-sm text-muted leading-relaxed">
                     {item.r}
                   </p>
+                  {item.link && (
+                    <a
+                      href={item.link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center underline gap-1.5 px-6 pb-5 text-sm font-medium text-muted hover:text-text transition-colors duration-200"
+                    >
+                      {item.link.label}
+                      <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
+                    </a>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* CTA Contact */}
-        <div className="mt-20 pt-10 border-t border-border/20 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <p className="text-muted text-sm">{content.contactTitle}</p>
+        {/* CTA */}
+        <div className="mt-12 p-6 rounded-2xl border border-border bg-bg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <p className="text-sm text-muted">{content.contactTitle}</p>
           <button
             onClick={() => onPageChange('contact')}
-            className="text-primary font-semibold hover:underline underline-offset-8 flex items-center gap-2 transition-all cursor-pointer bg-transparent border-none"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-text hover:gap-3 transition-all duration-200"
           >
-            {content.contactBtn} <ArrowRight className="w-4 h-4" />
+            {content.contactBtn}
+            <ArrowRight className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
-      </section>
+
+      </div>
     </div>
   );
 }

@@ -10,7 +10,10 @@ export default function Navigation({
 }) {
   const { t } = useContext(LangContext);
   const [scrollHidden, setScrollHidden] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeBoxStyle, setActiveBoxStyle] = useState({ width: 0, x: 0, opacity: 0 });
+  
   const lastY = useRef(0);
   const turnY = useRef(0);
   const goingDown = useRef(true);
@@ -18,53 +21,65 @@ export default function Navigation({
   const tabRefs = useRef({});
 
   useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
+  }, [isMenuOpen]);
+
+  const handlePageChange = (id) => {
+    setIsMenuOpen(false); 
+    onPageChange(id);
+  };
+
+  useEffect(() => {
     function onScroll() {
       const y = window.scrollY;
+      setIsScrolled(y > 10);
+      if (isMenuOpen || window.innerWidth < 768) {
+        setScrollHidden(false);
+        return;
+      }
       const down = y > lastY.current;
-
       if (down !== goingDown.current) {
         turnY.current = lastY.current;
         goingDown.current = down;
       }
-
       if (down && y > 300) setScrollHidden(true);
       if (!down && turnY.current - y > 60) setScrollHidden(false);
       if (y <= 10) setScrollHidden(false);
-
       lastY.current = y;
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isMenuOpen]);
 
-  useEffect(() => {
-    lastY.current = window.scrollY;
-    turnY.current = window.scrollY;
-    goingDown.current = true;
-  }, [currentPage]);
-
-  useEffect(() => {
-    function updateActiveBox() {
-      const shell = shellRef.current;
-      const activeTab = tabRefs.current[currentPage];
-
-      if (!shell || !activeTab) {
-        setActiveBoxStyle((prev) => ({ ...prev, opacity: 0 }));
-        return;
-      }
-
-      setActiveBoxStyle({
-        width: activeTab.offsetWidth,
-        x: activeTab.offsetLeft,
-        opacity: 1,
-      });
+useEffect(() => {
+  function updateActiveBox() {
+    const shell = shellRef.current;
+    const activeTab = tabRefs.current[currentPage];
+    
+    if (!shell || !activeTab) {
+      setActiveBoxStyle((prev) => ({ ...prev, opacity: 0 }));
+      return;
     }
 
-    updateActiveBox();
-    window.addEventListener("resize", updateActiveBox);
+    const offset = activeTab.getBoundingClientRect().left - shell.getBoundingClientRect().left;
 
-    return () => window.removeEventListener("resize", updateActiveBox);
-  }, [currentPage, t.nav.home, t.nav.scan, t.nav.features, t.nav.contact, t.nav.aboutUs]);
+    setActiveBoxStyle({
+      width: activeTab.offsetWidth,
+      x: offset,
+      opacity: 1,
+    });
+  }
+
+  updateActiveBox();
+
+  const timer = setTimeout(updateActiveBox, 100);
+
+  window.addEventListener("resize", updateActiveBox);
+  return () => {
+    window.removeEventListener("resize", updateActiveBox);
+    clearTimeout(timer);
+  };
+}, [currentPage, t.nav]); 
 
   const show = visible && !scrollHidden;
 
@@ -84,71 +99,96 @@ export default function Navigation({
   ];
 
   return (
-    <nav
-      className="sticky top-0 z-50 bg-transparent"
-      style={{
-        opacity: show ? 1 : 0,
-        transform: show ? "translateY(0)" : "translateY(-100%)",
-        pointerEvents: show ? "auto" : "none",
-        transition: "opacity 500ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1)",
-        willChange: "opacity, transform",
-      }}
-    >
-      <div className="nav-outer w-full px-4 md:px-6 lg:px-8">
-        <div className="nav-grid grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 md:h-20">
-          <button
-            onClick={() => onPageChange("home")}
-            className="nav-brand justify-self-start hover:opacity-95 transition-opacity"
-          >
-            <img
-              src="/Logo-2.svg"
-              alt="MEDISCAN AI"
-              className="nav-logo h-[clamp(32px,8vw,48px)] w-auto object-contain object-left"
-            />
-          </button>
+    <>
+      <nav
+        className="sticky top-0 z-[9999] w-full transition-all duration-300"
+        style={{
+          opacity: show ? 1 : 0,
+          transform: show ? "translateY(0)" : "translateY(-100%)",
+          backgroundColor: (isScrolled || isMenuOpen) ? "var(--palette-bg)" : "transparent",
+          borderBottom: (isScrolled || isMenuOpen) ? "1px solid var(--palette-border)" : "1px solid transparent",
+        }}
+      >
+        <div className="relative z-[1200] w-full px-6">
+          <div className="flex h-16 items-center justify-between md:grid md:h-20 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-4 lg:px-8">
+            
+            <button onClick={() => handlePageChange("home")} className="z-[1300] outline-none">
+              <img src="/Logo-2.svg" alt="LOGO" className="h-8 md:h-10 w-auto object-contain" />
+            </button>
 
-          <div
-            ref={shellRef}
-            className={`nav-shell-track justify-self-center flex items-center gap-[0.5vw] overflow-hidden rounded-2xl px-[1vw] py-1.5 ${shellToneClass}`}
-            style={{
-              transition:
-                "background-color var(--motion-enter-duration) var(--motion-enter-ease), border-color var(--motion-enter-duration) var(--motion-enter-ease), box-shadow var(--motion-enter-duration) var(--motion-enter-ease)",
-            }}
-          >
-            <div
-              aria-hidden="true"
-              className="nav-active-indicator"
-              style={{
-                width: `${activeBoxStyle.width}px`,
-                transform: `translate3d(${activeBoxStyle.x}px, 0, 0)`,
-                opacity: activeBoxStyle.opacity,
-              }}
-            />
+            <div ref={shellRef} className={`hidden md:flex nav-shell-track justify-self-center items-center gap-[0.5vw] overflow-hidden rounded-2xl px-[1vw] py-1.5 ${shellToneClass}`}>
+              <div 
+                aria-hidden="true" 
+                className="nav-active-indicator" 
+                style={{ 
+                  position: 'absolute',
+                  left: 0, 
+                  width: `${activeBoxStyle.width}px`, 
+                  transform: `translateX(${activeBoxStyle.x}px)`, 
+                }} 
+              />
+              {mainTabs.map((tab) => (
+                <button key={tab.id} ref={(node) => { tabRefs.current[tab.id] = node; }} onClick={() => handlePageChange(tab.id)} className={`nav-tab relative z-10 px-5 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap ${currentPage === tab.id ? "nav-tab-active" : "nav-tab-inactive"}`}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-            {mainTabs.map((tab) => (
-              <button
-                key={tab.id}
-                ref={(node) => {
-                  tabRefs.current[tab.id] = node;
-                }}
-                onClick={() => onPageChange(tab.id)}
-                className={`nav-tab relative z-10 px-[clamp(0.5rem,1.5vw,1.25rem)] py-1.5 text-[clamp(11px,1.2vw,14px)] font-medium rounded-lg whitespace-nowrap
-                  ${
-                    currentPage === tab.id
-                      ? "nav-tab-active"
-                      : "nav-tab-inactive"
-                  }`}
+            <div className="flex items-center gap-4 z-[1300]">
+              <div className="hidden md:block scale-90 origin-right">
+                <LanguageSelector />
+              </div>
+
+              <button 
+                onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                className="md:hidden flex flex-col justify-center items-center w-6 h-6 relative outline-none"
               >
-                {tab.label}
+                <span className="block h-[1.5px] absolute transition-all duration-300" 
+                  style={{ width: '20px', backgroundColor: "var(--palette-text)", transform: isMenuOpen ? 'rotate(45deg)' : 'translateY(-6px)' }} />
+                <span className="block h-[1.5px] transition-all duration-300" 
+                  style={{ width: '20px', backgroundColor: "var(--palette-text)", opacity: isMenuOpen ? 0 : 1 }} />
+                <span className="block h-[1.5px] absolute transition-all duration-300" 
+                  style={{ width: '20px', backgroundColor: "var(--palette-text)", transform: isMenuOpen ? 'rotate(-45deg)' : 'translateY(6px)' }} />
               </button>
-            ))}
-          </div>
-
-          <div className="nav-settings justify-self-end scale-[clamp(0.8,1vw,1)] origin-right">
-            <LanguageSelector />
+            </div>
           </div>
         </div>
+      </nav>
+
+      <div
+        className={`md:hidden fixed inset-0 z-[9998] transition-all duration-300 ${
+          isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        }`}
+        style={{ backgroundColor: "var(--palette-bg)" }}
+      >
+        <div className="flex flex-col pt-20 px-6 h-full pb-10">
+
+          {mainTabs.map((tab, i) => (
+            <button
+              key={tab.id}
+              onClick={() => handlePageChange(tab.id)}
+              className="text-left text-[1.3rem] font-medium tracking-tight py-4 transition-opacity active:opacity-40"
+              style={{
+                color: "var(--palette-text)",
+                borderBottom: i < mainTabs.length - 1 ? "1px solid var(--palette-border)" : "none",
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+
+          <div
+            className="flex items-center justify-between mt-8 pt-5"
+            style={{ borderTop: "1px solid var(--palette-border)" }}
+          >
+            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--palette-muted)" }}>
+              {t.nav.settings || "Settings"}
+            </span>
+            <LanguageSelector />
+          </div>
+
+        </div>
       </div>
-    </nav>
+    </>
   );
 }

@@ -73,7 +73,7 @@ function getInitialSearchTone(route) {
 }
 
 function shouldShowFooter(route) {
-  return route.page !== "search" || route.searchView !== "hub";
+  return true;
 }
 
 function getRouteSurface(route) {

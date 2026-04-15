@@ -69,31 +69,30 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-12 items-start">
 
           {/* Left — info cards */}
-          <div className={`lg:col-span-2 flex flex-col gap-4 ${ready ? "by-image-panel-enter-left" : "opacity-0"}`}>
+          <div className={`lg:col-span-2 grid grid-cols-2 lg:grid-cols-1 gap-4 ${ready ? "by-image-panel-enter-left" : "opacity-0"}`}>
 
-            {/* Email card */}
-            <div className="p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-4">
+            <div className="p-4 md:p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-3">
                 <Mail className="w-4.5 h-4.5 text-text" strokeWidth={1.8} />
               </div>
               <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-1">
                 {content.supportLabel}
               </p>
-              <p className="text-sm text-muted leading-relaxed mb-4">
+              <p className="text-sm text-muted leading-relaxed mb-3 hidden md:block">
                 {content.supportDesc}
               </p>
-              <a
-                href={`mailto:${content.supportAddr}`}
+              
+                <a href={`mailto:${content.supportAddr}`}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-text hover:gap-2.5 transition-all duration-200"
               >
-                {content.supportAddr}
+                <span className="hidden md:inline">{content.supportAddr}</span>
+                <span className="md:hidden">Email</span>
                 <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
               </a>
             </div>
 
-            {/* Response time card */}
-            <div className="p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-4">
+            <div className="p-4 md:p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-3">
                 <Clock className="w-4.5 h-4.5 text-text" strokeWidth={1.8} />
               </div>
               <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-1">
@@ -137,7 +136,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="contact-name" className="block text-sm font-medium text-text mb-2">
                       {content.formName}
-                      <span className="text-muted ml-1">*</span>
+                      <span className="text-red-500 font-medium ml-1">*</span>
                     </label>
                     <input
                       id="contact-name"
@@ -155,7 +154,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="contact-email" className="block text-sm font-medium text-text mb-2">
                       {content.formEmail}
-                      <span className="text-muted ml-1">*</span>
+                      <span className="text-red-500 font-medium ml-1">*</span>
                     </label>
                     <input
                       id="contact-email"
@@ -176,7 +175,7 @@ export default function ContactPage() {
                 <div>
                   <label htmlFor="contact-subject" className="block text-sm font-medium text-text mb-2">
                     {content.formSubject}
-                    <span className="text-muted ml-1">*</span>
+                    <span className="text-red-500 font-medium ml-1">*</span>
                   </label>
                   <input
                     id="contact-subject"
@@ -196,7 +195,7 @@ export default function ContactPage() {
                 <div>
                   <label htmlFor="contact-message" className="block text-sm font-medium text-text mb-2">
                     {content.formMessage}
-                    <span className="text-muted ml-1">*</span>
+                    <span className="text-red-500 font-medium ml-1">*</span>
                   </label>
                   <textarea
                     id="contact-message"

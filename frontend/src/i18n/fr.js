@@ -401,7 +401,7 @@ export const fr = {
       compareTitle: "Comparaison",
       queryImageLabel: "Image requete",
       selectedImageLabel: "Resultat correspondant",
-      resultMetadataHint: "Les informations ci-dessous correspondent au resultat selectionne.",
+      resultMetadataHint: "Les informations ci-dessous correspondent au résultat selectionné.",
       resultCaptionLabel: "Caption du resultat",
       resultScoreLabel: "Score du resultat",
       resultCuiLabel: "Code CUI du resultat",
@@ -450,7 +450,7 @@ export const fr = {
     supportDesc: "Pour toute question technique ou retour sur MediScan.",
     supportAddr: "mediscanaisupport@gmail.com",
     responseLabel: "Temps de réponse",
-    responseDesc: "Nous répondons généralement sous 24h les jours ouvrés.",
+    responseDesc: "Réponse sous 24h (jours ouvrés)",
     sentTitle: "Message envoyé",
     sentDesc: "Votre message a bien été transmis à l'équipe MEDISCAN. Nous revenons vers vous rapidement.",
     sentAnother: "Envoyer un autre message",
@@ -467,26 +467,82 @@ export const fr = {
     formPrivacy: "Vos informations ne seront jamais partagées.",
     errorGeneric: "Impossible d'envoyer votre message pour le moment. Merci de réessayer plus tard.",
   },
+
+  //About Page
   about: {
     headline: "À propos de MEDISCAN AI",
+    eyebrow: "Prototype universitaire",
     description:
-      "MEDISCAN AI est un prototype universitaire centré sur la recherche d'images médicales, l'expérimentation rapide et la transparence du code.",
+      "Un projet universitaire combinant vision par ordinateur, recherche vectorielle et modèles de langage afin d'assister l'interprétation d'images médicales par recherche de similarité.",
+    missionVision: "Mission & Vision",
     mission: {
-      title: "Notre Mission",
-      text: "Rendre la recherche d'images médicales accessible et efficace — permettre aux cliniciens et chercheurs de retrouver des cas pertinents dans de grandes bases de données, à partir d'une image ou d'une description textuelle.",
+      title: "Notre mission",
+      image: "/mission.png",
+      image_d: "/mission_d.png",
+      text: "Permettre aux professionnels de santé de rechercher dans des archives d'images médicales par similarité visuelle ou sémantique, et d'obtenir une interprétation assistée par IA rapide et contextualisée.",
     },
     vision: {
-      title: "Notre Objectif",
-      text: "Réduire l'écart entre des archives d'images médicales brutes et des expérimentations concrètes de recherche grâce à une pile biomédicale rapide et compréhensible.",
+      title: "Notre objectif",
+      image: "/goal.png",
+      image_d: "/goal_d.png",
+      text: "Construire une première étape vers des outils d'aide au diagnostic basés sur l'IA — en respectant la confidentialité des données médicales et en s'améliorant continuellement grâce à de nouvelles données.",
+    },
+    architecture: {
+      title: "Fonctionnement",
+      cards: [
+        {
+          image: "/vector.png",
+          image_d: "/vector_d.png",
+          title: "Encodage vectoriel",
+          text: "Deux modes : visuel (DINOv2) pour la similarité structurelle, et sémantique (BioMedCLIP) pour le sens médical. Chaque image est transformée en un vecteur multidimensionnel.",
+        },
+        {
+          image: "/faiss_about.png",
+          image_d: "/faiss_about_d.png",
+          title: "Recherche de similarité FAISS",
+          text: "Moteur vectoriel haute performance récupérant les k images les plus proches avec scores de similarité, légendes et références de fichiers.",
+        },
+        {
+          image: "/llm.png",
+          image_d: "/llm_d.png",
+          title: "Interprétation LLM",
+          text: "Les légendes des résultats correspondants sont envoyées à un modèle de langage (Groq + LLaMA) pour générer une conclusion médicale synthétique avec un niveau de confiance et des recommandations.",
+        },
+        {
+          image: "/export.png",
+          image_d: "/export_d.png",
+          title: "Export",
+          text: "Les résultats peuvent être exportés en JSON, CSV ou PDF avec les images pour une analyse ou un reporting ultérieur.",
+        },
+      ],
+    },
+    pipeline: {
+      title: "Pipeline de traitement",
+      steps: [
+        { title: "Téléversement de l’image", desc: "L’utilisateur envoie une image médicale via l’interface React." },
+        { title: "Vectorisation", desc: "L’image est transformée en vecteur numérique (mode visuel ou sémantique)." },
+        { title: "Recherche de similarité", desc: "FAISS compare le vecteur à la base indexée → top-k résultats." },
+        { title: "Affichage et filtrage", desc: "Grille d’images interactive avec tri, filtrage par score et recherche textuelle." },
+        { title: "Analyse IA", desc: "Les légendes des résultats sont envoyées à Groq + LLaMA pour une conclusion médicale synthétique." },
+        { title: "Export", desc: "Téléchargement des résultats en JSON, CSV ou PDF avec images." },
+      ],
+    },
+    stack: {
+      title: "Stack technique",
+      items: ["React", "FastAPI", "FAISS", "DINOv2", "BioMedCLIP", "Groq", "LLaMA", "Python", "NumPy"],
     },
     team: {
-      title: "Rencontrez l'Équipe",
-      members: [],
+      title: "L’équipe",
+      members: [
+        { name: "Taouache Rayane", color: "semantic", photo : "/photo-rayane.jpeg", github: "https://github.com/RayaneWebDev" },
+        { name: "Ozan Taskin",     color: "visual", photo : "/photo-ozan.jpeg", github: "https://github.com/OzanTaskin" },
+        { name: "Ales Ferhani",    color: "semantic", photo : "/photo-ales.jpeg", github: "https://github.com/ales-frhn" },
+        { name: "Maxime Huang",    color: "visual", photo : "/photo-maxime.jpeg", github: "https://github.com/Somixe" },
+      ],
     },
-    cta: {
-      title: "Vous voulez en savoir plus ?",
-      description: "Contactez notre équipe et découvrez comment MEDISCAN AI peut aider votre organisation.",
-      buttonText: "Nous Contacter",
+    disclaimer: {
+      note : "Remarque:",
+      text: "Ce système est un outil d’assistance destiné aux professionnels de santé qualifiés. Il ne remplace pas le jugement clinique et n’est pas un dispositif médical certifié.",
     },
   },
 
@@ -581,7 +637,7 @@ export const fr = {
     categories: {
       general: "Général",
       technical: "Technique",
-      security: "Sécurité et Confidentialité"
+      security: "Sécurité"
     },
     items: [
       // --- GÉNÉRAL ---
@@ -600,6 +656,25 @@ export const fr = {
         q: "S'agit-il d'un outil de diagnostic ?", 
         r: "Non. C'est un prototype non clinique qui retourne des cas similaires et des synthèses IA optionnelles à titre exploratoire uniquement." 
       },
+
+      { 
+        category: "general", 
+        q: "Quel jeu de données est utilisé ?", 
+        r: "Le prototype utilise ROCO v2, un jeu de données public d'imagerie médicale (rayons X, scanners, IRM), filtré et annoté pour des expériences de recherche par similitude. La base contient environ 60 000 images stockées et servies depuis Hugging Face.",
+        link: { 
+          label: "En savoir plus sur ROCO v2", 
+          url: "https://huggingface.co/datasets/eltorio/ROCO-radiology" 
+        }
+      },
+      { 
+        category: "general", 
+        q: "Le projet est-il open source ?", 
+        r: "Oui, le code source est disponible sur GitHub. Le projet est développé dans un cadre universitaire.",
+        link: { 
+          label: "Voir sur GitHub", 
+          url: "https://github.com/OzanTaskin/mediscan-cbir" 
+        }
+      },
       
       // --- TECHNIQUE ---
       { 
@@ -607,6 +682,19 @@ export const fr = {
         q: "Quelle est la différence entre la recherche 'Visuelle' et la recherche 'Interprétative' ?", 
         r: "La recherche visuelle se concentre sur la similarité structurelle de l'image. La recherche interprétative s'appuie sur un espace sémantique pour retrouver des cas dont la légende exprime un sens proche." 
       },
+
+      { category: "technical", 
+        q: "Quel modèle IA est utilisé pour la recherche visuelle ?", 
+        r: "La recherche visuelle utilise DINOv2 (Meta AI), un Vision Transformer auto-supervisé entraîné sur 142 millions d'images. Il produit des embeddings de haute qualité pour la similarité visuelle sans nécessiter de fine-tuning.",
+        link: { label: "En savoir plus sur DINOv2", url: "https://ai.meta.com/blog/dino-v2-computer-vision-self-supervised-learning/" }
+      },
+
+      { category: "technical", 
+        q: "Quel modèle IA est utilisé pour la recherche sémantique et texte-image ?", 
+        r: "La recherche interprétative utilise BiomedCLIP (Microsoft Research), un modèle entraîné sur 15 millions de paires image-texte médicales issues de PubMed Central. Il offre une représentation sémantique riche pour les images radiologiques.",
+        link: { label: "En savoir plus sur BiomedCLIP", url: "https://www.microsoft.com/en-us/research/publication/biomedclip-a-multimodal-biomedical-foundation-model-pretrained-from-fifteen-million-scientific-image-text-pairs/" }
+      },
+      
       { 
         category: "technical",
         q: "S'intègre-t-il aux systèmes PACS/DICOM existants ?", 
@@ -633,7 +721,13 @@ export const fr = {
         category: "security",
         q: "Comment les données sont-elles cryptées ?", 
         r: "Le chiffrement dépend de votre déploiement. Un environnement local de développement ne garantit pas à lui seul TLS, stockage chiffré ou hébergement conforme." 
-      }
+      },
+
+      { 
+        category: "security", 
+        q: "Le jeu de données contient-il des données patients ?", 
+        r: "Non. Le jeu de données d'images ne contient aucune donnée directement identifiable." 
+      },
     ],
     contactTitle: "Vous avez encore des questions ?",
     contactBtn: "Contactez notre équipe"

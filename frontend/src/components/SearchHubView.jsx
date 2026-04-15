@@ -42,14 +42,14 @@ function SearchChoiceCard({
       }}
     >
       <div className="search-hub-card-content">
-        <div className={`mb-6 ${toneClasses.iconShell}`}>
+        <div className={`mb-3 md:mb-6 ${toneClasses.iconShell}`}>
           {icon}
         </div>
 
-        <h2 className="search-hub-card-title mb-3 text-2xl font-bold">{title}</h2>
-        <p className="search-hub-card-description mb-6">{description}</p>
+        <h2 className="search-hub-card-title mb-2 md:mb-3 text-2xl font-bold">{title}</h2>
+        <p className="search-hub-card-description mb-3 md:mb-6">{description}</p>
 
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-4 md:mb-8 flex flex-wrap gap-2">
           {features.map((feature) => (
             <span key={feature} className={toneClasses.chip}>
               {feature}
@@ -82,14 +82,14 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
   }, []);
 
   return (
-    <div className={`${useSharedSurface ? "bg-transparent" : "search-hub-surface"} relative box-border h-[calc(100dvh-4rem)] overflow-x-hidden overflow-y-auto px-6 py-8 md:h-[calc(100dvh-5rem)] md:py-12`}>
+    <div className={`${useSharedSurface ? "bg-transparent" : "search-hub-surface"} relative box-border min-h-[calc(100dvh-4rem)] overflow-x-hidden overflow-y-auto px-6 py-8 pb-16 md:min-h-[calc(100dvh-5rem)] md:py-12`}>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-8%] top-[10%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute right-[-6%] top-[20%] h-80 w-80 rounded-full bg-accent/12 blur-3xl" />
         <div className="absolute bottom-[-8%] left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-primary/6 blur-3xl" />
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1120px] flex-col items-center justify-start pt-10 md:pt-14">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col items-center justify-start pt-0 md:pt-14 pb-10">
         <section
           className="mb-10 w-full max-w-[760px] text-center md:mb-12"
           style={{

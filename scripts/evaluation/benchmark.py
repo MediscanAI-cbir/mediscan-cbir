@@ -1,4 +1,18 @@
-"""Measure retrieval performance metrics for MEDISCAN."""
+"""
+Measure retrieval performance metrics for MEDISCAN.
+ 
+This script benchmarks the end-to-end retrieval pipeline (embedding + FAISS search)
+for a given mode (visual or semantic). It runs a configurable number of queries
+against a FAISS index, computes timing statistics, checks predefined thresholds,
+and exports results to a CSV file.
+ 
+Typical usage::
+    - python benchmark.py --mode visual --k 10 --n-queries 50
+ 
+Output:
+    - A CSV file saved in "proofs/perf/" containing per-query timings and
+      aggregate statistics (min, max, mean, dispersion, stability ratio).
+"""
 
 from __future__ import annotations
 
@@ -18,11 +32,14 @@ from mediscan.runtime import build_embedder, default_config_for_mode, resolve_pa
 
 configure_cpu_environment()
 
+""" Maximum acceptable mean end-to-end latency (seconds). """
 SEUIL_TE2E_30K = 5.0
+""" Maximum acceptable stability ratio (dispersion / mean) across queries. """
 SEUIL_STABILITE = 0.20
 
 
 def parse_args() -> argparse.Namespace:
+    """ Parse and return command-line arguments. """
     parser = argparse.ArgumentParser(description="Benchmark MEDISCAN retrieval")
     parser.add_argument("--mode", default="visual", choices=("visual", "semantic"))
     parser.add_argument("--k", type=int, default=10)
@@ -38,6 +55,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_index(index_path: Path) -> faiss.Index:
+    """
+    Load a FAISS index from disk.
+ 
+    Raises
+    ------
+    FileNotFoundError
+        If "index_path" does not exist.
+    """
     if not index_path.exists():
         raise FileNotFoundError(f"Index FAISS introuvable : {index_path}")
     index = faiss.read_index(str(index_path))
@@ -46,6 +71,16 @@ def load_index(index_path: Path) -> faiss.Index:
 
 
 def pick_query_images(images_dir: Path, n: int, seed: int) -> list[Path]:
+    """
+    Randomly sample "n" images from a directory.
+ 
+    Raises
+    ------
+    FileNotFoundError
+        If no images are found in "images_dir".
+    ValueError
+        If "n" exceeds the number of available images.
+    """
     all_images = sorted(images_dir.glob("*.png")) + sorted(images_dir.glob("*.jpg"))
     if not all_images:
         raise FileNotFoundError(f"Aucune image trouvée dans {images_dir}")
@@ -55,6 +90,33 @@ def pick_query_images(images_dir: Path, n: int, seed: int) -> list[Path]:
 
 
 def measure_one_query(image_path: Path, embedder, index: faiss.Index, k: int) -> dict[str, float]:
+    """
+    Run a single retrieval query and return its timing breakdown.
+ 
+    Opens the image, encodes it into a normalised embedding vector, and runs
+    a FAISS nearest-neighbour search. Returns four timing metrics (in seconds):
+ 
+    - "tembed"  : image encoding time
+    - "tsearch" : FAISS search time
+    - "tserver" : combined server-side time ("tembed + tsearch")
+    - "te2e"    : total end-to-end wall-clock time
+ 
+    Parameters
+    ----------
+    image_path : Path
+        Path to the query image file.
+    embedder : any
+        Embedder instance with an ``encode_pil(image)`` method and a ``dim`` attribute.
+    index : faiss.Index
+        FAISS index to search against.
+    k : int
+        Number of nearest neighbours to retrieve.
+ 
+    Returns
+    -------
+    dict[str, float]
+        Keys: "tembed", "tsearch", "tserver", "te2e".
+    """
     te2e_start = time.perf_counter()
 
     with Image.open(image_path) as image:
@@ -82,6 +144,14 @@ def measure_one_query(image_path: Path, embedder, index: faiss.Index, k: int) ->
 
 
 def compute_stats(values: list[float]) -> dict[str, float]:
+    """
+    Compute min, max, mean, dispersion and stability ratio for a list of values.
+ 
+    Returns
+    -------
+    dict[str, float]
+        Keys: "min", "max", "moyenne", "dispersion", "stabilite_ratio".
+    """
     minimum = min(values)
     maximum = max(values)
     average = sum(values) / len(values)
@@ -97,6 +167,7 @@ def compute_stats(values: list[float]) -> dict[str, float]:
 
 
 def check_seuils(stats_te2e: dict[str, float]) -> None:
+    """ Print a threshold check for mean end-to-end latency and stability ratio. """
     average = stats_te2e["moyenne"]
     stability = stats_te2e["stabilite_ratio"]
     print(f"te2e moyen: {average:.3f}s (seuil <= {SEUIL_TE2E_30K}s)")
@@ -111,6 +182,32 @@ def save_csv(
     k: int,
     n_images: int,
 ) -> Path:
+    """
+    Save per-query timings and aggregate statistics to a timestamped CSV file.
+ 
+    The file is written to ``output_dir/perf_measures_<timestamp>.csv`` and
+    contains two sections: individual query rows followed by a statistics block.
+ 
+    Parameters
+    ----------
+    results : list[dict[str, float]]
+        Per-query timing dictionaries, as returned by :func:"measure_one_query".
+    stats : dict[str, dict[str, float]]
+        Per-metric statistics, as returned by :func:"compute_stats".
+    output_dir : Path
+        Destination directory (created if absent).
+    mode : str
+        Retrieval mode used ("visual" or "semantic").
+    k : int
+        Number of nearest neighbours retrieved per query.
+    n_images : int
+        Total number of vectors in the FAISS index.
+ 
+    Returns
+    -------
+    Path
+        Path to the saved CSV file.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     csv_path = output_dir / f"perf_measures_{timestamp}.csv"
@@ -148,6 +245,28 @@ def save_csv(
 
 
 def main() -> None:
+    """
+    Entry point for the MEDISCAN benchmark script.
+ 
+    Orchestrates the full benchmark pipeline:
+ 
+    1. Parse and validate CLI arguments.
+    2. Load the FAISS index and initialise the embedder.
+    3. Check dimension compatibility between index and embedder.
+    4. Sample query images and run warmup passes (excluded from metrics).
+    5. Run the measured queries and collect timing results.
+    6. Compute statistics and check performance thresholds.
+    7. Export results to a timestamped CSV file.
+ 
+    Raises
+    ------
+    ValueError
+        If "--k", "--n-queries", or "--n-warmup" receive invalid values.
+    RuntimeError
+        If the FAISS index dimension does not match the embedder output dimension.
+    FileNotFoundError
+        If the index file or images directory cannot be found.
+    """
     args = parse_args()
     if args.k <= 0:
         raise ValueError("--k doit être strictement positif")
@@ -187,7 +306,6 @@ def main() -> None:
 
     csv_path = save_csv(results, stats, resolve_path(args.output_dir), args.mode, args.k, index.ntotal)
     print(f"Résultats sauvegardés : {csv_path}")
-
 
 if __name__ == "__main__":
     main()

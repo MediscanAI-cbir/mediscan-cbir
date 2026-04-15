@@ -29,13 +29,13 @@ export default function Footer({ onPageChange }) {
 
   return (
     <footer className="bg-footer text-on-strong border-t border-border mt-auto">
-      <div className="max-w-[1320px] mx-auto px-6 md:px-12 lg:px-16 py-16 md:py-20">
+      <div className="max-w-[1320px] mx-auto px-6 md:px-12 lg:px-16 py-13 md:py-10">
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 md:gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-8 mb-8">
 
           {/* Branding */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <img src="/Logo-2.svg" alt="MediScan" className="h-8 w-auto" />
               <h3 className="font-bold text-on-strong text-lg tracking-tight">MEDISCAN</h3>
@@ -132,7 +132,7 @@ export default function Footer({ onPageChange }) {
         </div>
 
         {/* Tech Stack */}
-        <div className="py-8 border-t border-border/50 mb-8">
+        <div className="py-4 border-t border-border/50 mb-2">
           <p className="text-xs font-semibold text-on-strong uppercase tracking-widest mb-4 opacity-80">{footerContent.builtWith || "Built with"}</p>
           <div className="flex flex-wrap items-center gap-6">
             {techLogos.map(({ src, alt }) => (
