@@ -1,3 +1,11 @@
+"""
+Endpoints de l'API de recherche Mediscan.
+
+Ce module définit les routes FastAPI pour la recherche d'images médicales
+par téléchargement d'image, par texte, ou par identifiants d'images existants.
+Il expose également les routes de génération de synthèse IA et de contact.
+"""
+
 from collections.abc import Callable
 from typing import Any, TypeVar
 
@@ -27,15 +35,34 @@ UPLOAD_CHUNK_SIZE = 1024 * 1024
 
 
 def _get_service(request: Request) -> SearchService:
-    """Retrieve the SearchService loaded at startup."""
+    """
+    Récupère l'instance globale de SearchService.
+    Le service est stocké dans l'état de l'application (app.state) lors du démarrage.
+    """
     return request.app.state.search_service
 
 
 def _get_email_service(request: Request) -> EmailService:
+    """
+    Récupère l'instance globale de EmailService.
+    Le service est initialisé au démarrage à partir des variables d'environnement SMTP.
+    """
     return request.app.state.email_service
 
 
 def _sanitize_image_id_or_400(image_id: str) -> str:
+    """
+    Nettoie et valide un identifiant d'image, ou lève une HTTPException 400.
+
+    Args:
+        image_id: L'identifiant brut à vérifier.
+
+    Returns:
+        L'identifiant nettoyé s'il est valide.
+
+    Raises:
+        HTTPException (400): Si l'identifiant contient des caractères non autorisés.
+    """
     try:
         return sanitize_image_id(image_id)
     except ValueError as exc:
@@ -43,6 +70,13 @@ def _sanitize_image_id_or_400(image_id: str) -> str:
 
 
 def _as_http_exception(exc: Exception) -> HTTPException:
+    """
+    Convertit une exception métier en HTTPException FastAPI avec le bon code HTTP.
+    - ValueError → 400 Bad Request
+    - SearchUnavailableError → 503 Service Unavailable
+    - ClinicalConclusionError → 503 Service Unavailable
+    - Autres → 500 Internal Server Error
+    """
     if isinstance(exc, ValueError):
         return HTTPException(status_code=400, detail=str(exc))
     if isinstance(exc, SearchUnavailableError):
@@ -56,6 +90,10 @@ def _response_from_payload(
     model_class: type[ResponseModelT],
     payload: dict[str, Any],
 ) -> ResponseModelT:
+    """
+    Convertit un dictionnaire de résultats bruts en modèle de réponse Pydantic.
+    Remplace les chemins locaux par les URLs HuggingFace publiques avant la validation.
+    """
     return model_class.model_validate(with_public_result_paths(payload))
 
 
@@ -63,6 +101,19 @@ def _run_service_call(
     model_class: type[ResponseModelT],
     call: Callable[[], dict[str, Any]],
 ) -> ResponseModelT:
+    """
+    Exécute un appel au service de recherche et gère les exceptions de manière uniforme.
+
+    Args:
+        model_class: Le modèle Pydantic cible pour la réponse.
+        call: La fonction lambda qui appelle le service.
+
+    Returns:
+        Une instance du modèle de réponse remplie avec les résultats.
+
+    Raises:
+        HTTPException: En cas d'erreur métier (400, 503, 500).
+    """
     try:
         return _response_from_payload(model_class, call())
     except (ValueError, SearchUnavailableError, FileNotFoundError, RuntimeError) as exc:
@@ -70,6 +121,18 @@ def _run_service_call(
 
 
 async def _read_upload_bytes(image: UploadFile) -> bytes:
+    """
+    Lit le fichier image uploadé par chunks et vérifie que la taille ne dépasse pas la limite.
+
+    Args:
+        image: Le fichier image uploadé via la requête multipart.
+
+    Returns:
+        Les octets du fichier image.
+
+    Raises:
+        HTTPException (413): Si la taille du fichier dépasse MAX_UPLOAD_BYTES.
+    """
     chunks: list[bytes] = []
     total_size = 0
 
@@ -92,6 +155,7 @@ async def _read_upload_bytes(image: UploadFile) -> bytes:
 
 @router.get("/health")
 def health() -> dict[str, str]:
+    """Vérifie si l'API est opérationnelle."""
     return {"status": "ok"}
 
 
@@ -102,6 +166,14 @@ async def search_image(
     mode: str = Form("visual"),
     k: int = Form(5),
 ) -> SearchResponse:
+    """
+    Recherche par similarité à partir d'un fichier image uploadé.
+
+    - Le fichier image doit être au format PNG ou JPEG.
+    - Le mode peut être 'visual' (similarité visuelle via DinoV2)
+      ou 'semantic' (similarité sémantique via BioMedCLIP).
+    - Retourne les k images les plus similaires du dataset ROCOv2.
+    """
     service = _get_service(request)
     image_bytes = await _read_upload_bytes(image)
 
@@ -124,7 +196,11 @@ class TextSearchRequest(BaseModel):
 
 @router.post("/search-text", response_model=TextSearchResponse)
 async def search_text(body: TextSearchRequest, request: Request) -> TextSearchResponse:
-    """Text-to-image search using BioMedCLIP semantic index."""
+    """
+    Recherche Text-to-Image via l'index sémantique BioMedCLIP.
+    Permet de trouver des images médicales à partir d'une description textuelle
+    en exploitant les capacités multimodales du modèle BioMedCLIP.
+    """
     service = _get_service(request)
     return _run_service_call(
         TextSearchResponse,
@@ -134,7 +210,11 @@ async def search_text(body: TextSearchRequest, request: Request) -> TextSearchRe
 
 @router.get("/images/{image_id}")
 async def get_image(image_id: str) -> RedirectResponse:
-    """Redirect to the HuggingFace dataset image."""
+    """
+    Redirige directement vers l'image hébergée sur HuggingFace.
+    Détermine dynamiquement le sous-dossier (images_01, images_02, etc.)
+    à partir du numéro de séquence présent dans l'identifiant ROCOv2.
+    """
     return RedirectResponse(url=hf_image_url(_sanitize_image_id_or_400(image_id)))
 
 
@@ -146,7 +226,10 @@ class IdSearchRequest(BaseModel):
 
 @router.post("/search-by-id", response_model=IdSearchResponse)
 async def search_by_id(body: IdSearchRequest, request: Request) -> IdSearchResponse:
-    """Relance une recherche depuis un image_id existant."""
+    """
+    Lance une recherche de similarité à partir d'une seule image existante (via son ID).
+    Utile pour relancer une recherche depuis un résultat déjà affiché.
+    """
     service = _get_service(request)
     safe_id = _sanitize_image_id_or_400(body.image_id)
 
@@ -168,7 +251,11 @@ class IdsSearchRequest(BaseModel):
 
 @router.post("/search-by-ids", response_model=IdsSearchResponse)
 async def search_by_ids(body: IdsSearchRequest, request: Request) -> IdsSearchResponse:
-    """Recherche par centroide depuis plusieurs image_ids selectionnes."""
+    """
+    Recherche par centroïde à partir d'une sélection de plusieurs images.
+    Combine les vecteurs des images sélectionnées via max-pooling des embeddings
+    pour produire un vecteur requête unique représentatif de la sélection.
+    """
     service = _get_service(request)
     safe_ids = [_sanitize_image_id_or_400(image_id) for image_id in body.image_ids]
 
@@ -184,7 +271,12 @@ async def search_by_ids(body: IdsSearchRequest, request: Request) -> IdsSearchRe
 
 @router.post("/generate-conclusion", response_model=ConclusionResponse)
 async def get_conclusion(body: ConclusionRequest) -> ConclusionResponse:
-    """Genere une synthese IA prudente a partir des resultats de recherche."""
+    """
+    Génère une synthèse IA prudente à partir des résultats de recherche.
+    Utilise le LLM Groq pour produire un résumé cliniquement prudent
+    à partir des descriptions des images les plus similaires trouvées.
+    Ne remplace pas l'avis d'un professionnel de santé.
+    """
     try:
         conclusion = generate_clinical_conclusion(body.model_dump())
     except (ValueError, ClinicalConclusionError) as exc:
@@ -195,6 +287,10 @@ async def get_conclusion(body: ConclusionRequest) -> ConclusionResponse:
 
 @router.post("/contact", response_model=ContactResponse)
 async def contact(body: ContactRequest, request: Request) -> ContactResponse:
+    """
+    Envoie un message de contact par email via le service SMTP configuré.
+    Nécessite que les variables d'environnement MEDISCAN_SMTP_* soient définies.
+    """
     email_service = _get_email_service(request)
 
     try:

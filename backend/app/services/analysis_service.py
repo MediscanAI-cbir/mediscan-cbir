@@ -1,3 +1,15 @@
+"""
+Service de génération de synthèse clinique IA via le LLM Groq.
+
+Ce module fournit une analyse prudente et non diagnostique des résultats
+de recherche d'images médicales. Il utilise le modèle Groq (Llama) pour
+produire un résumé en français à partir des descriptions textuelles des
+images les plus similaires trouvées par le pipeline CBIR.
+
+Important : cette synthèse est un outil exploratoire non clinique et
+ne remplace en aucun cas l'avis d'un professionnel de santé.
+"""
+
 from __future__ import annotations
 
 from groq import Groq
@@ -6,10 +18,29 @@ from backend.app.config import GROQ_API_KEY, GROQ_MODEL, MAX_CONCLUSION_RESULTS
 
 
 class ClinicalConclusionError(RuntimeError):
-    """Raised when the optional LLM summarization service cannot be used."""
+    """
+    Lancé lorsque le service de synthèse IA optionnel ne peut pas être utilisé.
+    Causes possibles : clé API absente, service indisponible, réponse vide.
+    """
 
 
 def _prepare_ranked_captions(search_result: dict) -> tuple[str, int]:
+    """
+    Extrait et formate les descriptions des résultats de recherche pour le prompt LLM.
+
+    Sélectionne les MAX_CONCLUSION_RESULTS premiers résultats disposant d'une
+    description (caption), les formate avec leur score de similarité, et les
+    concatène en une chaîne prête à l'envoi au modèle.
+
+    Args:
+        search_result: Le dictionnaire de résultats bruts du pipeline de recherche.
+
+    Returns:
+        Un tuple (texte_formaté, nombre_de_descriptions) prêt pour le prompt.
+
+    Raises:
+        ValueError: Si aucun résultat ne possède de description exploitable.
+    """
     results = search_result.get("results", [])
     ranked_captions: list[str] = []
 
@@ -28,6 +59,19 @@ def _prepare_ranked_captions(search_result: dict) -> tuple[str, int]:
 
 
 def _build_messages(search_result: dict) -> list[dict[str, str]]:
+    """
+    Construit la liste de messages (system + user) pour l'appel au LLM Groq.
+
+    Le prompt system instruit le modèle à rester prudent, non diagnostique
+    et à ne pas mentionner l'infrastructure technique (FAISS, embeddings, etc.).
+    Le prompt user fournit les descriptions triées par similarité décroissante.
+
+    Args:
+        search_result: Le dictionnaire de résultats bruts du pipeline de recherche.
+
+    Returns:
+        La liste de messages au format attendu par l'API Groq.
+    """
     ranked_captions, caption_count = _prepare_ranked_captions(search_result)
     mode = str(search_result.get("mode", "inconnu")).strip() or "inconnu"
 
@@ -61,6 +105,27 @@ def _build_messages(search_result: dict) -> list[dict[str, str]]:
 
 
 def generate_clinical_conclusion(search_result: dict) -> str:
+    """
+    Génère une synthèse clinique prudente à partir des résultats de recherche.
+
+    Appelle l'API Groq avec un prompt non diagnostique construit à partir des
+    descriptions des images similaires trouvées. Retourne un texte en français
+    structuré en 3 paragraphes (observations, limites, rappel non clinique).
+
+    Args:
+        search_result: Le dictionnaire de résultats bruts du pipeline de recherche,
+                       incluant les champs 'results', 'mode', et les métadonnées
+                       associées (caption, score, etc.).
+
+    Returns:
+        La synthèse textuelle générée par le LLM, en français.
+
+    Raises:
+        ClinicalConclusionError: Si GROQ_API_KEY n'est pas configuré,
+                                  si le service est indisponible,
+                                  ou si la réponse est vide.
+        ValueError: Si aucun résultat ne possède de description exploitable.
+    """
     if not GROQ_API_KEY:
         raise ClinicalConclusionError(
             "La fonctionnalite d'analyse IA n'est pas configuree sur cette instance."

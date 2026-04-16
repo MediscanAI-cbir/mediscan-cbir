@@ -12,6 +12,7 @@ const ContactPage = lazy(() => import("./components/ContactPage"));
 const HowItWorks = lazy(() => import("./components/HowItWorks"));
 const FAQPage = lazy(() => import("./components/FAQPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
+const FeaturesPage = lazy(() => import("./components/FeaturesPage"));
 
 const lazyPagePreloaders = [
   () => import("./components/SearchPage"),
@@ -21,6 +22,7 @@ const lazyPagePreloaders = [
   () => import("./components/HowItWorks"),
   () => import("./components/FAQPage"),
   () => import("./components/AboutPage"),
+  () => import("./components/FeaturesPage"),
 ];
 
 const MOTION_ENTER_DURATION_MS = 620;
@@ -39,6 +41,7 @@ const PAGE_EXIT_TRANSITION =
 const pages = {
   home: HomePage,
   search: SearchPage,
+  features: FeaturesPage,
   contact: ContactPage,
   how: HowItWorks,
   faq: FAQPage,

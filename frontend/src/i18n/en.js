@@ -637,4 +637,18 @@ export const en = {
     contactTitle: "Still have questions?",
     contactBtn: "Contact our team"
   },
+
+  // Features Page
+  features: {
+    headline: "Powerful Features",
+    description: "Everything you need for clinical-grade medical image analysis and exploration.",
+    list: [
+      { title: "Lightning Speed", desc: "Sub-second latency on millions of images with FAISS indexing." },
+      { title: "Interpretive Intelligence", desc: "AI trained on annotated biomedical datasets (BioMedCLIP)." },
+      { title: "Dual Retrieval", desc: "Visual and semantic search modes on the same dataset." },
+      { title: "Research Prototype", desc: "Built for demos, experimentation, and code transparency." },
+      { title: "Result Export", desc: "Export visible results as JSON, CSV, or PDF." },
+      { title: "Open API", desc: "Simple REST endpoints for local integrations and testing." },
+    ],
+  },
 };

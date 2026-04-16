@@ -638,4 +638,18 @@ export const fr = {
     contactTitle: "Vous avez encore des questions ?",
     contactBtn: "Contactez notre équipe"
   },
+
+  // Page Fonctionnalités
+  features: {
+    headline: "Fonctionnalités Puissantes",
+    description: "Tout ce qu'il faut pour l'analyse et l'exploration d'images de grade clinique.",
+    list: [
+      { title: "Vitesse Éclair", desc: "Latence inférieure à la seconde sur des millions d'images grâce à l'indexation FAISS." },
+      { title: "Intelligence Interprétative", desc: "IA entraînée sur des datasets biomédicaux annotés (BioMedCLIP)." },
+      { title: "Recherche Duale", desc: "Modes de recherche visuel et sémantique sur le même jeu de données." },
+      { title: "Prototype de Recherche", desc: "Conçu pour la démonstration, l'expérimentation et la lisibilité du code." },
+      { title: "Export des Résultats", desc: "Exporter les résultats visibles en JSON, CSV ou PDF." },
+      { title: "API Ouverte", desc: "Endpoints REST simples pour intégrations locales et tests." },
+    ],
+  },
 };
