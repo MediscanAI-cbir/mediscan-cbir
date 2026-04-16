@@ -1,6 +1,19 @@
+/**
+ * @fileoverview Page explicative du fonctionnement du système CBIR MediScan.
+ * @module components/HowItWorks
+ */
+
 import { useContext } from "react";
 import { LangContext } from "../context/LangContext";
 
+/**
+ * Page décrivant les deux modes de recherche du système CBIR :
+ * - **Visuel** : similarité par descripteurs d'image.
+ * - **Sémantique** : similarité par embeddings de captions textuelles.
+ * 
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function HowItWorks() {
   const { t } = useContext(LangContext);
   const content = t.howItWorks;

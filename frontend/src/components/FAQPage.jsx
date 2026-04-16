@@ -1,13 +1,33 @@
+/**
+ * @fileoverview Page FAQ avec accordéon filtrable par catégorie.
+ * @module components/FAQPage
+ */
+
 import { useState, useContext } from "react";
 import { LangContext } from "../context/LangContext";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import Spinner from "./Spinner";
 
+/**
+ * Page FAQ
+ *
+ * Les questions/réponses sont chargées depuis les traductions ("t.faq").
+ *
+ * @component
+ * @param {object} props
+ * @param {function(string): void} props.onPageChange - Callback de navigation vers une autre page
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <FAQPage onPageChange={(page) => setCurrentPage(page)} />
+ */
 export default function FAQPage({ onPageChange }) {
   const { t } = useContext(LangContext);
   const content = t.faq;
 
+  /** @type {[string, function]} Catégorie d'onglet active */
   const [activeTab, setActiveTab] = useState("general");
+  /** @type {[number|null, function]} Index de la question ouverte dans l'accordéon */
   const [openIndex, setOpenIndex] = useState(null);
 
   if (!content || !content.items) {
@@ -17,7 +37,8 @@ export default function FAQPage({ onPageChange }) {
       </div>
     );
   }
-
+  
+  /** Questions filtrées selon la catégorie sélectionnée */
   const filteredItems = content.items.filter(item => item.category === activeTab);
 
   return (

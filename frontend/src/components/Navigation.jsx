@@ -1,34 +1,76 @@
+/**
+ * @fileoverview Barre de navigation principale de l'application MediScan.
+ * @module components/Navigation
+ */
+
 import { useContext, useState, useEffect, useRef } from "react";
 import { LangContext } from "../context/LangContext";
 import LanguageSelector from "./LanguageSelector";
 
+
+/**
+ * Barre de navigation avec les fonctionnalités suivantes :
+ * - **Desktop** : onglets centrés avec indicateur animé de l'onglet actif.
+ * - **Mobile** : menu plein écran.
+ * - **Scroll** : la navbar se masque lors du scroll vers le bas et réapparaît vers le haut.
+ * - **Transparence** : fond transparent au sommet, opaque après défilement.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.currentPage - Identifiant de la page active
+ * @param {function(string): void} props.onPageChange - Callback de navigation vers une autre page.
+ * @param {boolean} [props.visible=true] - Contrôle la visibilité forcée de la navbar.
+ * @param {"default"|"primary"|"accent"} [props.tone="default"] - Thème visuel de la navbar.
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <Navigation
+ *   currentPage="search"
+ *   onPageChange={(page) => setCurrentPage(page)}
+ *   tone="primary"
+ * />
+ */
 export default function Navigation({
   currentPage,
   onPageChange,
   visible = true,
   tone = "default",
 }) {
+  
   const { t } = useContext(LangContext);
+
+  /** @type {[boolean, function]} Masquage de la navbar lors du scroll vers le bas */
   const [scrollHidden, setScrollHidden] = useState(false);
+  /** @type {[boolean, function]} État d'ouverture du menu mobile */
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  /** @type {[boolean, function]} Indique si la page a défilé (pour l'opacité du fond) */
   const [isScrolled, setIsScrolled] = useState(false);
+  /** @type {[{width: number, x: number, opacity: number}, function]} Style CSS de la boîte animée sur l'onglet actif.*/
   const [activeBoxStyle, setActiveBoxStyle] = useState({ width: 0, x: 0, opacity: 0 });
   
   const lastY = useRef(0);
   const turnY = useRef(0);
   const goingDown = useRef(true);
+  /** Référence sur le conteneur des onglets pour calculer la position de l'indicateur */
   const shellRef = useRef(null);
+  /** Map des références DOM sur chaque bouton d'onglet */
   const tabRefs = useRef({});
 
+  // Bloque le scroll du body quand le menu mobile est ouvert
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
   }, [isMenuOpen]);
 
+  /**
+   * Navigue vers une page et ferme le menu mobile si ouvert.
+   * @param {string} id - Identifiant de la page cible.
+  */
   const handlePageChange = (id) => {
     setIsMenuOpen(false); 
     onPageChange(id);
   };
 
+  // Gestion du masquage de la navbar au scroll
   useEffect(() => {
     function onScroll() {
       const y = window.scrollY;
@@ -51,35 +93,36 @@ export default function Navigation({
     return () => window.removeEventListener("scroll", onScroll);
   }, [isMenuOpen]);
 
-useEffect(() => {
-  function updateActiveBox() {
-    const shell = shellRef.current;
-    const activeTab = tabRefs.current[currentPage];
-    
-    if (!shell || !activeTab) {
-      setActiveBoxStyle((prev) => ({ ...prev, opacity: 0 }));
-      return;
+  // Calcul de la position et largeur de l'indicateur d'onglet actif.
+  useEffect(() => {
+    function updateActiveBox() {
+      const shell = shellRef.current;
+      const activeTab = tabRefs.current[currentPage];
+      
+      if (!shell || !activeTab) {
+        setActiveBoxStyle((prev) => ({ ...prev, opacity: 0 }));
+        return;
+      }
+
+      const offset = activeTab.getBoundingClientRect().left - shell.getBoundingClientRect().left;
+
+      setActiveBoxStyle({
+        width: activeTab.offsetWidth,
+        x: offset,
+        opacity: 1,
+      });
     }
 
-    const offset = activeTab.getBoundingClientRect().left - shell.getBoundingClientRect().left;
+    updateActiveBox();
 
-    setActiveBoxStyle({
-      width: activeTab.offsetWidth,
-      x: offset,
-      opacity: 1,
-    });
-  }
+    const timer = setTimeout(updateActiveBox, 100);
 
-  updateActiveBox();
-
-  const timer = setTimeout(updateActiveBox, 100);
-
-  window.addEventListener("resize", updateActiveBox);
-  return () => {
-    window.removeEventListener("resize", updateActiveBox);
-    clearTimeout(timer);
-  };
-}, [currentPage, t.nav]); 
+    window.addEventListener("resize", updateActiveBox);
+    return () => {
+      window.removeEventListener("resize", updateActiveBox);
+      clearTimeout(timer);
+    };
+  }, [currentPage, t.nav]); 
 
   const show = visible && !scrollHidden;
 
@@ -90,6 +133,7 @@ useEffect(() => {
         ? "nav-shell nav-shell-accent"
         : "nav-shell nav-shell-default";
 
+  /** @type {Array<{id: string, label: string}>} Onglets de navigation principaux. */
   const mainTabs = [
     { id: "home", label: t.nav.home },
     { id: "search", label: t.nav.scan },
@@ -112,10 +156,12 @@ useEffect(() => {
         <div className="relative z-[1200] w-full px-6">
           <div className="flex h-16 items-center justify-between md:grid md:h-20 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-4 lg:px-8">
             
+            {/* Logo */}
             <button onClick={() => handlePageChange("home")} className="z-[1300] outline-none">
               <img src="/Logo-2.svg" alt="LOGO" className="h-8 md:h-10 w-auto object-contain" />
             </button>
 
+            {/* Onglets desktop avec indicateur animé */}
             <div ref={shellRef} className={`hidden md:flex nav-shell-track justify-self-center items-center gap-[0.5vw] overflow-hidden rounded-2xl px-[1vw] py-1.5 ${shellToneClass}`}>
               <div 
                 aria-hidden="true" 
@@ -134,6 +180,7 @@ useEffect(() => {
               ))}
             </div>
 
+            {/* Sélecteur de langue + mobile */}
             <div className="flex items-center gap-4 z-[1300]">
               <div className="hidden md:block scale-90 origin-right">
                 <LanguageSelector />
@@ -155,6 +202,7 @@ useEffect(() => {
         </div>
       </nav>
 
+      {/* Menu mobile plein écran */}
       <div
         className={`md:hidden fixed inset-0 z-[9998] transition-all duration-300 ${
           isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"

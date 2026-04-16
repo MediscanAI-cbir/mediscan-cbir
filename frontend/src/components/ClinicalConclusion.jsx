@@ -1,8 +1,19 @@
+/**
+ * @fileoverview Composant de génération de conclusion clinique IA (Groq + Llama) à partir des résultats CBIR.
+ * @module components/ClinicalConclusion
+ */
+
 import { useContext, useMemo, useState } from "react";
 import { fetchConclusion } from "../api";
 import { LangContext } from "../context/LangContext";
 import Spinner from "./Spinner";
 
+/**
+ * Transforme une chaîne de texte brute en blocs JSX formatés (paragraphes et listes à puces).
+ *
+ * @param {string} conclusion - Texte brut de la conclusion générée par l'IA.
+ * @returns {JSX.Element[]} Tableau de paragraphes ou de listes "<ul>".
+ */
 function renderConclusionBlocks(conclusion) {
   return conclusion
     .split(/\n\s*\n/)
@@ -33,20 +44,52 @@ function renderConclusionBlocks(conclusion) {
     });
 }
 
+/**
+ * Permet de générer une conclusion clinique IA à partir des 5 meilleurs résultats de recherche CBIR.
+ *
+ * Fonctionnement :
+ * 1. L'utilisateur clique sur "Générer".
+ * 2. Les 5 premiers résultats sont envoyés à l'API via "fetchConclusion".
+ * 3. La réponse texte est formatée en blocs JSX et affichée.
+ * 4. L'utilisateur peut copier la conclusion ou en générer une nouvelle.
+ *
+ * @component
+ * @param {object} props
+ * @param {object|null} props.searchResult - Résultat de recherche complet retourné par l'API CBIR.
+ * @param {boolean} [props.isAccent=false] - Utilise la palette de recherche sémantique.
+ * @param {string} [props.className="mt-6"] - Classes CSS supplémentaires pour le conteneur.
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <ClinicalConclusion searchResult={results} isAccent={true} className="mt-6" />
+ */
 export default function ClinicalConclusion({ searchResult, isAccent = false, className = "mt-6" }) {
+  
   const { t } = useContext(LangContext);
   const content = t.search.conclusion;
+  /** @type {[string|null, function]} Texte de la conclusion générée */
   const [conclusion, setConclusion] = useState(null);
+  /** @type {[boolean, function]} Indique si la génération est en cours */
   const [loading, setLoading] = useState(false);
+  /** @type {[string|null, function]} Message d'erreur possible*/
   const [error, setError] = useState(null);
+  /** @type {[boolean, function]} État d'ouverture/fermeture */
   const [open, setOpen] = useState(false);
 
+  /**
+   * Les 5 meilleurs résultats utilisés comme contexte pour la génération IA.
+   * @type {Array<{rank: number, score: number}>}
+  */
   const topResults = useMemo(() => searchResult?.results?.slice(0, 5) || [], [searchResult]);
+  
   const accentColor = isAccent ? "text-accent border-accent/30 bg-accent/5" : "text-primary border-primary/30 bg-primary/5";
-  const btnColor = isAccent
-    ? "bg-accent hover:bg-accent/90 text-white"
-    : "bg-primary hover:bg-primary/90 text-white";
+  const btnColor = isAccent ? "bg-accent hover:bg-accent/90 text-white" : "bg-primary hover:bg-primary/90 text-white";
   const canGenerate = topResults.length > 0;
+  
+  /**
+   * Clé unique représentant l'état du résumé pour forcer le rendu de l'animation.
+   * @type {string}
+  */
   const summaryStateKey = loading
     ? "loading"
     : error
@@ -55,6 +98,10 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
         ? `conclusion-${conclusion.length}`
         : "idle";
 
+  /**
+   * Lance la génération de la conclusion clinique via l'API (entrée dans le fichier .env).
+   * Ouvre et réinitialise les états et appelle "fetchConclusion".
+  */
   async function handleGenerate() {
     if (!canGenerate) {
       setError(content.noResults);
@@ -76,6 +123,9 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
     }
   }
 
+  /**
+   * Copie la conclusion dans le presse-papier du navigateur.
+  */
   function handleCopy() {
     if (conclusion) navigator.clipboard.writeText(conclusion);
   }
@@ -115,6 +165,7 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
       {/* Body */}
       {open && (
         <div className="search-conclusion-body-enter px-5 py-4">
+          {/* Disclaimer */}
           <div className={`search-tone-sync search-conclusion-note flex gap-2 items-start text-xs rounded-xl px-3 py-2.5 mb-4 border ${accentColor}`}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
               <circle cx="12" cy="12" r="10"/>
@@ -123,6 +174,8 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
             </svg>
             <span>{content.disclaimer}</span>
           </div>
+
+          {/* Tags des résultats utilisés comme contexte */}
           <div className="mb-4 flex flex-wrap gap-1.5">
             {topResults.map((r, i) => (
               <span key={i} className="search-tone-sync search-conclusion-chip text-[11px] px-2 py-1 rounded-lg bg-bg border border-border text-muted font-mono">
@@ -130,6 +183,8 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
               </span>
             ))}
           </div>
+
+          {/* États : bouton, chargement, erreur, conclusion */}
           <div key={summaryStateKey} className="mediscan-results-stage-enter">
             {!conclusion && !loading && (
               <button onClick={handleGenerate} className={`search-tone-sync search-conclusion-action w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${btnColor}`}>

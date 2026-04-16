@@ -1,6 +1,27 @@
+/**
+ * @fileoverview Écran de recherche permettant de choisir le mode de recherche CBIR.
+ * @module components/SearchHubView
+ */
+
 import { useContext, useEffect, useState } from "react";
 import { LangContext } from "../context/LangContext";
 
+/**
+ * Carte de choix de mode de recherche (image ou texte).
+ *
+ * @component
+ * @param {object} props
+ * @param {function(): void} props.onClick - Callback déclenché au clic sur la carte.
+ * @param {string} props.title - Titre principal de la carte.
+ * @param {string} props.description - Description du mode de recherche.
+ * @param {string[]} props.features - Liste de fonctionnalités affichées sous forme de chips.
+ * @param {string} props.cta - Texte du bouton d'appel à l'action.
+ * @param {"primary"|"accent"} props.tone - Palette de couleur de la carte.
+ * @param {boolean} props.ready - Déclenche l'animation d'entrée quand `true`.
+ * @param {number} props.delayMs - Délai en ms avant l'animation d'entrée.
+ * @param {JSX.Element} props.icon - Icône SVG affichée en haut de la carte.
+ * @returns {JSX.Element}
+ */
 function SearchChoiceCard({
   onClick,
   title,
@@ -69,9 +90,32 @@ function SearchChoiceCard({
   );
 }
 
+/**
+ * Vue d'accueil du hub de recherche CBIR.
+ * Présente deux cartes permettant de choisir entre :
+ * - La **recherche par image** (mode visuel/sémantique via upload).
+ * - La **recherche par texte** (mode sémantique via caption).
+ *
+ * Une animation d'entrée est déclenchée au montage du composant.
+ *
+ * @component
+ * @param {object} props
+ * @param {function(): void} props.onChooseImage - Callback pour naviguer vers la recherche par image.
+ * @param {function(): void} props.onChooseText - Callback pour naviguer vers la recherche par texte.
+ * @param {boolean} [props.useSharedSurface=false] - Si vrai, fond transparent (fond partagé avec le parent).
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <SearchHubView
+ *   onChooseImage={() => setView("image")}
+ *   onChooseText={() => setView("text")}
+ * />
+ */
 export default function SearchHubView({ onChooseImage, onChooseText, useSharedSurface = false }) {
+  
   const { t } = useContext(LangContext);
   const hub = t.search.hub;
+  /** @type {[boolean, function]} Déclenche les animations d'entrée après le premier rendu */
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -83,6 +127,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
 
   return (
     <div className={`${useSharedSurface ? "bg-transparent" : "search-hub-surface"} relative box-border min-h-[calc(100dvh-4rem)] overflow-x-hidden overflow-y-auto px-6 py-8 pb-16 md:min-h-[calc(100dvh-5rem)] md:py-12`}>
+      {/* Cercles décoratifs en arrière-plan */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-8%] top-[10%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute right-[-6%] top-[20%] h-80 w-80 rounded-full bg-accent/12 blur-3xl" />
@@ -90,6 +135,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col items-center justify-start pt-0 md:pt-14 pb-10">
+        {/* En-tête */}
         <section
           className="mb-10 w-full max-w-[760px] text-center md:mb-12"
           style={{
@@ -108,6 +154,7 @@ export default function SearchHubView({ onChooseImage, onChooseText, useSharedSu
           </p>
         </section>
 
+        {/* Cartes de choix */}
         <div className="grid w-full max-w-[1080px] grid-cols-1 gap-10 md:grid-cols-2 lg:gap-12">
           <SearchChoiceCard
             onClick={onChooseImage}

@@ -1,8 +1,19 @@
-// src/components/AboutPage.jsx
+/**
+ * @fileoverview Page À propos présentant le projet MediScan CBIR, l'équipe et l'architecture.
+ * @module components/AboutPage
+ */
+
 import { useContext, useEffect, useState } from "react";
 import { LangContext } from "../context/LangContext";
 import { useTheme } from "../context/ThemeContext";
 
+/**
+ * Icône SVG du logo GitHub.
+ * @component
+ * @param {object} props
+ * @param {string} [props.className=""]
+ * @returns {JSX.Element}
+ */
 function GitHubMark({ className = "" }) {
   return (
     <svg
@@ -16,6 +27,11 @@ function GitHubMark({ className = "" }) {
   );
 }
 
+/**
+ * Génère les initiales d'un nom complet (2 premières lettres de chaque mot).
+ * @param {string} name - Nom complet.
+ * @returns {string} Initiales en majuscules.
+ */
 function initials(name) {
   return name
     .split(" ")
@@ -25,6 +41,18 @@ function initials(name) {
     .join("");
 }
 
+/**
+ * Avatar d'un membre de l'équipe.
+ * Affiche la photo si disponible, sinon un cercle avec les initiales.
+ *
+ * @component
+ * @param {object} props
+ * @param {object} props.member - Données du membre.
+ * @param {string} props.member.name - Nom du membre.
+ * @param {string} [props.member.photo] - URL de la photo.
+ * @param {"visual"|"semantic"} [props.member.color] - Couleur du fallback d'initiales.
+ * @returns {JSX.Element}
+ */
 function TeamAvatar({ member }) {
   const [imageFailed, setImageFailed] = useState(false);
   const isVisual = member.color === "visual";
@@ -53,6 +81,13 @@ function TeamAvatar({ member }) {
   );
 }
 
+/**
+ * Label de section en majuscules espacées (style "eyebrow").
+ * @component
+ * @param {object} props
+ * @param {React.ReactNode} props.children
+ * @returns {JSX.Element}
+ */
 function SectionLabel({ children }) {
   return (
     <p className="text-xs font-semibold tracking-widest uppercase text-muted mb-3">
@@ -61,12 +96,35 @@ function SectionLabel({ children }) {
   );
 }
 
+/**
+ * Page À propos du projet MediScan CBIR.
+ * 
+ * - **Hero** : titre et description du projet.
+ * - **Mission / Vision** : deux cartes avec images.
+ * - **Architecture** : cartes présentant les outils techniques.
+ * - **Pipeline** : liste ordonnée des étapes du pipeline CBIR.
+ * - **Stack** : tags des technologies utilisées.
+ * - **Équipe** : grille des membres avec avatar et lien GitHub.
+ * - **Disclaimer** : mention légale sur l'usage médical.
+ * 
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function AboutPage() {
+  
   const { t } = useContext(LangContext);
   const content = t.about;
+  /** Déclenche les animations d'entrée après le premier frame */
   const [ready, setReady] = useState(false);
+  /** Thème actif du site "light" ou "dark" */
   const { theme } = useTheme();
 
+    /**
+   * Retourne la classe CSS d'animation d'entrée selon la direction et le statut "ready".
+   * @param {"up"|"left"|"right"} [dir="up"] - Direction d'entrée.
+   * @param {number} [delay=0] - Délai non utilisé.
+   * @returns {string}
+   */
   useEffect(() => {
     const frame = requestAnimationFrame(() => setReady(true));
     return () => cancelAnimationFrame(frame);
@@ -147,7 +205,7 @@ export default function AboutPage() {
 
         <div className="h-px bg-border my-12 mx-8 md:mx-21" />
 
-        {/* ── Architecture cards ── */}
+        {/* ── Architecture ── */}
         <div className="mb-12">
           <SectionLabel>{content.architecture?.title}</SectionLabel>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -179,7 +237,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* ── Pipeline ── */}
+        {/* ── Pipeline CBIR ── */}
         <div className="mb-12">
           <SectionLabel>{content.pipeline?.title}</SectionLabel>
           <ol className="flex flex-col">
@@ -254,11 +312,11 @@ export default function AboutPage() {
         )}
 
         {/* ── Disclaimer ── */}
-<div className="p-4 rounded-xl border border-border bg-bg flex gap-3 text-sm text-muted leading-relaxed">
-  <span>
-    <span className="underline font-semibold">{content.disclaimer?.note}</span> {content.disclaimer?.text}
-  </span>
-</div>
+        <div className="p-4 rounded-xl border border-border bg-bg flex gap-3 text-sm text-muted leading-relaxed">
+          <span>
+            <span className="underline font-semibold">{content.disclaimer?.note}</span> {content.disclaimer?.text}
+          </span>
+        </div>
 
       </div>
     </div>

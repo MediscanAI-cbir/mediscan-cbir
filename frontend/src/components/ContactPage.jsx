@@ -1,16 +1,45 @@
+/**
+ * @fileoverview Page de contact avec formulaire.
+ * @module components/ContactPage
+ */
+
 import { Mail, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 import { useState, useContext, useEffect } from "react";
 import { LangContext } from "../context/LangContext";
 import { sendContactMessage } from "../api";
 
+
+/**
+ * Page de contact permettant à l'utilisateur d'envoyer un message via un formulaire.
+ *
+ * Fonctionnement :
+ * 1. L'utilisateur remplit les champs nom, email, sujet et message.
+ * 2. À la soumission, "sendContactMessage" est appelé avec les données nettoyées.
+ * 3. En cas de succès, un écran de confirmation remplace le formulaire.
+ * 4. En cas d'erreur, un message d'erreur est affiché au-dessus du bouton.
+ *
+ * @component
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <ContactPage />
+ */
 export default function ContactPage() {
+
   const { t } = useContext(LangContext);
   const content = t.contact;
+
+  /** @type {[{name: string, email: string, subject: string, message: string}, function]} État du formulaire de contact. */
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  /** @type {[boolean, function]} Indique si le message a été envoyé avec succès */
   const [sent, setSent] = useState(false);
+  /** @type {[boolean, function]} Indique si la soumission est en cours */
   const [isSubmitting, setIsSubmitting] = useState(false);
+  /** @type {[string, function]} Message d'erreur de soumission */
   const [error, setError] = useState("");
+  /** @type {[string|null, function]} Nom du champ actuellement focus */
   const [focused, setFocused] = useState(null);
+  /** @type {[boolean, function]} Déclenche les animations d'entrée après le premier frame */
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -18,11 +47,19 @@ export default function ContactPage() {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  /**
+   * Met à jour un champ du formulaire par son nom.
+   * @param {React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>} e
+  */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   * Soumet le formulaire de contact.
+   * Nettoie les données, appelle l'API Groq et gère les états succès/erreur.
+  */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -44,6 +81,11 @@ export default function ContactPage() {
     }
   };
 
+  /**
+   * Retourne les classes CSS d'un champ selon son état (focus ou non).
+   * @param {string} name - Nom du champ.
+   * @returns {string}
+  */
   const inputClass = (name) =>
     `w-full px-4 py-3 rounded-xl border text-text text-sm placeholder:text-muted/40 bg-bg focus:outline-none transition-all duration-200 ${
       focused === name

@@ -1,6 +1,19 @@
+/**
+ * @fileoverview Pied de page de l'application MediScan.
+ * @module components/Footer
+ */
+
 import { useContext } from "react";
 import { LangContext } from "../context/LangContext";
 
+/**
+ * Icône SVG du logo GitHub.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} [props.className=""] - Classes CSS supplémentaires.
+ * @returns {JSX.Element}
+ */
 function GitHubMark({ className = "" }) {
   return (
     <svg
@@ -14,12 +27,36 @@ function GitHubMark({ className = "" }) {
   );
 }
 
+/**
+ * Pied de page de l'application contenant :
+ * - Le logo et la description de MediScan
+ * - Les liens de navigation (Home, Search, How it Works)
+ * - Les liens de support (About, Contact, FAQ)
+ * - Les mentions légales (Privacy, Terms)
+ * - Le lien GitHub du projet
+ * - La stack technologique (logos: Paris Cité, Python, PyTorch, FAISS)
+ * - Le copyright dynamique
+ *
+ * @component
+ * @param {object} props
+ * @param {function(string): void} props.onPageChange - Callback de navigation entre les pages.
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <Footer onPageChange={(page) => setCurrentPage(page)} />
+ */
 export default function Footer({ onPageChange }) {
+
   const { t } = useContext(LangContext);
   const content = t.home;
   const footerContent = content.footer || {};
+  /** Année courante pour le copyright pour changer automatiquement la date. */
   const currentYear = new Date().getFullYear();
 
+  /**
+   * Logos des technologies utilisées dans le projet.
+   * @type {Array<{src: string, alt: string}>}
+  */
   const techLogos = [
     { src: "/ParisCite.png", alt: "Université Paris Cité" },
     { src: "/Python.png",    alt: "Python" },
@@ -147,7 +184,7 @@ export default function Footer({ onPageChange }) {
           </div>
         </div>
 
-        {/* Bottom */}
+        {/* Bottom (copyright) */}
         <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-sm text-footer-muted">
           <p>© {currentYear} MEDISCAN AI. {content.footer?.rights || "All rights reserved"}</p>
           <div>
