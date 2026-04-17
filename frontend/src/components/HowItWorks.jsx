@@ -1,6 +1,19 @@
+/**
+ * @fileoverview Page explicative du fonctionnement du système CBIR MediScan.
+ * @module components/HowItWorks
+ */
+
 import { useContext } from "react";
 import { LangContext } from "../context/LangContext";
 
+/**
+ * Page décrivant les deux modes de recherche du système CBIR :
+ * - **Visuel** : similarité par descripteurs d'image.
+ * - **Sémantique** : similarité par embeddings de captions textuelles.
+ * 
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function HowItWorks() {
   const { t } = useContext(LangContext);
   const content = t.howItWorks;
@@ -46,22 +59,22 @@ export default function HowItWorks() {
           <p className="text-muted text-center mb-8 max-w-xl mx-auto text-sm">{content.when.description}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="text-center">
-              <h3 className="font-bold text-primary mb-4 text-center">{content.when.visual.title}</h3>
+              <h3 className="font-bold text-accent mb-4 text-left md:text-center">{content.when.visual.title}</h3>
               <ul className="space-y-2">
                 {content.when.visual.cases.map((c, i) => (
-                  <li key={i} className="text-sm text-muted flex gap-2 items-center justify-center">
-                    <span className="text-primary shrink-0">✓</span>
+                  <li key={i} className="text-sm text-muted flex gap-2 items-start justify-start text-left md:justify-center md:text-center md:items-center">
+                    <span className="text-accent shrink-0 mt-0.5 md:mt-0">✓</span>
                     {c}
                   </li>
                 ))}
               </ul>
             </div>
             <div className="text-center">
-              <h3 className="font-bold text-accent mb-4 text-center">{content.when.semantic.title}</h3>
+              <h3 className="font-bold text-accent mb-4 text-left md:text-center">{content.when.semantic.title}</h3>
               <ul className="space-y-2">
                 {content.when.semantic.cases.map((c, i) => (
-                  <li key={i} className="text-sm text-muted flex gap-2 items-center justify-center">
-                    <span className="text-accent shrink-0">✓</span>
+                  <li key={i} className="text-sm text-muted flex gap-2 items-start justify-start text-left md:justify-center md:text-center md:items-center">
+                    <span className="text-accent shrink-0 mt-0.5 md:mt-0">✓</span>
                     {c}
                   </li>
                 ))}

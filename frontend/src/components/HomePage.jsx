@@ -35,8 +35,10 @@ const useCaseIcons = {
 function WhyFeature({ icon, title, description }) {
   return (
     <article className="home-why-column">
-      <div className="home-why-icon mb-4">{icon}</div>
-      <h3 className="home-why-title mb-3">{title}</h3>
+      <div className="flex items-center gap-3 mb-3 md:block">
+        {icon && <div className="home-why-icon md:mb-4">{icon}</div>}
+        <h3 className="home-why-title md:mb-3">{title}</h3>
+      </div>
       <p className="home-why-body">{description}</p>
     </article>
   );
@@ -373,7 +375,7 @@ export default function HomePage({ onPageChange }) {
           <div className="home-hero-stage">
             <div className="home-hero-layout">
               <div className="home-hero-copy">
-                <p className="home-hero-label -mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.22em]">
+                <p className="home-hero-label -mb-2 text-[0.6rem] md:text-[0.72rem] font-semibold uppercase tracking-[0.15em] md:tracking-[0.22em]">
                   {content.heroLabel}
                 </p>
                 <h1 className="home-hero-title text-[clamp(2.75rem,6vw,5.5rem)] font-extrabold tracking-[-0.05em]">
@@ -383,46 +385,65 @@ export default function HomePage({ onPageChange }) {
                   {content.description}{" "}
                   <span className="home-hero-description-tail">{content.useCases.inlineDescription}</span>
                 </p>
-                <div className="home-hero-actions mt-8 flex flex-wrap gap-3">
+                <div className="home-hero-actions mt-8 w-full" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
                   <button
                     onClick={() => onPageChange("search")}
-                    className="home-hero-button-primary home-hero-button-scan rounded-xl px-8 py-3 text-sm font-semibold"
+                    className="home-hero-button-primary home-hero-button-scan rounded-xl px-6 py-3 text-[0.82rem] md:text-base font-semibold whitespace-nowrap"
+                    style={{ display: "inline-flex", width: "auto" }}
                   >
                     {content.cta1}
                   </button>
                   <button
                     onClick={() => onPageChange("how")}
-                    className="home-hero-button-secondary rounded-xl px-8 py-3 text-sm font-semibold"
+                    className="home-hero-button-secondary rounded-xl px-6 py-3 text-[0.82rem] md:text-base font-semibold whitespace-nowrap"
+                    style={{ display: "inline-flex", width: "auto" }}
                   >
                     {content.cta2}
                   </button>
                 </div>
                 <div className="home-hero-audience mt-10" aria-label={content.useCases.headline}>
                   <p className="home-hero-audience-heading">{content.useCases.headline}</p>
-                  <div className="home-hero-audience-list">
+                  
+                  <div 
+                    className="home-hero-audience-list"
+                    style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'repeat(2, 1fr)', 
+                      gap: '8px',
+                      marginTop: '12px' 
+                    }}
+                  >
                     {content.useCases.roles.map((role) => {
                       const AudienceIcon = useCaseIcons[role.icon];
 
                       return (
-                        <div key={role.title} className="home-hero-audience-item">
+                        <div 
+                          key={role.title} 
+                          className="home-hero-audience-item"
+                          style={{ display: 'flex', alignItems: 'center', margin: 0 }}
+                        >
                           {AudienceIcon ? (
                             <span className="home-hero-audience-icon">
                               <AudienceIcon className="h-3.5 w-3.5" strokeWidth={1.8} />
                             </span>
                           ) : null}
-                          <span className="home-hero-audience-name">{role.title}</span>
+                          <span className="home-hero-audience-name" style={{ fontSize: '0.7rem' }}>
+                            {role.title}
+                          </span>
                         </div>
                       );
                     })}
                   </div>
-                </div>
+                </div>          
               </div>
 
-              <div className="home-hero-visual" aria-hidden="true">
-                <div className="home-hero-spine-shell">
-                  <div className="home-hero-spine-glow" />
-                  <div className="home-hero-spine-veil" />
-                  <img src="/HomeSpine.png" alt="" className="home-hero-spine-image" draggable="false" />
+              <div className="hidden md:block">
+                <div className="home-hero-visual" aria-hidden="true">
+                  <div className="home-hero-spine-shell">
+                    <div className="home-hero-spine-glow" />
+                    <div className="home-hero-spine-veil" />
+                    <img src="/HomeSpine.png" alt="" className="home-hero-spine-image" draggable="false" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -432,16 +453,17 @@ export default function HomePage({ onPageChange }) {
         </div>
       </section>
 
+
       <section className="page-container home-section home-modes-page">
         <div className="home-modes-page-inner">
-          <div className="home-section-header home-section-header-center home-modes-intro">
+          <div className="home-section-header home-section-header-center home-modes-intro px-3 md:px-0">
             <h2 className="home-section-title mb-3">{content.modes.headline}</h2>
             <p className="home-section-description home-section-description-wide home-modes-description">
               {content.modes.description}
             </p>
           </div>
 
-          <div className="home-retrieval-anchor">
+          <div className="home-retrieval-anchor mt-4 px-5 md:mt-0 md:px-0">
           <div
             ref={treeRef}
             className="home-retrieval-branch home-retrieval-tree"
@@ -678,7 +700,9 @@ export default function HomePage({ onPageChange }) {
           </div>
           </div>
 
-          <div className="home-modes-benefits">
+          <hr className="border-none h-px mx-auto w-11/12 md:hidden" style={{ background: "var(--theme-border, rgba(148,163,184,0.15))" }} />
+
+          <div className="home-modes-benefits px-2 md:px-0">
             <div className="home-section-header home-section-header-center home-modes-benefits-header">
               <h3 className="home-subsection-title mb-3">{content.whyChoose.headline}</h3>
               <p className="home-section-description home-section-description-wide">
@@ -686,16 +710,16 @@ export default function HomePage({ onPageChange }) {
               </p>
             </div>
 
-            <div className="home-why-grid home-why-grid-compact grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-0">
-              {content.whyChoose.features.map((feature, i) => {
-                const BenefitIcon = benefitIcons[feature.icon];
-                return (
-                  <WhyFeature
-                    key={i}
-                    icon={BenefitIcon ? <BenefitIcon className="w-5 h-5" strokeWidth={1.8} /> : null}
-                    title={feature.title}
-                    description={feature.desc}
-                  />
+            <div className="home-why-grid home-why-grid-compact grid grid-cols-1 md:grid-cols-3 md:gap-0 px-5 md:px-0">
+                {content.whyChoose.features.map((feature, i) => {
+                  const BenefitIcon = benefitIcons[feature.icon];
+                  return (
+                    <WhyFeature
+                      key={i}
+                      icon={BenefitIcon ? <BenefitIcon className="w-5 h-5" strokeWidth={1.8} /> : null}
+                      title={feature.title}
+                      description={feature.desc}
+                    />
                 );
               })}
             </div>

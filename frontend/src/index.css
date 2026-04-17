@@ -706,6 +706,11 @@ button {
   cursor: pointer;
 }
 
+/* inversement */
+.flip-horizontal {
+  transform: scaleX(-1);
+}
+
 /* Focus visible propre */
 :focus-visible {
   outline: 2px solid var(--theme-primary);

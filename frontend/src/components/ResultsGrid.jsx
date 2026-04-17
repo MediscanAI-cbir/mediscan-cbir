@@ -1,18 +1,35 @@
+/**
+ * @fileoverview Grille de résultats CBIR avec pagination, sélection, export et modales détail/comparaison.
+ * @module components/ResultsGrid
+ */
+
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowDownToLine, ArrowLeftRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { imageUrl } from "../api";
 import { LangContext } from "../context/LangContext";
 
+/** Durée en ms de la transition de fermeture de la modale détail. */
 const DETAIL_MODAL_TRANSITION_MS = 420;
+/** Durée en ms de la transition du panneau de la modale détail. */
 const DETAIL_MODAL_PANEL_TRANSITION_MS = 520;
+/** Courbe d'animation du fond de la modale détail. */
 const DETAIL_MODAL_BACKDROP_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+/** Courbe d'animation du panneau de la modale détail. */
 const DETAIL_MODAL_PANEL_EASE = "cubic-bezier(0.19, 1, 0.22, 1)";
+/** Durée en ms de la transition de la modale de comparaison. */
 const COMPARE_MODAL_TRANSITION_MS = 320;
+/** Nombre de résultats affichés par page dans la grille. */
 const RESULTS_PER_PAGE = 6;
+/** Classe CSS ajoutée au body quand une modale est ouverte (verrouillage du scroll). */
 const BODY_MODAL_LOCK_CLASS = "search-modal-open";
+/** Attribut HTML comptant le nombre de modales ouvertes simultanément. */
 const BODY_MODAL_LOCK_COUNT_ATTR = "data-search-modal-open-count";
 
+/**
+ * Verrouille le scroll global du document lors de l'ouverture d'une modale.
+ * Utilise un compteur pour gérer les ouvertures multiples simultanées.
+ */
 function lockGlobalSearchModalUi() {
   if (typeof document === "undefined") return;
 
@@ -24,6 +41,10 @@ function lockGlobalSearchModalUi() {
   body.classList.add(BODY_MODAL_LOCK_CLASS);
 }
 
+/**
+ * Déverrouille le scroll global du document à la fermeture d'une modale.
+ * Ne retire la classe que si toutes les modales sont fermées (compteur à 0).
+ */
 function unlockGlobalSearchModalUi() {
   if (typeof document === "undefined") return;
 
@@ -40,6 +61,13 @@ function unlockGlobalSearchModalUi() {
   body.setAttribute(BODY_MODAL_LOCK_COUNT_ATTR, String(nextCount));
 }
 
+/**
+ * Retourne les classes CSS de couleur d'une carte de résultat selon son ton et son thème.
+ *
+ * @param {"primary"|"accent"} tone - Ton de couleur.
+ * @param {boolean} useHomeVisualTone - Utilise le thème primary de la home page.
+ * @returns {{shell: string, selected: string, rank: string, checkbox: string, checkboxHover: string}}
+ */
 function getCardClasses(tone, useHomeVisualTone) {
   if (tone === "accent") {
     return {
@@ -59,6 +87,15 @@ function getCardClasses(tone, useHomeVisualTone) {
   };
 }
 
+/**
+ * Barre de score visuelle pour une carte de résultat.
+ *
+ * @component
+ * @param {object} props
+ * @param {number} props.score - Score de similarité entre 0 et 1.
+ * @param {"primary"|"accent"} props.tone - Ton de couleur de la barre.
+ * @returns {JSX.Element}
+ */
 function ScoreBar({ score, tone }) {
   const pct = Math.round(score * 100);
   const color = tone === "accent"
@@ -77,6 +114,12 @@ function ScoreBar({ score, tone }) {
   );
 }
 
+/**
+ * Normalise une valeur CUI (identifiant de concept médical) en chaîne lisible.
+ *
+ * @param {string|string[]} cui - Valeur CUI brute (chaîne ou tableau).
+ * @returns {string} CUI normalisé.
+ */
 function formatCuiValue(cui) {
   if (Array.isArray(cui)) {
     return cui.filter(Boolean).join(", ");
@@ -84,6 +127,16 @@ function formatCuiValue(cui) {
   return typeof cui === "string" ? cui.trim() : "";
 }
 
+/**
+ * Élément de détail affiché dans la modale d'un résultat.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.label - Libellé du champ.
+ * @param {string} props.value - Valeur du champ (non rendu si vide).
+ * @param {boolean} [props.mono=false] - Affichage en police monospace.
+ * @returns {JSX.Element|null}
+ */
 function DetailItem({ label, value, mono = false }) {
   if (!value) return null;
 
@@ -99,10 +152,24 @@ function DetailItem({ label, value, mono = false }) {
   );
 }
 
+/**
+ * Limite une valeur numérique dans un intervalle [min, max].
+ *
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Assigne un nœud DOM à une ref externe (objet ou fonction).
+ *
+ * @param {React.Ref|function|null} externalRef - Ref externe.
+ * @param {HTMLElement|null} node - Nœud DOM à assigner.
+ */
 function assignExternalRef(externalRef, node) {
   if (!externalRef) return;
 
@@ -114,10 +181,32 @@ function assignExternalRef(externalRef, node) {
   externalRef.current = node;
 }
 
+/**
+ * Retourne l'URL de l'image d'un résultat (chemin direct ou URL via API).
+ *
+ * @param {{path?: string, image_id?: string}} result - Résultat CBIR.
+ * @returns {string} URL de l'image.
+ */
 function getResultImageSrc(result) {
   return result.path || imageUrl(result.image_id);
 }
 
+/**
+ * Modale de détail d'un résultat CBIR.
+ * Affiche l'image en grand avec ses métadonnées (score, CUI, caption, référence).
+ * Supporte le téléchargement de l'image et la navigation clavier (Escape pour fermer).
+ * Animation d'entrée depuis la position de la carte source (origin animation).
+ *
+ * @component
+ * @param {object} props
+ * @param {object} props.result - Résultat CBIR à afficher.
+ * @param {DOMRect|null} props.originRect - Rectangle de la carte source pour l'animation d'entrée.
+ * @param {"primary"|"accent"} props.tone - Ton de couleur de la modale.
+ * @param {string} props.modeLabel - Libellé du mode de recherche.
+ * @param {object} props.content - Traductions de la section résultats.
+ * @param {function(): void} props.onClose - Callback de fermeture de la modale.
+ * @returns {JSX.Element}
+ */
 function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onClose }) {
   const imageSrc = getResultImageSrc(result);
   const cuiValue = formatCuiValue(result.cui);
@@ -143,6 +232,11 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
     }, DETAIL_MODAL_TRANSITION_MS);
   }
 
+  /**
+   * Télécharge l'image du résultat via fetch + création d'un lien temporaire.
+   *
+   * @param {React.MouseEvent} event
+  */
   async function handleDownloadImage(event) {
     event.stopPropagation();
     if (downloadPending) return;
@@ -172,6 +266,7 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
     }
   }
 
+  // Animation d'entrée depuis la position de la carte source
   useLayoutEffect(() => {
     if (!modalRef.current) return;
 
@@ -209,6 +304,7 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
     };
   }, [originRect]);
 
+  // Fermeture au clavier (Escape) + verrouillage du scroll du body
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
@@ -258,19 +354,20 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6 sm:py-6"
       role="dialog"
       aria-modal="true"
       aria-label={content.detailsTitle}
       onClick={requestClose}
       style={{
-        backgroundColor: isOpen ? "rgba(6, 12, 21, 0.96)" : "rgba(6, 12, 21, 0)",
+        paddingTop: "max(24px, env(safe-area-inset-top))", backgroundColor: isOpen ? "rgba(6, 12, 21, 0.96)" : "rgba(6, 12, 21, 0)",
         transition: `background-color ${DETAIL_MODAL_TRANSITION_MS}ms ${DETAIL_MODAL_BACKDROP_EASE}`,
       }}
     >
+      {/* Header */}
       <div
         ref={modalRef}
-        className={`search-detail-modal search-detail-modal-${tone} relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[1.75rem] border lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]`}
+        className={`search-detail-modal search-detail-modal-${tone} relative flex max-h-[88vh] sm:max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[1.75rem] border lg:grid lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]`}
         onClick={(event) => event.stopPropagation()}
         style={{
           opacity: isOpen ? 1 : 0,
@@ -285,13 +382,14 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
         <button
           type="button"
           onClick={requestClose}
-          className="search-modal-close absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all"
+          className="search-modal-close absolute right-4 top-4 z-55 flex h-10 w-10 items-center justify-center rounded-full transition-all"
           aria-label={content.closeDetails}
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className={`search-detail-media search-detail-media-${tone} relative flex min-h-[300px] items-center justify-center overflow-hidden p-6 lg:min-h-[72vh] lg:p-8`}>
+        {/* Corps */}
+        <div className={`search-detail-media search-detail-media-${tone} relative flex min-h-[300px] items-center justify-center overflow-hidden p-6 lg:min-h-[72vh] lg:p-8 mt-12 mx-4 mb-4 rounded-[1.35rem] lg:mt-0 lg:mx-0 lg:mb-0 lg:rounded-none`}>
           <img
             src={imageSrc}
             alt={result.caption || result.image_id}
@@ -299,7 +397,7 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
           />
         </div>
 
-        <div className="flex max-h-[92vh] flex-col overflow-y-auto px-5 pb-5 pt-16 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
+        <div className="flex max-h-[88vh] sm:max-h-[92vh] flex-col overflow-y-auto px-5 pb-8 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
               {modeLabel}
@@ -353,6 +451,19 @@ function ResultDetailsModal({ result, originRect, tone, modeLabel, content, onCl
   );
 }
 
+/**
+ * Modale de comparaison côte à côte entre l'image requête et un résultat CBIR.
+ *
+ * @component
+ * @param {object} props
+ * @param {object} props.result - Résultat CBIR à comparer.
+ * @param {{src: string, alt?: string}} props.comparisonSource - Image source de la requête.
+ * @param {DOMRect|null} props.originRect - Rectangle de la carte source pour l'animation.
+ * @param {"primary"|"accent"} props.tone - Ton de couleur.
+ * @param {object} props.content - Traductions de la section résultats.
+ * @param {function(): void} props.onClose - Callback de fermeture.
+ * @returns {JSX.Element}
+ */
 function ResultCompareModal({ result, comparisonSource, originRect, tone, content, onClose }) {
   const imageSrc = getResultImageSrc(result);
   const cuiValue = formatCuiValue(result.cui);
@@ -463,7 +574,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+      className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-10 sm:py-6 pb-4 sm:pt-0"
       role="dialog"
       aria-modal="true"
       aria-label={content.compareTitle}
@@ -475,27 +586,22 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
     >
       <div
         ref={modalRef}
-        className={`search-compare-modal search-compare-modal-${tone} relative flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-[1.75rem] border`}
+        className={`search-compare-modal search-compare-modal-${tone} relative flex max-h-[88vh] sm:max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-[1.75rem] border`}
         onClick={(event) => event.stopPropagation()}
-        style={{
-          opacity: isOpen ? 1 : 0,
-          transform: isOpen
-            ? "translate3d(0px, 0px, 0px) scale(1)"
-            : `translate3d(${entryTransform.x}px, ${entryTransform.y}px, 0px) scale(${entryTransform.scale})`,
-          transition: `opacity ${COMPARE_MODAL_TRANSITION_MS}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${COMPARE_MODAL_TRANSITION_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`,
-          transformOrigin: "center center",
-        }}
+        style={{ opacity: isOpen ? 1 : 0, transform: isOpen ? "translate3d(0px, 0px, 0px) scale(1)" : `translate3d(${entryTransform.x}px, ${entryTransform.y}px, 0px) scale(${entryTransform.scale})`, transition: `opacity ${COMPARE_MODAL_TRANSITION_MS}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${COMPARE_MODAL_TRANSITION_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`, transformOrigin: "center center", }}
       >
+
         <button
           type="button"
           onClick={requestClose}
-          className="search-modal-close absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all"
-          aria-label={content.closeCompare}
+          className="search-modal-close absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full transition-all lg:right-4 lg:top-4"
+          style={{ top: "env(safe-area-inset-top, 12px)", margin: "8px" }}
+          aria-label={content.closeDetails}
         >
           <X className="h-5 w-5" />
         </button>
 
-        <div className={`search-modal-banner search-compare-banner search-compare-banner-${tone} relative px-5 py-5 sm:px-6 lg:px-8 lg:py-6`}>
+        <div className={`search-modal-banner search-compare-banner search-compare-banner-${tone} relative px-5 pt-14 pb-4 sm:pt-5 sm:pb-5 sm:px-6 lg:px-8 lg:py-6`}>
           <div className="flex flex-wrap items-center gap-2">
             <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
               {content.compareAction}
@@ -512,11 +618,11 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
           </h3>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 pb-5 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
+        <div className="flex-1 overflow-y-auto px-5 pb-10 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
           <div className="grid gap-5 lg:grid-cols-2">
             <div className="search-modal-panel rounded-[1.5rem] p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[8px] lg:text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
                   {content.queryImageLabel}
                 </span>
                 {comparisonSource.meta && (
@@ -525,8 +631,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
                   </span>
                 )}
               </div>
-              <div className={`search-compare-frame search-compare-frame-${tone} relative mt-4 flex min-h-[300px] items-center justify-center overflow-hidden rounded-[1.25rem] p-5`}>
-                <img
+                <div className={`search-compare-frame search-compare-frame-${tone} relative mt-4 flex min-h-[160px] sm:min-h-[300px] items-center justify-center overflow-hidden rounded-[1.25rem] p-5`}>                <img
                   src={comparisonSource.src}
                   alt={comparisonSource.alt}
                   className="search-detail-image relative z-10 max-h-[58vh] w-full rounded-[1.15rem] object-contain"
@@ -536,7 +641,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
 
             <div className="search-modal-panel rounded-[1.5rem] p-4">
               <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[8px] lg:text-[10px] font-semibold uppercase tracking-[0.18em] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip border"}`}>
                   {content.selectedImageLabel}
                 </span>
                 <span className="max-w-[60%] truncate text-[11px] font-medium text-muted">
@@ -578,6 +683,24 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
   );
 }
 
+/**
+ * Carte individuelle représentant un résultat CBIR dans la grille.
+ *
+ * @component
+ * @param {object} props
+ * @param {object} props.result - Données du résultat (image_id, score, rank, caption, cui, reference).
+ * @param {boolean} props.selected - Indique si la carte est sélectionnée.
+ * @param {function(string): void|null} props.onToggleSelect - Callback de (dé)sélection.
+ * @param {function(object, DOMRect): void} props.onOpenDetails - Callback d'ouverture de la modale détail.
+ * @param {function(object, DOMRect): void|null} props.onOpenCompare - Callback d'ouverture de la modale comparaison.
+ * @param {object} props.content - Traductions.
+ * @param {"primary"|"accent"} props.tone - Ton de couleur.
+ * @param {number} props.entryIndex - Index de la carte pour les animations d'entrée décalées.
+ * @param {boolean} props.animateOnMount - Active l'animation d'entrée au montage.
+ * @param {boolean} props.useHomeVisualTone - Utilise le thème primary de la home page.
+ * @param {{src?: string}} props.comparisonSource - Source de l'image requête pour la comparaison.
+ * @returns {JSX.Element}
+ */
 function ResultCard({
   result,
   selected,
@@ -607,6 +730,9 @@ function ResultCard({
     setImageFailed(true);
   }
 
+  /**
+   * Ouvre la modale détail en passant le rectangle de la carte comme origine d'animation.
+  */
   function handleOpenDetails() {
     const rect = previewRef.current?.getBoundingClientRect();
     if (rect) {
@@ -622,6 +748,10 @@ function ResultCard({
     onOpenDetails(result, null);
   }
 
+  /**
+   * Ouvre la modale de comparaison.
+   * @param {React.MouseEvent} e
+  */
   function handleOpenCompare() {
     if (!onOpenCompare) return;
 
@@ -659,7 +789,8 @@ function ResultCard({
           : undefined
       }
     >
-      <div ref={previewRef} className="search-result-preview bg-bg border-b border-border relative h-56 shrink-0">
+      {/* Image */}
+      <div ref={previewRef} className="search-result-preview bg-bg border-b border-border relative h-44 sm:h-56 shrink-0">
         {imageFailed ? (
           <div className="w-full h-full flex items-center justify-center text-[11px] text-muted bg-bg px-4 text-center">
             Image indisponible
@@ -673,9 +804,11 @@ function ResultCard({
             className="w-full h-full object-contain"
           />
         )}
+        {/* Badge de rang */}
         <span className={`absolute top-2 left-2 ${c.rank} text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm`}>
           #{result.rank}
         </span>
+        {/* Bouton de comparaison */}
         {onToggleSelect && (
           <button
             type="button"
@@ -694,6 +827,7 @@ function ResultCard({
           </button>
         )}
       </div>
+      {/* Contenu */}
       <div className="p-3.5 flex min-h-0 flex-1 flex-col">
         <p
           className="search-result-caption min-h-0 flex-1 overflow-hidden text-text text-xs leading-relaxed"
@@ -708,6 +842,7 @@ function ResultCard({
           {result.caption}
         </p>
         <div className="mt-auto pt-2">
+          {/* Checkbox de sélection */}
           {comparisonSource && (
             <div className="mb-0.5 flex items-center justify-center">
               <button
@@ -739,6 +874,20 @@ function ResultCard({
   );
 }
 
+
+/**
+ * Contrôles de pagination de la grille de résultats.
+ *
+ * @component
+ * @param {object} props
+ * @param {number} props.currentPage - Page courante (1-indexé).
+ * @param {number} props.totalPages - Nombre total de pages.
+ * @param {function(number): void} props.onPageChange - Callback de navigation.
+ * @param {object} props.content - Traductions.
+ * @param {"primary"|"accent"} props.tone - Ton de couleur.
+ * @param {boolean} props.useHomeVisualTone - Utilise le thème primary de la home page.
+ * @returns {JSX.Element}
+ */
 function PaginationControls({
   currentPage,
   totalPages,
@@ -852,6 +1001,43 @@ function PaginationControls({
   );
 }
 
+/**
+ * Grille paginée de résultats CBIR avec sélection, export et modales interactives.
+ *
+ * Fonctionnalités :
+ * - Pagination automatique par blocs de {@link RESULTS_PER_PAGE} résultats.
+ * - Sélection de résultats pour relance de recherche.
+ * - Export des résultats en JSON, CSV et PDF.
+ * - Modale détail avec animation depuis la carte source.
+ * - Modale de comparaison côte à côte avec l'image requête.
+ *
+ * @component
+ * @param {object} props
+ * @param {object|null} props.data - Données de résultats CBIR. Structure : { mode, results, onRelaunch, onRelaunchMultiple }.
+ * @param {boolean} [props.useHomeVisualTone=false] - Utilise le thème primary de la home page.
+ * @param {string} [props.className="mt-8"] - Classes CSS supplémentaires.
+ * @param {boolean} [props.headerHiddenOnDesktop=false] - Masque le header sur desktop.
+ * @param {boolean} [props.animateOnMount=false] - Active les animations d'entrée des cartes.
+ * @param {string[]} [props.selectedIds] - IDs sélectionnés (mode contrôlé).
+ * @param {function(string[]): void} [props.onSelectedIdsChange] - Callback de changement de sélection (mode contrôlé).
+ * @param {{src: string, alt?: string}|null} [props.comparisonSource=null] - Source de comparaison pour les modales.
+ * @param {React.Ref} [props.cardsGridExternalRef=null] - Ref externe sur la grille de cartes.
+ * @param {string} [props.desktopLockedHeightClass=""] - Classe CSS de hauteur verrouillée sur desktop.
+ * @param {boolean} [props.desktopThreeColumns=false] - Force 3 colonnes sur desktop (sinon 2 ou 3 selon breakpoint).
+ * @param {function(): void|null} [props.onExportJson=null] - Callback d'export JSON.
+ * @param {function(): void|null} [props.onExportCsv=null] - Callback d'export CSV.
+ * @param {function(): Promise<void>|null} [props.onExportPdf=null] - Callback d'export PDF (async).
+ * @returns {JSX.Element|null} Null si "data" est null.
+ *
+ * @example
+ * <ResultsGrid
+ *   data={searchResults}
+ *   animateOnMount
+ *   onExportJson={exportJSON}
+ *   onExportCsv={exportCSV}
+ *   onExportPdf={exportPDF}
+ * />
+ */
 export default function ResultsGrid({
   data,
   useHomeVisualTone = false,
@@ -906,16 +1092,23 @@ export default function ResultsGrid({
   const paginatedResults = resultRows.slice(pageStartIndex, pageStartIndex + RESULTS_PER_PAGE);
   const desktopPlaceholderCount = Math.max(0, RESULTS_PER_PAGE - paginatedResults.length);
 
+  // Réinitialise la page courante au changement de résultats ou de mode
   useEffect(() => {
     setCurrentPage(1);
   }, [resultRows, dataMode]);
 
+  // Assure que la page courante ne dépasse pas le nombre total de pages
   useEffect(() => {
     setCurrentPage((previousPage) => Math.min(previousPage, totalPages));
   }, [totalPages]);
 
   if (!data) return null;
 
+  
+  /**
+   * Met à jour les IDs sélectionnés (mode contrôlé ou local).
+   * @param {string[]|function} updater
+  */
   function updateSelectedIds(updater) {
     if (isSelectionControlled) {
       const nextSelectedIds = typeof updater === "function" ? updater(controlledSelectedIds) : updater;
@@ -926,21 +1119,39 @@ export default function ResultsGrid({
     setLocalSelectedIds(updater);
   }
 
+  /**
+   * Bascule la sélection d'un résultat par son ID image.
+   * @param {string} imageId
+  */
   function handleToggleSelect(imageId) {
     updateSelectedIds((prev) =>
       prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId]
     );
   }
 
+  /**
+   * Ouvre la modale de détail pour un résultat.
+   * @param {object} result
+   * @param {DOMRect} originRect
+  */
   function handleOpenDetails(result, originRect) {
     setDetailState({ result, originRect });
   }
 
+  /**
+   * Ouvre la modale de comparaison pour un résultat.
+   * @param {object} result
+   * @param {DOMRect} originRect
+  */
   function handleOpenCompare(result, originRect) {
     if (!comparisonSource?.src) return;
     setCompareState({ result, originRect });
   }
 
+  /**
+   * Navigue vers une page de la grille.
+   * @param {number} nextPage
+  */
   function handlePageChange(nextPage) {
     const safePage = Math.min(Math.max(nextPage, 1), totalPages);
     if (safePage === currentPage) return;
@@ -948,11 +1159,20 @@ export default function ResultsGrid({
     setCurrentPage(safePage);
   }
 
+  /**
+   * Assigne la ref interne de la grille et la ref externe si fournie.
+   * @param {HTMLElement|null} node
+  */
   function handleCardsGridRef(node) {
     cardsGridRef.current = node;
     assignExternalRef(cardsGridExternalRef, node);
   }
 
+  /**
+   * Déclenche un export dans le format spécifié et gère l'état de chargement.
+   * @param {"json"|"csv"|"pdf"} format - Format d'export.
+   * @param {function|null} exportAction - Fonction d'export à appeler.
+  */
   async function handleExportClick(format, exportAction) {
     if (!exportAction || activeExport) return;
 
@@ -969,6 +1189,7 @@ export default function ResultsGrid({
       ref={sectionRef}
       className={`${className} ${animateOnMount ? "mediscan-results-stage-enter" : ""} ${desktopLockedHeightClass ? `lg:flex lg:flex-col ${desktopLockedHeightClass}` : ""}`}
     >
+      {/* En-tête : compteur de résultats + badge de mode */}
       <div className={`flex justify-between items-center mb-4 flex-wrap gap-3 ${headerHiddenOnDesktop ? "lg:hidden" : ""}`}>
         <h2 className="text-lg font-bold text-title">
           {resultRows.length}{" "}
@@ -979,6 +1200,7 @@ export default function ResultsGrid({
         </span>
       </div>
 
+      {/* Pagination + Boutons d'export */}
       <div className="mb-4 flex flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-4">
         <PaginationControls
           currentPage={currentPage}
@@ -1020,6 +1242,7 @@ export default function ResultsGrid({
         </div>
       </div>
 
+      {/* Grille de cartes */}
       <div
         ref={handleCardsGridRef}
         className={`mb-8 grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 ${desktopThreeColumns ? "lg:grid-cols-3" : "xl:grid-cols-3"} ${desktopLockedHeightClass ? "lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1" : "lg:min-h-[49rem]"}`}
@@ -1040,6 +1263,8 @@ export default function ResultsGrid({
             comparisonSource={comparisonSource}
           />
         ))}
+
+        {/* Placeholders desktop pour maintenir la hauteur de la grille */}
         {Array.from({ length: desktopPlaceholderCount }, (_, index) => (
           <div
             key={`desktop-placeholder-${index}`}
@@ -1049,6 +1274,7 @@ export default function ResultsGrid({
         ))}
       </div>
 
+      {/* Modale détail */}
       {detailState && (
         <ResultDetailsModal
           result={detailState.result}
@@ -1060,6 +1286,7 @@ export default function ResultsGrid({
         />
       )}
 
+      {/* Modale comparaison */}
       {compareState && comparisonSource?.src && (
         <ResultCompareModal
           result={compareState.result}

@@ -1,6 +1,19 @@
+/**
+ * @fileoverview Pied de page de l'application MediScan.
+ * @module components/Footer
+ */
+
 import { useContext } from "react";
 import { LangContext } from "../context/LangContext";
 
+/**
+ * Icône SVG du logo GitHub.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} [props.className=""] - Classes CSS supplémentaires.
+ * @returns {JSX.Element}
+ */
 function GitHubMark({ className = "" }) {
   return (
     <svg
@@ -14,12 +27,36 @@ function GitHubMark({ className = "" }) {
   );
 }
 
+/**
+ * Pied de page de l'application contenant :
+ * - Le logo et la description de MediScan
+ * - Les liens de navigation (Home, Search, How it Works)
+ * - Les liens de support (About, Contact, FAQ)
+ * - Les mentions légales (Privacy, Terms)
+ * - Le lien GitHub du projet
+ * - La stack technologique (logos: Paris Cité, Python, PyTorch, FAISS)
+ * - Le copyright dynamique
+ *
+ * @component
+ * @param {object} props
+ * @param {function(string): void} props.onPageChange - Callback de navigation entre les pages.
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <Footer onPageChange={(page) => setCurrentPage(page)} />
+ */
 export default function Footer({ onPageChange }) {
+
   const { t } = useContext(LangContext);
   const content = t.home;
   const footerContent = content.footer || {};
+  /** Année courante pour le copyright pour changer automatiquement la date. */
   const currentYear = new Date().getFullYear();
 
+  /**
+   * Logos des technologies utilisées dans le projet.
+   * @type {Array<{src: string, alt: string}>}
+  */
   const techLogos = [
     { src: "/ParisCite.png", alt: "Université Paris Cité" },
     { src: "/Python.png",    alt: "Python" },
@@ -29,13 +66,13 @@ export default function Footer({ onPageChange }) {
 
   return (
     <footer className="bg-footer text-on-strong border-t border-border mt-auto">
-      <div className="max-w-[1320px] mx-auto px-6 md:px-12 lg:px-16 py-16 md:py-20">
+      <div className="max-w-[1320px] mx-auto px-6 md:px-12 lg:px-16 py-13 md:py-10">
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 md:gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-8 mb-8">
 
           {/* Branding */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <img src="/Logo-2.svg" alt="MediScan" className="h-8 w-auto" />
               <h3 className="font-bold text-on-strong text-lg tracking-tight">MEDISCAN</h3>
@@ -132,7 +169,7 @@ export default function Footer({ onPageChange }) {
         </div>
 
         {/* Tech Stack */}
-        <div className="py-8 border-t border-border/50 mb-8">
+        <div className="py-4 border-t border-border/50 mb-2">
           <p className="text-xs font-semibold text-on-strong uppercase tracking-widest mb-4 opacity-80">{footerContent.builtWith || "Built with"}</p>
           <div className="flex flex-wrap items-center gap-6">
             {techLogos.map(({ src, alt }) => (
@@ -147,7 +184,7 @@ export default function Footer({ onPageChange }) {
           </div>
         </div>
 
-        {/* Bottom */}
+        {/* Bottom (copyright) */}
         <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-sm text-footer-muted">
           <p>© {currentYear} MEDISCAN AI. {content.footer?.rights || "All rights reserved"}</p>
           <div>

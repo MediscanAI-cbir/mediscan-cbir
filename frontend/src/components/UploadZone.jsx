@@ -1,6 +1,34 @@
-import { useContext, useEffect, useId, useMemo, useRef, useState } from "react";
+/**
+ * @fileoverview Zone de dépôt et de sélection d'image pour la recherche CBIR par image.
+ * @module components/UploadZone
+ */
+
+import { useContext, useEffect, useId, useMemo, useRef, useState, useCallback } from "react";
 import { LangContext } from "../context/LangContext";
 
+/**
+ * Zone interactive permettant à l'utilisateur de sélectionner ou glisser-déposer
+ * une image (JPEG ou PNG). Affiche une prévisualisation une fois le fichier sélectionné.
+ *
+ * @component
+ * @param {object} props
+ * @param {File|null} props.file - Fichier image actuellement sélectionné (null = état vide).
+ * @param {function(File): void} props.onFileSelect - Callback appelé quand un fichier est choisi.
+ * @param {function(): void} props.onRemove - Callback appelé quand l'utilisateur supprime l'image.
+ * @param {boolean} [props.isAccent=false] - Utilise la palette accent (recherche sémantique).
+ * @param {boolean} [props.useHomeVisualTone=false] - Utilise le thème visuel de la home page.
+ * @param {boolean} [props.fillHeight=false] - Étend la zone pour remplir la hauteur disponible.
+ * @param {boolean} [props.enableToneTransition=false] - Active les transitions CSS de changement de ton.
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <UploadZone
+ *   file={selectedFile}
+ *   onFileSelect={(f) => setSelectedFile(f)}
+ *   onRemove={() => setSelectedFile(null)}
+ *   isAccent={false}
+ * />
+ */
 export default function UploadZone({
   file,
   onFileSelect,
@@ -19,6 +47,7 @@ export default function UploadZone({
   const toneSyncClass = enableToneTransition ? "search-tone-sync" : "";
   const uploadFrameClass = "w-full min-h-[15.5rem] sm:min-h-[17rem] lg:min-h-[20rem]";
 
+  // Révocation de l'URL objet pour éviter les fuites mémoire
   useEffect(() => {
     return () => {
       if (previewUrl) {
@@ -39,6 +68,34 @@ export default function UploadZone({
     : useHomeVisualTone ? "mediscan-primary-chip border"
     : "bg-primary-pale text-primary";
 
+  /**
+   * Gestion du "Coller" via le clavier (Ctrl+V)
+   */
+  const handlePaste = useCallback((e) => {
+    // Accès aux données du presse-papier
+    const clipboardItems = e.clipboardData?.items;
+    if (!clipboardItems) return;
+
+    const item = Array.from(clipboardItems).find(i => i.type.includes("image"));
+    
+    if (item) {
+      const pastedFile = item.getAsFile();
+      if (pastedFile) {
+        onFileSelect(pastedFile);
+      }
+    }
+  }, [onFileSelect]);
+
+  useEffect(() => {
+    window.addEventListener("paste", handlePaste);
+    return () => {
+      window.removeEventListener("paste", handlePaste);
+    };
+  }, [handlePaste]);
+  
+  /**
+   * Ouvre le sélecteur de fichier natif du navigateur.
+  */
   function handleOpenFilePicker() {
     try {
       if (typeof inputRef.current?.showPicker === "function") {
@@ -51,6 +108,10 @@ export default function UploadZone({
     inputRef.current?.click();
   }
 
+  /**
+   * Gère le dépôt d'un fichier via drag & drop.
+   * @param {DragEvent} e - Événement de drop natif.
+  */
   function handleDrop(e) {
     e.preventDefault();
     setDragOver(false);
@@ -58,6 +119,11 @@ export default function UploadZone({
     if (dropped) onFileSelect(dropped);
   }
 
+  /**
+   * Gère la sélection d'un fichier via l'input natif.
+   * Réinitialise la valeur de l'input pour permettre la re-sélection du même fichier.
+   * @param {React.ChangeEvent<HTMLInputElement>} e
+  */
   function handleChange(e) {
     const nextFile = e.target.files[0];
     e.target.value = "";

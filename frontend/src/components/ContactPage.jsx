@@ -1,16 +1,45 @@
+/**
+ * @fileoverview Page de contact avec formulaire.
+ * @module components/ContactPage
+ */
+
 import { Mail, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 import { useState, useContext, useEffect } from "react";
 import { LangContext } from "../context/LangContext";
 import { sendContactMessage } from "../api";
 
+
+/**
+ * Page de contact permettant à l'utilisateur d'envoyer un message via un formulaire.
+ *
+ * Fonctionnement :
+ * 1. L'utilisateur remplit les champs nom, email, sujet et message.
+ * 2. À la soumission, "sendContactMessage" est appelé avec les données nettoyées.
+ * 3. En cas de succès, un écran de confirmation remplace le formulaire.
+ * 4. En cas d'erreur, un message d'erreur est affiché au-dessus du bouton.
+ *
+ * @component
+ * @returns {JSX.Element}
+ *
+ * @example
+ * <ContactPage />
+ */
 export default function ContactPage() {
+
   const { t } = useContext(LangContext);
   const content = t.contact;
+
+  /** @type {[{name: string, email: string, subject: string, message: string}, function]} État du formulaire de contact. */
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  /** @type {[boolean, function]} Indique si le message a été envoyé avec succès */
   const [sent, setSent] = useState(false);
+  /** @type {[boolean, function]} Indique si la soumission est en cours */
   const [isSubmitting, setIsSubmitting] = useState(false);
+  /** @type {[string, function]} Message d'erreur de soumission */
   const [error, setError] = useState("");
+  /** @type {[string|null, function]} Nom du champ actuellement focus */
   const [focused, setFocused] = useState(null);
+  /** @type {[boolean, function]} Déclenche les animations d'entrée après le premier frame */
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -18,11 +47,19 @@ export default function ContactPage() {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  /**
+   * Met à jour un champ du formulaire par son nom.
+   * @param {React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>} e
+  */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   * Soumet le formulaire de contact.
+   * Nettoie les données, appelle l'API Groq et gère les états succès/erreur.
+  */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -44,6 +81,11 @@ export default function ContactPage() {
     }
   };
 
+  /**
+   * Retourne les classes CSS d'un champ selon son état (focus ou non).
+   * @param {string} name - Nom du champ.
+   * @returns {string}
+  */
   const inputClass = (name) =>
     `w-full px-4 py-3 rounded-xl border text-text text-sm placeholder:text-muted/40 bg-bg focus:outline-none transition-all duration-200 ${
       focused === name
@@ -69,31 +111,30 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-12 items-start">
 
           {/* Left — info cards */}
-          <div className={`lg:col-span-2 flex flex-col gap-4 ${ready ? "by-image-panel-enter-left" : "opacity-0"}`}>
+          <div className={`lg:col-span-2 grid grid-cols-2 lg:grid-cols-1 gap-4 ${ready ? "by-image-panel-enter-left" : "opacity-0"}`}>
 
-            {/* Email card */}
-            <div className="p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-4">
+            <div className="p-4 md:p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-3">
                 <Mail className="w-4.5 h-4.5 text-text" strokeWidth={1.8} />
               </div>
               <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-1">
                 {content.supportLabel}
               </p>
-              <p className="text-sm text-muted leading-relaxed mb-4">
+              <p className="text-sm text-muted leading-relaxed mb-3 hidden md:block">
                 {content.supportDesc}
               </p>
-              <a
-                href={`mailto:${content.supportAddr}`}
+              
+                <a href={`mailto:${content.supportAddr}`}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-text hover:gap-2.5 transition-all duration-200"
               >
-                {content.supportAddr}
+                <span className="hidden md:inline">{content.supportAddr}</span>
+                <span className="md:hidden">Email</span>
                 <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
               </a>
             </div>
 
-            {/* Response time card */}
-            <div className="p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
-              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-4">
+            <div className="p-4 md:p-6 rounded-2xl border border-border bg-bg hover:border-text/20 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-text/6 flex items-center justify-center mb-3">
                 <Clock className="w-4.5 h-4.5 text-text" strokeWidth={1.8} />
               </div>
               <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-1">
@@ -137,7 +178,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="contact-name" className="block text-sm font-medium text-text mb-2">
                       {content.formName}
-                      <span className="text-muted ml-1">*</span>
+                      <span className="text-red-500 font-medium ml-1">*</span>
                     </label>
                     <input
                       id="contact-name"
@@ -155,7 +196,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="contact-email" className="block text-sm font-medium text-text mb-2">
                       {content.formEmail}
-                      <span className="text-muted ml-1">*</span>
+                      <span className="text-red-500 font-medium ml-1">*</span>
                     </label>
                     <input
                       id="contact-email"
@@ -176,7 +217,7 @@ export default function ContactPage() {
                 <div>
                   <label htmlFor="contact-subject" className="block text-sm font-medium text-text mb-2">
                     {content.formSubject}
-                    <span className="text-muted ml-1">*</span>
+                    <span className="text-red-500 font-medium ml-1">*</span>
                   </label>
                   <input
                     id="contact-subject"
@@ -196,7 +237,7 @@ export default function ContactPage() {
                 <div>
                   <label htmlFor="contact-message" className="block text-sm font-medium text-text mb-2">
                     {content.formMessage}
-                    <span className="text-muted ml-1">*</span>
+                    <span className="text-red-500 font-medium ml-1">*</span>
                   </label>
                   <textarea
                     id="contact-message"
