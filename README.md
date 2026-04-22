@@ -28,7 +28,7 @@
 </div>
 
 <p align="center">
-  <img src="frontend/public/Day_visual_2.png" alt="MediScan result grid in day mode" width="100%" />
+  <img src="frontend/public/Dark_visual_2.png" alt="MediScan result grid in dark mode" width="100%" />
 </p>
 
 ---
@@ -53,17 +53,17 @@ The goal is simple: make medical retrieval feel like a serious product, with str
 <table>
   <tr>
     <td align="center" width="33%">
-      <img src="frontend/public/Day_visual_1.png" alt="Visual retrieval interface" width="100%" /><br />
+      <img src="frontend/public/Dark_visual_1.png" alt="Visual retrieval interface" width="100%" /><br />
       <strong>Visual Retrieval</strong><br />
       Start from an image and retrieve structurally similar exams.
     </td>
     <td align="center" width="33%">
-      <img src="frontend/public/Day_interp_1.png" alt="Semantic retrieval interface" width="100%" /><br />
+      <img src="frontend/public/Dark_Interp_1.png" alt="Semantic retrieval interface" width="100%" /><br />
       <strong>Semantic Retrieval</strong><br />
       Retrieve cases through medically aligned meaning, not only visual resemblance.
     </td>
     <td align="center" width="33%">
-      <img src="frontend/public/Day_texte_1.png" alt="Text search interface" width="100%" /><br />
+      <img src="frontend/public/Dark_texte_1.png" alt="Text search interface" width="100%" /><br />
       <strong>Text Search</strong><br />
       Move from clinical wording to relevant image evidence.
     </td>
@@ -72,24 +72,31 @@ The goal is simple: make medical retrieval feel like a serious product, with str
 
 ---
 
-## Built Like a Real Product, Not a Thin Demo Layer
+## Interface Gallery
 
 <table>
   <tr>
-    <td align="center" width="33%">
-      <img src="frontend/public/mission.png" alt="Mission visual" width="100%" /><br />
-      <strong>Product framing</strong><br />
-      The experience is designed as a coherent product surface, not just an API client.
+    <td align="center" width="50%">
+      <img src="frontend/public/Dark_visual_3.png" alt="Visual search detail flow" width="100%" /><br />
+      <strong>Detail and comparison flows</strong><br />
+      Retrieved cases can be opened, compared, and relaunch-used inside the same dark product surface.
     </td>
-    <td align="center" width="33%">
-      <img src="frontend/public/llm.png" alt="AI synthesis visual" width="100%" /><br />
-      <strong>AI workflow integration</strong><br />
-      Retrieval and LLM synthesis are connected inside the same user journey.
+    <td align="center" width="50%">
+      <img src="frontend/public/Dark_interp_2.png" alt="Interpretive workspace" width="100%" /><br />
+      <strong>Interpretive workspace</strong><br />
+      The semantic mode is not just another search box, it is a distinct interpretive workflow.
     </td>
-    <td align="center" width="33%">
-      <img src="frontend/public/goal.png" alt="Goal visual" width="100%" /><br />
-      <strong>Operational polish</strong><br />
-      Comparison, export, guided flows, and UX clarity make the system feel usable.
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="frontend/public/Dark_texte_2.png" alt="Text search results" width="100%" /><br />
+      <strong>Text-first exploration</strong><br />
+      A clinical query can directly become a ranked visual evidence trail.
+    </td>
+    <td align="center" width="50%">
+      <img src="frontend/public/llm_d.png" alt="AI synthesis panel" width="100%" /><br />
+      <strong>Retrieval plus synthesis</strong><br />
+      The platform connects search and AI synthesis instead of treating them as separate demos.
     </td>
   </tr>
 </table>
@@ -159,6 +166,10 @@ That is a strong technical decision because it reflects how real users think: so
 ---
 
 ## Architecture Overview
+
+<p align="center">
+  <img src="docs/assets/archi_logicielle-2.png" alt="Detailed MediScan architecture diagram" width="100%" />
+</p>
 
 ```mermaid
 flowchart TB
@@ -390,7 +401,7 @@ pytest
 ### 1. Visual Mode
 
 <p align="center">
-  <img src="frontend/public/Day_visual_3.png" alt="Visual mode large screenshot" width="100%" />
+  <img src="frontend/public/Dark_visual_3.png" alt="Visual mode large screenshot" width="100%" />
 </p>
 
 **What it is**
@@ -407,7 +418,7 @@ Visual mode searches by appearance. It is the right choice when the user already
 ### 2. Semantic Mode
 
 <p align="center">
-  <img src="frontend/public/Day_interp_3.png" alt="Semantic mode large screenshot" width="100%" />
+  <img src="frontend/public/Dark_interp_3.png" alt="Semantic mode large screenshot" width="100%" />
 </p>
 
 **What it is**
@@ -424,7 +435,7 @@ Semantic mode searches through a medically aligned embedding space. It is less a
 ### 3. Text Search Mode
 
 <p align="center">
-  <img src="frontend/public/Day_texte_3.png" alt="Text search large screenshot" width="100%" />
+  <img src="frontend/public/Dark_texte_3.png" alt="Text search large screenshot" width="100%" />
 </p>
 
 **What it is**
