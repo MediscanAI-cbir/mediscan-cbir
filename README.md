@@ -263,7 +263,7 @@ This is important because the repository is not only concerned with runtime beha
 
 ## Evaluation and Benchmarking
 
-The repository includes a dedicated evaluation layer documented in [`docs/evaluation.md`](docs/evaluation.md).
+The repository includes a dedicated evaluation layer with benchmark evidence kept alongside the project.
 
 ### Benchmark base
 
@@ -288,7 +288,7 @@ The repository includes a dedicated evaluation layer documented in [`docs/evalua
 - the repository includes measurable evidence, not only qualitative claims
 - the system already has a serious basis for future fine-tuning and benchmarking work
 
-For more detail, see [`docs/evaluation.md`](docs/evaluation.md) and the supporting files in [`proofs/`](proofs).
+Supporting benchmark evidence is available in [`proofs/`](proofs).
 
 ---
 
@@ -420,7 +420,6 @@ pytest
 ├── scripts/           evaluation and benchmark scripts
 ├── tests/             Python test suite
 ├── proofs/            benchmark evidence
-├── docs/              supporting documentation
 ├── run.sh             startup script for macOS / Linux
 ├── run.bat            startup script for Windows
 └── README.md          product-facing overview
