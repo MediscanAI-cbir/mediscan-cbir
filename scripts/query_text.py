@@ -20,6 +20,10 @@ def main() -> None:
     )
     parser.add_argument("--query", "-q", required=True, help="Medical text query (English)")
     parser.add_argument("--k", type=int, default=5, help="Number of results (default: 5, max: 50)")
+    parser.add_argument("--embedder", default=None, help="Optional embedder override")
+    parser.add_argument("--model-name", default=None, help="Optional pretrained model override")
+    parser.add_argument("--index-path", default=None, help="Optional FAISS index override")
+    parser.add_argument("--ids-path", default=None, help="Optional IDs JSON override")
     args = parser.parse_args()
 
     if not args.query.strip():
@@ -36,7 +40,13 @@ def main() -> None:
 
     print(f"Loading semantic index (BioMedCLIP)...")
     try:
-        resources = load_resources(mode="semantic")
+        resources = load_resources(
+            mode="semantic",
+            embedder=args.embedder,
+            model_name=args.model_name,
+            index_path=args.index_path,
+            ids_path=args.ids_path,
+        )
     except FileNotFoundError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         print(

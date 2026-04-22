@@ -1,0 +1,120 @@
+/* Bloc hero visual extrait de app.css: orbs, spine et variantes dark. */
+.home-hero-orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(42px);
+}
+
+.home-hero-orb-left {
+  left: 8%;
+  top: 18%;
+  width: min(24vw, 220px);
+  height: min(24vw, 220px);
+  opacity: 0.36;
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.28) 0%, rgba(148, 163, 184, 0) 74%);
+}
+
+.home-hero-orb-right {
+  right: 16%;
+  top: 26%;
+  width: min(30vw, 300px);
+  height: min(30vw, 300px);
+  opacity: 0.5;
+  background: radial-gradient(circle, rgba(191, 219, 254, 0.32) 0%, rgba(191, 219, 254, 0) 76%);
+}
+
+.home-hero-spine-shell {
+  position: relative;
+  width: min(100%, 28rem);
+  max-width: 28rem;
+  margin-left: auto;
+  pointer-events: none;
+  animation: home-spine-enter var(--motion-enter-duration) var(--motion-enter-delay) var(--motion-enter-ease) both;
+  will-change: transform, opacity;
+}
+
+.home-hero-spine-glow {
+  position: absolute;
+  inset: 10% -18% 4%;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 52% 26%, rgba(255, 255, 255, 0.56) 0%, rgba(255, 255, 255, 0.1) 24%, rgba(255, 255, 255, 0) 66%),
+    radial-gradient(circle at 48% 62%, rgba(148, 163, 184, 0.16) 0%, rgba(148, 163, 184, 0) 72%);
+  filter: blur(28px);
+  opacity: 0.78;
+}
+
+.home-hero-spine-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(90deg, var(--theme-bg-soft) 0%, color-mix(in srgb, var(--theme-bg-soft) 24%, transparent) 16%, transparent 42%);
+  filter: blur(10px);
+  opacity: 0.12;
+}
+
+.home-hero-spine-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.98;
+  mix-blend-mode: normal;
+  filter: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 74%,
+    rgba(0, 0, 0, 0.96) 80%,
+    rgba(0, 0, 0, 0.78) 87%,
+    rgba(0, 0, 0, 0.46) 93%,
+    rgba(0, 0, 0, 0.16) 98%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 74%,
+    rgba(0, 0, 0, 0.96) 80%,
+    rgba(0, 0, 0, 0.78) 87%,
+    rgba(0, 0, 0, 0.46) 93%,
+    rgba(0, 0, 0, 0.16) 98%,
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+[data-theme="dark"] .home-hero-orb-left {
+  opacity: 0.28;
+  background: radial-gradient(circle, color-mix(in srgb, var(--theme-accent) 18%, transparent) 0%, transparent 74%);
+}
+
+[data-theme="dark"] .home-hero-orb-right {
+  opacity: 0.38;
+  background: radial-gradient(circle, color-mix(in srgb, var(--theme-primary) 22%, transparent) 0%, transparent 76%);
+}
+
+[data-theme="dark"] .home-hero-spine-glow {
+  background:
+    radial-gradient(
+      circle at 52% 24%,
+      color-mix(in srgb, var(--theme-primary) 18%, transparent) 0%,
+      color-mix(in srgb, var(--theme-primary) 6%, transparent) 24%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 48% 62%,
+      color-mix(in srgb, var(--theme-accent) 12%, transparent) 0%,
+      transparent 72%
+    );
+  opacity: 0.62;
+}
+
+[data-theme="dark"] .home-hero-spine-image {
+  opacity: 0.92;
+  mix-blend-mode: normal;
+  filter: brightness(1.02) contrast(1.04);
+}

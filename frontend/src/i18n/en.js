@@ -3,7 +3,6 @@ export const en = {
   nav: {
     home: "Home",
     scan: "Scan & Search",
-    features: "Features",
     contact: "Contact",
     startFree: "Scan & Search",
     aboutUs: "About Us",
@@ -11,14 +10,13 @@ export const en = {
 
   // Home Page
   home: {
-    heroLabel: "IMAGE - TEXT GUIDED MEDICAL RETRIEVAL",
+    heroLabel: "IMAGE AND TEXT GUIDED MEDICAL RETRIEVAL",
     badge: "Interpretive AI Analysis",
     headline1: "Reduce Uncertainty.",
     headline2: "Accelerate Diagnosis.",
-    description: "Search medical imaging archives by image content or text description, retrieve visually or semantically related cases, and explore a university CBIR prototype through a structured similarity workflow.",
+    description: "Medical image retrieval (X-rays, CT scans, MRI) by visual and semantic similarity. Compare relevant cases, identify patient cohorts, and advance research.",
     cta1: "Scan & Search",
     cta1Link: "/search",
-    cta2Link: "/features",
     cta2: "Learn More",
 
     stats: {
@@ -34,11 +32,11 @@ export const en = {
 
     whyChoose: {
       headline: "Why MEDISCAN AI ?",
-      description: "University prototype designed to explore medical image retrieval workflows for teaching, demos, and research experimentation.",
+      description: "Serving health and research, image by image, step by step.",
       features: [
         {
           icon: "route",
-          title: "Intelligent Retrieval",
+          title: "Intelligent Search",
           desc: "Search by visual or semantic similarity through a fast, intuitive workflow across radiology data.",
         },
         {
@@ -77,42 +75,88 @@ export const en = {
     },
 
     modes: {
-      headline: "Two Complementary Retrieval Modes",
-      description: "A visual pathway for structural similarity and an interpretive pathway for clinically meaningful case discovery.",
+      headline: "Two Ways In. One Mission.",
+      description: "Start with an image or a clinical phrase. MEDISCAN finds what matters.",
       rootLabel: "MEDISCAN Retrieval",
       visual: {
         title: "Visual Analysis",
-        items: [
-          "Visual Similarity Search",
-        ],
+        items: ["Visual Similarity Search"],
         desc: "Find images with similar anatomical structures and visual characteristics.",
         use: "Use when: Comparative anatomy, morphology matching, or structural similarity.",
       },
       semantic: {
         title: "Interpretive Analysis",
-        items: [
-          "Semantic Similarity Search",
-          "Text-Guided Search",
-        ],
+        items: ["Semantic Similarity Search", "Text-Guided Search"],
         desc: "Discover cases with comparable pathology and clinical significance.",
         use: "Use when: Disease finding, diagnostic reasoning, or evidence-based case selection.",
       },
+      imageEntry: {
+        badge: "IMAGE ENTRY",
+        title: "Drag & Drop Search",
+        desc: "Upload a medical image, then choose how deep to look. Two analysis modes, one upload.",
+        visual: {
+          label: "Visual Analysis",
+          caption: "Shape · Structure · Texture",
+        },
+        semantic: {
+          label: "Semantic Analysis",
+          caption: "Pathology · Diagnosis · Meaning",
+        },
+      },
+      textEntry: {
+        badge: "TEXT ENTRY",
+        title: "Text-Guided Search",
+        desc: "Describe a finding or a diagnosis. Natural language, clinical precision.",
+        semantic: {
+          label: "Semantic Search",
+          caption: "Clinical · Contextual · Direct",
+        },
+      },
+    },
+
+    hub: {
+      headline: "Medical search",
+      description: "Choose the most relevant approach to explore similar cases.",
+      centerLabel: "Powered by",
+      centerName: "MEDISCAN AI",
+      cards: [
+        {
+          title: "Visual Analysis",
+          desc: "Match by anatomical shape, tissue texture, and structural patterns across your archive.",
+        },
+        {
+          title: "Contextual Retrieval",
+          desc: "Surface cases with comparable pathology and clinical significance.",
+        },
+        {
+          title: "Image Entry",
+          desc: "Upload any DICOM or medical image. Drag & drop, instantly processed.",
+        },
+        {
+          title: "Text Query",
+          desc: "Describe a clinical finding in natural language. Get semantically ranked results.",
+        },
+        {
+          title: "Interpretive Analysis",
+          desc: "Image-based search to retrieve medically and semantically similar cases.",
+        },
+      ],
     },
 
     useCases: {
-      headline: "Built for Healthcare Professionals",
-      audience: "Radiologists, pathologists, hospital systems, and research centers.",
-      inlineDescription: "Retrieve precedent cases, compare similar specimens, reduce redundant imaging, and accelerate cohort discovery in a single workflow.",
+      headline: "Built for People Interested in the Medical Field",
+      audience: "Medical staff, medical students, hospital systems, and research centers.",
+      inlineDescription: "Compare relevant cases, identify patient cohorts, and reduce redundant imaging through visual and semantic similarity analysis.",
       roles: [
         {
           icon: "stethoscope",
-          title: "Radiologists",
-          desc: "Find precedent cases instantly. Improve diagnostic confidence with historical data.",
+          title: "Medical Staff",
+          desc: "Find comparable cases faster and support interpretation with relevant historical data.",
         },
         {
-          icon: "microscope",
-          title: "Pathologists",
-          desc: "Explore comparable specimens and tissue samples across your repository.",
+          icon: "book",
+          title: "Medical Students",
+          desc: "Learn from comparable cases and strengthen diagnostic reasoning through concrete examples.",
         },
         {
           icon: "hospital",
@@ -124,18 +168,6 @@ export const en = {
           title: "Research Centers",
           desc: "Accelerate studies by rapidly identifying relevant patient cohorts.",
         },
-      ],
-    },
-
-    features: {
-      headline: "Powerful Features",
-      list: [
-        { title: "Lightning Speed", desc: "Sub-second latency on millions of images" },
-        { title: "Interpretive Intelligence", desc: "AI trained on annotated medical datasets" },
-        { title: "Dual Retrieval", desc: "Visual and semantic search modes on the same dataset" },
-        { title: "Research Prototype", desc: "Built for demos, experimentation, and code understanding" },
-        { title: "Result Export", desc: "Export visible results as JSON, CSV, or PDF" },
-        { title: "Open API", desc: "Simple REST endpoints for local integrations and testing" },
       ],
     },
 
@@ -218,6 +250,17 @@ export const en = {
           "Semantically relevant results",
         ],
         cta: "Describe a case",
+      },
+      filterCard: {
+        title: "Intelligent Filter",
+        subtitle: "Mathematical norms + CUI",
+        desc: "Automatically refine results using similarity norms, CUI-aware concepts, and contextual smart suggestions.",
+        features: [
+          "Norm-based reranking",
+          "CUI-assisted filtering",
+          "Smart query suggestions",
+        ],
+        cta: "Enable filters",
       },
       choose: {
         title: "Which approach to choose?",
@@ -445,65 +488,20 @@ export const en = {
   // About Page
   about: {
     headline: "About MEDISCAN AI",
-    eyebrow: "University Prototype",
-    description:
-      "A university project combining computer vision, vector search, and language models to assist medical image interpretation through similarity retrieval.",
-    missionVision: "Mission & Vision",
+    eyebrow: "Our goal?",
+    description: "Making medical image exploration and AI-assisted interpretation easier.",
+    missionVision: "Commitment & Vision",
     mission: {
-      title: "Our Mission",
+      title: "Our Commitment",
       image: "/mission.png",
       image_d: "/mission_d.png",
-      text: "Enable healthcare professionals to search medical image archives by visual or semantic similarity, and obtain a fast, contextualized AI-assisted interpretation.",
+      text: "Make medical image retrieval accessible, fast and useful for those who care, research and learn.",
     },
     vision: {
-      title: "Our Goal",
+      title: "Our Vision",
       image: "/goal.png",
       image_d: "/goal_d.png",
-      text: "Build a first step toward AI-assisted diagnostic tools — respecting medical data confidentiality and improving continuously through new data.",
-    },
-    architecture: {
-      title: "How It Works",
-      cards: [
-        {
-          image: "/vector.png",
-          image_d: "/vector_d.png",
-          title: "Vector Encoding",
-          text: "Two modes: visual (DINOv2) for structural similarity, and semantic (BioMedCLIP) for medical meaning. Each image is embedded into a multidimensional vector space.",
-        },
-        {
-          image: "/faiss_about.png",
-          image_d: "/faiss_about_d.png",
-          title: "FAISS Similarity Search",
-          text: "High-performance vector engine retrieving the top-k closest images with similarity scores, captions, and file references.",
-        },
-        {
-          image: "/llm.png",
-          image_d: "/llm_d.png",
-          title: "LLM Interpretation",
-          text: "Captions from matched results are sent to a language model (Groq + LLaMA) to generate a synthetic medical conclusion with confidence level and recommendations.",
-        },
-        {
-          image: "/export.png",
-          image_d: "/export_d.png",
-          title: "Export",
-          text: "Results can be exported as JSON, CSV, or PDF with images for further analysis or reporting.",
-        },
-      ],
-    },      
-    pipeline: {
-      title: "Processing Pipeline",
-      steps: [
-        { title: "Image Upload", desc: "User sends a medical image via the React interface." },
-        { title: "Embedding", desc: "Image is transformed into a numerical vector (visual or semantic mode)." },
-        { title: "Similarity Search", desc: "FAISS compares the vector against the indexed database → top-k results." },
-        { title: "Display & Filtering", desc: "Interactive image grid with sorting, score filtering, and text search." },
-        { title: "AI Analysis", desc: "Result captions are sent to Groq + LLaMA for a synthetic medical conclusion." },
-        { title: "Export", desc: "Download results as JSON, CSV, or PDF with images." },
-      ],
-    },
-    stack: {
-      title: "Tech Stack",
-      items: ["React", "FastAPI", "FAISS", "DINOv2", "BioMedCLIP", "Groq", "LLaMA", "Python", "NumPy"],
+      text: "A smart, ethical medical tool built with patient data privacy in mind.",
     },
     team: {
       title: "Meet the Team",
@@ -728,15 +726,167 @@ export const en = {
 
   // Features Page
   features: {
-    headline: "Powerful Features",
-    description: "Everything you need for clinical-grade medical image analysis and exploration.",
-    list: [
-      { title: "Lightning Speed", desc: "Sub-second latency on millions of images with FAISS indexing." },
-      { title: "Interpretive Intelligence", desc: "AI trained on annotated biomedical datasets (BioMedCLIP)." },
-      { title: "Dual Retrieval", desc: "Visual and semantic search modes on the same dataset." },
-      { title: "Research Prototype", desc: "Built for demos, experimentation, and code transparency." },
-      { title: "Result Export", desc: "Export visible results as JSON, CSV, or PDF." },
-      { title: "Open API", desc: "Simple REST endpoints for local integrations and testing." },
+    heroEyebrow: "Features",
+    heroHeadline: "Clear functionality for demanding clinical use.",
+    heroDescription: "MEDISCAN brings similar-case retrieval, visual comparison, and readable results together in a sober, reliable interface designed for real-world workflows.",
+    heroCta: "Open search",
+    heroNote: "A product layer built to compare, explore, and document nearby cases without overpromising.",
+    heroPanelEyebrow: "Product value",
+    heroPanelCaption: "Professional use",
+    heroSignals: [
+      {
+        icon: "search",
+        title: "Immediate retrieval",
+        desc: "Start from a reference image and reach useful results without unnecessary friction.",
+      },
+      {
+        icon: "compare",
+        title: "Readable comparison",
+        desc: "Bring nearby cases into view quickly to save time during review.",
+      },
+      {
+        icon: "frame",
+        title: "Clear usage frame",
+        desc: "A support tool designed to stay in the right place inside the clinical workflow.",
+      },
+    ],
+
+    showcaseEyebrow: "Potential use cases",
+    showcaseHeadline: "Concrete capabilities that make review faster and clearer.",
+    showcaseDescription: "Each capability is designed to make similar-case retrieval more useful in practice: easier to browse, easier to compare, and safer to use in everyday work.",
+    showcaseCards: [
+      {
+        icon: "visual",
+        label: "Visual similarity",
+        title: "Visual similarity",
+        desc: "Find radiographs, scans, and MRIs closest to your reference case, drawn from real medical imaging data.",
+        points: [
+          "Real medical imaging data",
+          "Appearance-based retrieval",
+        ],
+      },
+      {
+        icon: "semantic",
+        label: "Semantic similarity",
+        title: "Semantic similarity",
+        desc: "Find cases sharing the same diagnostic context from a text description.",
+        points: [
+          "BioMedCLIP embedding index",
+          "Meaning-based retrieval",
+        ],
+      },
+      {
+        icon: "upload",
+        label: "Image input",
+        title: "Image upload",
+        desc: "Drag and drop an image or select a file to launch your search.",
+        points: [
+          "Secure upload pipeline",
+          "Local file and URL support",
+        ],
+      },
+      {
+        icon: "text",
+        label: "Text query",
+        title: "Text search",
+        desc: "Type a description or paste a text to launch your search.",
+        points: [
+          "Direct textual input",
+          "Text-to-image retrieval",
+        ],
+      },
+      {
+        icon: "filter",
+        label: "Smart filter",
+        title: "Smart filter",
+        desc: "Target anatomy, modality or pathology using structured medical vocabulary with CUI, similarity norms and smart suggestions.",
+        points: [
+          "CUI and norm-based filtering",
+          "Contextual suggestions",
+        ],
+      },
+      {
+        icon: "relaunch",
+        label: "Multi-relaunch",
+        title: "Multi-relaunch",
+        desc: "Relaunch a search from one or multiple selected results to narrow down your exploration.",
+        points: [
+          "Single ID relaunch endpoint",
+          "Multi-ID relaunch endpoint",
+        ],
+      },
+      {
+        icon: "ai",
+        label: "AI summary",
+        title: "AI summary",
+        desc: "Generate a synthesis of similar cases to support your interviews, triaging, and medical decisions.",
+        points: [
+          "Summary from ranked results",
+          "Configurable Groq integration",
+        ],
+      },
+      {
+        icon: "api",
+        label: "Stable API",
+        title: "Stable API",
+        desc: "Robust endpoints with input validation and consistent responses for reliable integration.",
+        points: [
+          "Health endpoint monitoring",
+          "On-demand heavy resource loading",
+        ],
+      },
+    ],
+
+    trustEyebrow: "Reliability and security",
+    trustHeadline: "A usage framework built for demanding environments.",
+    trustDescription: "The page emphasizes what a product like this should really deliver: readable results, safe usage, clear privacy expectations, and serious continuity of use.",
+    trustCalloutEyebrow: "Positioning",
+    trustCalloutTitle: "A support tool, not a shortcut",
+    trustCalloutDescription: "MEDISCAN helps teams compare, explore, and document nearby cases. Interpretation and clinical decisions remain with healthcare professionals.",
+    trustCards: [
+      {
+        icon: "robust",
+        title: "Response robustness",
+        desc: "Present consistent, ordered results so searches remain easier to trust and easier to revisit.",
+        detail: "A steadier experience makes review and sharing simpler.",
+      },
+      {
+        icon: "secure",
+        title: "Safe usage",
+        desc: "Keep the product disciplined in its claims and aligned with the role of the healthcare professional.",
+        detail: "The interface supports case review without presenting itself as a diagnosis.",
+      },
+      {
+        icon: "privacy",
+        title: "Confidentiality",
+        desc: "Maintain a clear approach to sensitive data expectations so trust is easier to build in clinical settings.",
+        detail: "The page places discretion and usage control at the forefront.",
+      },
+      {
+        icon: "continuity",
+        title: "Continuity of use",
+        desc: "Preserve a readable, dependable interface even when the product becomes part of a demanding routine.",
+        detail: "An experience designed to stay steady day after day.",
+      },
+    ],
+
+    prevLabel: "Previous",
+    nextLabel: "Next",
+    carouselLabel: "Product capability carousel",
+    disclaimerLabel: "Usage frame",
+    disclaimer: "An assistive tool intended for qualified healthcare professionals. It does not replace clinical judgment and is not presented as a diagnostic device.",
+  },
+  demos: {
+    demoEyebrow: "Demos",
+    tryLabel: "Try",
+    demoDescription: "Discover MEDISCAN in action through real use cases.",
+    prevLabel: "Previous",
+    nextLabel: "Next",
+    carouselLabel: "Demo carousel",
+    demoCards: [
+      { type: "image", srcs: ["/Visual_Dark1.png", "/Visual_Dark2.png"], alt: "Demo 1", label: "Visual similarity", desc: "Search for similar exams from a reference image, through visual comparison.", interval: 3500 },
+      { type: "image", srcs: ["/Sem_Dark1.png", "/Sem_Dark2.png"], alt: "Demo 2", label: "Semantic similarity", desc: "Search for matching exams from a text description in medical language.", interval: 3500 },
+      { type: "image", src: null, alt: "Demo 3", label: "Demo 3" },
     ],
   },
 };

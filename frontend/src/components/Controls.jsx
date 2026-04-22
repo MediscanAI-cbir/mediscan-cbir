@@ -3,10 +3,9 @@
  * @module components/Controls
  */
 
-import { Info } from "lucide-react";
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { LangContext } from "../context/LangContext";
+import { LangContext } from "../context/LangContextValue";
 
 /**
  * Panneau de contrôle de la recherche CBIR regroupant :
@@ -34,6 +33,7 @@ import { LangContext } from "../context/LangContext";
  * @param {string} [props.modeChangeCancelLabel=""] - Label du bouton d'annulation.
  * @param {function(): void} [props.onModeInfoClick=null] - Callback du bouton d'info sur le mode.
  * @param {string} [props.modeInfoLabel=""] - Texte aria du bouton d'info.
+ * @param {boolean} [props.modeInfoHighlighted=false] - Active l'illumination du bouton d'info.
  * @returns {JSX.Element}
  *
  * @example
@@ -65,6 +65,7 @@ export default function Controls({
   modeChangeCancelLabel = "",
   onModeInfoClick = null,
   modeInfoLabel = "",
+  modeInfoHighlighted = false,
 }) {
   const { t } = useContext(LangContext);
 
@@ -84,6 +85,21 @@ export default function Controls({
   const panelSurfaceClass = mode === "visual"
     ? useHomePrimaryTone ? "mediscan-primary-surface" : "bg-primary/5 border-primary/20"
     : useAccentTone ? "mediscan-accent-surface" : "bg-accent/5 border-accent/20";
+  const modeConfirmPopoverClass = useHomePrimaryTone
+    ? "search-mode-confirm-popover search-mode-confirm-popover-primary"
+    : useAccentTone
+      ? "search-mode-confirm-popover search-mode-confirm-popover-accent"
+      : "search-mode-confirm-popover";
+  const modeConfirmCancelClass = useHomePrimaryTone
+    ? "search-mode-confirm-button-secondary-primary"
+    : useAccentTone
+      ? "search-mode-confirm-button-secondary-accent"
+      : "";
+  const modeConfirmActionClass = useHomePrimaryTone
+    ? "search-mode-confirm-button-primary"
+    : mode === "semantic"
+      ? "search-mode-confirm-button-accent"
+      : "mediscan-accent-chip";
 
   const modeShellClass = mode === "visual"
     ? useHomePrimaryTone
@@ -99,22 +115,14 @@ export default function Controls({
   const semanticInactiveClass = modeToggleDisabled
     ? "cursor-not-allowed text-muted/75"
     : "cursor-pointer text-muted hover:bg-accent/8 hover:text-accent";
-
-  // Réinitialise le mode en attente quand la garde est désactivée.
-  useEffect(() => {
-    if (!modeChangeGuardActive) {
-      setPendingMode(null);
-    }
-  }, [modeChangeGuardActive]);
-
-  // Réinitialise le mode en attente quand le mode change.
-  useEffect(() => {
-    setPendingMode(null);
-  }, [mode]);
+  const effectivePendingMode =
+    modeChangeGuardActive && pendingMode && pendingMode !== mode
+      ? pendingMode
+      : null;
 
   // Fermeture du popover au clic en dehors.
   useEffect(() => {
-    if (!pendingMode) return undefined;
+    if (!effectivePendingMode) return undefined;
 
     const handlePointerDown = (event) => {
       const target = event.target;
@@ -132,12 +140,11 @@ export default function Controls({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("touchstart", handlePointerDown);
     };
-  }, [pendingMode]);
+  }, [effectivePendingMode]);
   
   // Calcul dynamique de la position du popover (recalculé au resize/scroll).
   useLayoutEffect(() => {
-    if (!pendingMode || !modeToggleRef.current || typeof window === "undefined") {
-      setPopoverStyle(null);
+    if (!effectivePendingMode || !modeToggleRef.current || typeof window === "undefined") {
       return undefined;
     }
 
@@ -168,7 +175,7 @@ export default function Controls({
       window.removeEventListener("resize", updatePopoverPosition);
       window.removeEventListener("scroll", updatePopoverPosition, true);
     };
-  }, [pendingMode]);
+  }, [effectivePendingMode]);
 
   /**
    * Tente de changer le mode de recherche.
@@ -201,8 +208,8 @@ export default function Controls({
    * Confirme le changement de mode en attente (appelé depuis le popover).
    */
   function handleConfirmModeChange() {
-    if (!pendingMode) return;
-    handleModeAttempt(pendingMode, { force: true });
+    if (!effectivePendingMode) return;
+    handleModeAttempt(effectivePendingMode, { force: true });
   }
 
   return (
@@ -218,11 +225,11 @@ export default function Controls({
               <button
                 type="button"
                 onClick={onModeInfoClick}
-                className={`${enableToneTransition ? "search-tone-transition " : ""}inline-flex h-5.5 w-5.5 items-center justify-center rounded-md text-muted transition-all hover:bg-primary/6 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/25`}
+                className={`${enableToneTransition ? "search-tone-transition " : ""}info-trigger analysis-mode-info-trigger ${mode === "semantic" ? "info-trigger-accent" : "info-trigger-primary"} inline-flex h-5.5 w-5.5 items-center justify-center ${modeInfoHighlighted ? mode === "semantic" ? "info-trigger-glow-accent" : "info-trigger-glow-primary" : ""} focus:outline-none focus:ring-2 ${mode === "semantic" ? "focus:ring-accent/25" : "focus:ring-primary/25"}`}
                 aria-label={modeInfoLabel || t.search.analysisMode}
                 title={modeInfoLabel || t.search.analysisMode}
               >
-                <Info className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                <span aria-hidden="true" className="text-sm font-medium leading-none">i</span>
               </button>
             )}
           </div>
@@ -235,8 +242,8 @@ export default function Controls({
               className={`${enableToneTransition ? "search-tone-transition " : ""}search-mode-option flex-1 rounded-[0.8rem] border border-transparent py-2.5 px-4 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer
                 ${mode === "visual"
                   ? useHomePrimaryTone
-                    ? `mediscan-primary-chip font-semibold shadow-sm ${activeModeClass}`
-                    : `bg-primary-pale text-primary font-semibold shadow-sm ${activeModeClass}`
+                    ? `mediscan-primary-chip search-mode-option-selected font-semibold shadow-sm ${activeModeClass}`
+                    : `bg-primary-pale text-primary search-mode-option-selected font-semibold shadow-sm ${activeModeClass}`
                   : visualInactiveClass
                 }`}
             >
@@ -251,7 +258,7 @@ export default function Controls({
               aria-disabled={modeToggleDisabled}
               className={`${enableToneTransition ? "search-tone-transition " : ""}search-mode-option flex-1 rounded-[0.8rem] border border-transparent py-2.5 px-4 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer
                 ${mode === "semantic"
-                  ? `mediscan-accent-chip font-semibold shadow-sm ${activeModeClass}`
+                  ? `mediscan-accent-chip search-mode-option-selected font-semibold shadow-sm ${activeModeClass}`
                   : semanticInactiveClass
                 }`}
             >
@@ -319,7 +326,7 @@ export default function Controls({
       </button>
 
       {/* Popover de confirmation de changement de mode */}
-      {pendingMode && modeChangeConfirmMessage && popoverStyle && typeof document !== "undefined" && createPortal(
+      {effectivePendingMode && modeChangeConfirmMessage && popoverStyle && typeof document !== "undefined" && createPortal(
         <div
           className="fixed z-[120]"
           style={{
@@ -330,27 +337,23 @@ export default function Controls({
         >
           <div
             ref={popoverRef}
-            className="rounded-2xl border border-border/80 bg-surface/95 p-3 shadow-xl backdrop-blur-sm"
+            className={`rounded-2xl border border-border/80 bg-surface/95 p-3 shadow-xl backdrop-blur-sm ${modeConfirmPopoverClass}`}
           >
-            <p className="text-xs font-medium leading-5 text-muted">
+            <p className="search-mode-confirm-copy text-xs font-medium leading-5 text-muted">
               {modeChangeConfirmMessage}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => setPendingMode(null)}
-                className="inline-flex items-center rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted transition-colors hover:border-primary/20 hover:text-text"
+                className={`inline-flex items-center rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted transition-colors hover:border-primary/20 hover:text-text ${modeConfirmCancelClass}`}
               >
                 {modeChangeCancelLabel}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmModeChange}
-                className={`inline-flex items-center rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors ${
-                  mode === "semantic"
-                    ? "mediscan-primary-chip"
-                    : "mediscan-accent-chip"
-                }`}
+                className={`inline-flex items-center rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors ${modeConfirmActionClass}`}
               >
                 {modeChangeConfirmActionLabel}
               </button>

@@ -41,6 +41,10 @@ class FakeSemanticIndex:
         assert search_k == 2
         return np.array([[0.91]], dtype=np.float32), np.array([[1]], dtype=np.int64)
 
+    def reconstruct(self, index):
+        assert index == 0
+        return np.ones((512,), dtype=np.float32)
+
 
 class FakeVisualEmbedder:
     name = "dinov2_base"
@@ -140,6 +144,10 @@ class FakeSemanticIndexSingle:
     def search(self, query_vector, search_k):
         return np.array([[0.91]], dtype=np.float32), np.array([[0]], dtype=np.int64)
 
+    def reconstruct(self, index):
+        assert index == 0
+        return np.ones((512,), dtype=np.float32)
+
 
 def test_query_with_preloaded_resources(tmp_path):
     """
@@ -157,10 +165,39 @@ def test_query_with_preloaded_resources(tmp_path):
         embedder=FakeSemanticEmbedder(),
         index=FakeSemanticIndexSingle(),
         rows=rows,
+        row_index_by_image_id={"result": 0},
     )
 
     with patch("mediscan.search.faiss.normalize_L2"):
         results = search_module.query(resources=resources, image=query_path, k=1)
+
+    assert len(results) == 1
+    assert results[0]["image_id"] == "result"
+
+
+def test_query_from_index_uses_precomputed_vector(tmp_path):
+    query_path = tmp_path / "query.png"
+    result_path = tmp_path / "result.png"
+    Image.new("RGB", (8, 8)).save(query_path)
+    Image.new("RGB", (8, 8)).save(result_path)
+
+    rows = [
+        {"image_id": "query", "path": str(query_path), "caption": "query", "cui": "[]"},
+        {"image_id": "result", "path": str(result_path), "caption": "result", "cui": "[]"},
+    ]
+    resources = SearchResources(
+        embedder=None,
+        index=FakeSemanticIndex(),
+        rows=rows,
+        row_index_by_image_id={"query": 0, "result": 1},
+    )
+
+    results = search_module.query_from_index(
+        resources=resources,
+        image_id="query",
+        k=1,
+        exclude_self=True,
+    )
 
     assert len(results) == 1
     assert results[0]["image_id"] == "result"

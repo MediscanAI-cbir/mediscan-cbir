@@ -48,6 +48,7 @@ export default function StatusBar({
     >
       {isLoading && (
         <span className={`inline-block w-4 h-4 border-2 rounded-full animate-spin shrink-0
+          ${!isAccent ? "search-status-spinner-primary" : ""}
           ${isAccent ? "border-accent/30 border-t-accent" : "border-primary/30 border-t-primary"}`}
         />
       )}

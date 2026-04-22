@@ -4,7 +4,7 @@
  */
 
 import { useState, useContext } from "react";
-import { LangContext } from "../context/LangContext";
+import { LangContext } from "../context/LangContextValue";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import Spinner from "./Spinner";
 
@@ -42,14 +42,15 @@ export default function FAQPage({ onPageChange }) {
   const filteredItems = content.items.filter(item => item.category === activeTab);
 
   return (
-    <div className="bg-transparent">
-      <div className="max-w-3xl mx-auto px-6 md:px-10 py-16 md:py-24">
+    <div className="home-page faq-page-surface -mt-16 md:-mt-20">
+      <div className="max-w-3xl mx-auto px-6 md:px-10 pt-28 md:pt-32 pb-20">
 
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-title tracking-tight mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-title tracking-tight mb-3 leading-tight">
             {content.headline}
           </h1>
+          <div className="w-10 h-0.5 bg-semantic mb-5 rounded" />
           <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
             {content.description}
           </p>

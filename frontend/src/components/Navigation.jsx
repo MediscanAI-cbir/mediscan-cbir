@@ -4,7 +4,8 @@
  */
 
 import { useContext, useState, useEffect, useRef } from "react";
-import { LangContext } from "../context/LangContext";
+import { LangContext } from "../context/LangContextValue";
+import useDesktopNavVisibility from "../hooks/useDesktopNavVisibility";
 import LanguageSelector from "./LanguageSelector";
 
 
@@ -36,29 +37,26 @@ export default function Navigation({
   visible = true,
   tone = "default",
 }) {
-  
   const { t } = useContext(LangContext);
-
-  /** @type {[boolean, function]} Masquage de la navbar lors du scroll vers le bas */
-  const [scrollHidden, setScrollHidden] = useState(false);
   /** @type {[boolean, function]} État d'ouverture du menu mobile */
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  /** @type {[boolean, function]} Indique si la page a défilé (pour l'opacité du fond) */
-  const [isScrolled, setIsScrolled] = useState(false);
   /** @type {[{width: number, x: number, opacity: number}, function]} Style CSS de la boîte animée sur l'onglet actif.*/
   const [activeBoxStyle, setActiveBoxStyle] = useState({ width: 0, x: 0, opacity: 0 });
-  
-  const lastY = useRef(0);
-  const turnY = useRef(0);
-  const goingDown = useRef(true);
   /** Référence sur le conteneur des onglets pour calculer la position de l'indicateur */
   const shellRef = useRef(null);
   /** Map des références DOM sur chaque bouton d'onglet */
   const tabRefs = useRef({});
+  const isDesktopNavVisible = useDesktopNavVisibility({
+    enabled: visible,
+    forceVisible: isMenuOpen,
+  });
 
   // Bloque le scroll du body quand le menu mobile est ouvert
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isMenuOpen]);
 
   /**
@@ -69,29 +67,6 @@ export default function Navigation({
     setIsMenuOpen(false); 
     onPageChange(id);
   };
-
-  // Gestion du masquage de la navbar au scroll
-  useEffect(() => {
-    function onScroll() {
-      const y = window.scrollY;
-      setIsScrolled(y > 10);
-      if (isMenuOpen || window.innerWidth < 768) {
-        setScrollHidden(false);
-        return;
-      }
-      const down = y > lastY.current;
-      if (down !== goingDown.current) {
-        turnY.current = lastY.current;
-        goingDown.current = down;
-      }
-      if (down && y > 300) setScrollHidden(true);
-      if (!down && turnY.current - y > 60) setScrollHidden(false);
-      if (y <= 10) setScrollHidden(false);
-      lastY.current = y;
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isMenuOpen]);
 
   // Calcul de la position et largeur de l'indicateur d'onglet actif.
   useEffect(() => {
@@ -124,7 +99,7 @@ export default function Navigation({
     };
   }, [currentPage, t.nav]); 
 
-  const show = visible && !scrollHidden;
+  const show = visible && isDesktopNavVisible;
 
   const shellToneClass =
     tone === "primary"
@@ -137,7 +112,6 @@ export default function Navigation({
   const mainTabs = [
     { id: "home", label: t.nav.home },
     { id: "search", label: t.nav.scan },
-    { id: "how", label: t.nav.features },
     { id: "contact", label: t.nav.contact },
     { id: "about", label: t.nav.aboutUs },
   ];
@@ -149,15 +123,15 @@ export default function Navigation({
         style={{
           opacity: show ? 1 : 0,
           transform: show ? "translateY(0)" : "translateY(-100%)",
-          backgroundColor: (isScrolled || isMenuOpen) ? "var(--palette-bg)" : "transparent",
-          borderBottom: (isScrolled || isMenuOpen) ? "1px solid var(--palette-border)" : "1px solid transparent",
+          background: "transparent",
+          pointerEvents: show ? "auto" : "none",
         }}
       >
         <div className="relative z-[1200] w-full px-6">
           <div className="flex h-16 items-center justify-between md:grid md:h-20 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-4 lg:px-8">
             
             {/* Logo */}
-            <button onClick={() => handlePageChange("home")} className="z-[1300] outline-none">
+            <button type="button" onClick={() => handlePageChange("home")} className="z-[1300] outline-none">
               <img src="/Logo-2.svg" alt="LOGO" className="h-8 md:h-10 w-auto object-contain" />
             </button>
 
@@ -174,7 +148,7 @@ export default function Navigation({
                 }} 
               />
               {mainTabs.map((tab) => (
-                <button key={tab.id} ref={(node) => { tabRefs.current[tab.id] = node; }} onClick={() => handlePageChange(tab.id)} className={`nav-tab relative z-10 px-5 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap ${currentPage === tab.id ? "nav-tab-active" : "nav-tab-inactive"}`}>
+                <button type="button" key={tab.id} ref={(node) => { tabRefs.current[tab.id] = node; }} onClick={() => handlePageChange(tab.id)} className={`nav-tab relative z-10 px-5 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap ${currentPage === tab.id ? "nav-tab-active" : "nav-tab-inactive"}`}>
                   {tab.label}
                 </button>
               ))}
@@ -187,6 +161,7 @@ export default function Navigation({
               </div>
 
               <button 
+                type="button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)} 
                 className="md:hidden flex flex-col justify-center items-center w-6 h-6 relative outline-none"
               >
@@ -207,7 +182,12 @@ export default function Navigation({
         className={`md:hidden fixed inset-0 z-[9998] transition-all duration-300 ${
           isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
-        style={{ backgroundColor: "var(--palette-bg)" }}
+        style={{
+          background: "var(--nav-active-surface, var(--nav-active-bg, var(--palette-bg)))",
+          backgroundPosition: "top center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
+        }}
       >
         <div className="flex flex-col pt-20 px-6 h-full pb-10">
 

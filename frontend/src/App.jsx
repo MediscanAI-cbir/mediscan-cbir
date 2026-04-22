@@ -1,7 +1,8 @@
 import { lazy, Suspense, useState, useEffect, useRef, useContext } from "react";
 import { LangProvider } from "./context/LangContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import { LangContext } from "./context/LangContext";
+import { LangContext } from "./context/LangContextValue";
+import { useTheme } from "./context/useTheme";
 import Navigation from "./components/Navigation";
 import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
@@ -12,7 +13,6 @@ const ContactPage = lazy(() => import("./components/ContactPage"));
 const HowItWorks = lazy(() => import("./components/HowItWorks"));
 const FAQPage = lazy(() => import("./components/FAQPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
-const FeaturesPage = lazy(() => import("./components/FeaturesPage"));
 
 const lazyPagePreloaders = [
   () => import("./components/SearchPage"),
@@ -22,46 +22,71 @@ const lazyPagePreloaders = [
   () => import("./components/HowItWorks"),
   () => import("./components/FAQPage"),
   () => import("./components/AboutPage"),
-  () => import("./components/FeaturesPage"),
 ];
 
 const MOTION_ENTER_DURATION_MS = 620;
 const MOTION_ENTER_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const HOME_SURFACE = "home-page";
 const SEARCH_HUB_SURFACE = "search-hub-surface";
+const SEARCH_PRIMARY_SURFACE = "search-primary-surface";
+const SEARCH_ACCENT_SURFACE = "search-accent-surface";
 const DEFAULT_SURFACE = "bg-bg";
 const PAGE_EXIT_DURATION_MS = 240;
 const SURFACE_FADE_DURATION_MS = 620;
+const SEARCH_PAGE = "search";
+const DEFAULT_ROUTE = { page: "home", searchView: "hub" };
+const VALID_SEARCH_VIEWS = new Set(["hub", "image", "text"]);
+const SEARCH_VIEW_TONES = {
+  hub: "default",
+  image: "primary",
+  text: "accent",
+};
 
 const PAGE_ENTER_TRANSITION =
   `opacity ${MOTION_ENTER_DURATION_MS}ms ${MOTION_ENTER_EASE}, transform ${MOTION_ENTER_DURATION_MS}ms ${MOTION_ENTER_EASE}`;
 const PAGE_EXIT_TRANSITION =
   `opacity ${PAGE_EXIT_DURATION_MS}ms ease-out, transform 520ms cubic-bezier(0.4, 0, 1, 1)`;
 
-const pages = {
+const PAGE_COMPONENTS = {
   home: HomePage,
   search: SearchPage,
-  features: FeaturesPage,
   contact: ContactPage,
   how: HowItWorks,
   faq: FAQPage,
   about: AboutPage,
 };
 
+const STATIC_ROUTE_SURFACES = {
+  home: HOME_SURFACE,
+  contact: HOME_SURFACE,
+  faq: HOME_SURFACE,
+};
+
 function normalizeRoute(nextRoute) {
+  let page = DEFAULT_ROUTE.page;
+  let searchView = DEFAULT_ROUTE.searchView;
+
   if (typeof nextRoute === "string") {
-    return nextRoute === "search"
-      ? { page: "search", searchView: "hub" }
-      : { page: nextRoute, searchView: "hub" };
+    page = nextRoute;
+  } else if (nextRoute?.page) {
+    page = nextRoute.page;
+    searchView = nextRoute.searchView ?? DEFAULT_ROUTE.searchView;
   }
 
-  if (!nextRoute || !nextRoute.page) {
-    return { page: "home", searchView: "hub" };
+  if (!PAGE_COMPONENTS[page]) {
+    return DEFAULT_ROUTE;
   }
 
-  return nextRoute.page === "search"
-    ? { page: "search", searchView: nextRoute.searchView ?? "hub" }
-    : { page: nextRoute.page, searchView: "hub" };
+  if (page !== SEARCH_PAGE) {
+    return { page, searchView: DEFAULT_ROUTE.searchView };
+  }
+
+  return {
+    page,
+    searchView: VALID_SEARCH_VIEWS.has(searchView)
+      ? searchView
+      : DEFAULT_ROUTE.searchView,
+  };
 }
 
 function areRoutesEqual(left, right) {
@@ -69,21 +94,23 @@ function areRoutesEqual(left, right) {
 }
 
 function getInitialSearchTone(route) {
-  if (route.page !== "search") return "default";
-  if (route.searchView === "image") return "primary";
-  if (route.searchView === "text") return "accent";
-  return "default";
+  return route.page === SEARCH_PAGE
+    ? SEARCH_VIEW_TONES[route.searchView] ?? "default"
+    : "default";
 }
 
 function shouldShowFooter(route) {
-  return route.page !== "search" || route.searchView !== "hub";
+  return route.page !== SEARCH_PAGE || route.searchView !== "hub";
 }
 
-function getRouteSurface(route) {
-  if (route.page === "home") return HOME_SURFACE;
-  if (route.page === "contact") return HOME_SURFACE;
-  if (route.page !== "search") return DEFAULT_SURFACE;
+function getRouteSurface(route, searchTone = "default") {
+  if (route.page !== SEARCH_PAGE) {
+    return STATIC_ROUTE_SURFACES[route.page] ?? DEFAULT_SURFACE;
+  }
+
   if (route.searchView === "hub") return SEARCH_HUB_SURFACE;
+  if (searchTone === "primary") return SEARCH_PRIMARY_SURFACE;
+  if (searchTone === "accent") return SEARCH_ACCENT_SURFACE;
   return DEFAULT_SURFACE;
 }
 
@@ -97,6 +124,7 @@ function PageLoader() {
 
 function AppInner() {
   const { langVisible } = useContext(LangContext);
+  const { theme } = useTheme();
   const [pageVisible, setPageVisible] = useState(true);
   const [displayRoute, setDisplayRoute] = useState(() =>
     normalizeRoute("home")
@@ -144,8 +172,8 @@ function AppInner() {
   function navigateToRoute(nextRouteLike) {
     const nextRoute = normalizeRoute(nextRouteLike);
     const nextSearchTone = getInitialSearchTone(nextRoute);
-    const currentSurface = getRouteSurface(displayRoute);
-    const nextSurface = getRouteSurface(nextRoute);
+    const currentSurface = getRouteSurface(displayRoute, searchTone);
+    const nextSurface = getRouteSurface(nextRoute, nextSearchTone);
 
     if (areRoutesEqual(nextRoute, displayRoute)) return;
 
@@ -216,31 +244,41 @@ function AppInner() {
     };
   }, []);
 
-  const PageComponent = pages[displayRoute.page] || HomePage;
+  const PageComponent = PAGE_COMPONENTS[displayRoute.page] || HomePage;
   const opacity = pageVisible && langVisible ? 1 : 0;
   const translateY = pageVisible ? "0px" : "4px";
   const scale = pageVisible ? 1 : 0.996;
-  const currentSurface = getRouteSurface(displayRoute);
+  const currentSurface = getRouteSurface(displayRoute, searchTone);
+  const navActiveSurface =
+    theme === "dark"
+      ? currentSurface === HOME_SURFACE
+        ? "var(--page-home-surface-bg)"
+        : currentSurface === SEARCH_HUB_SURFACE
+          ? "var(--page-search-hub-surface-bg)"
+          : "var(--page-default-surface-bg)"
+      : null;
   const navTone =
     displayRoute.page === "search" && displayRoute.searchView !== "hub"
       ? searchTone
       : "default";
   const showFooter = shouldShowFooter(displayRoute);
   const pageProps =
-    displayRoute.page === "search"
+    displayRoute.page === SEARCH_PAGE
       ? {
-          onPageChange: handlePageChange,
           view: displayRoute.searchView,
           onSearchViewChange: handleSearchViewChange,
           onSearchToneChange: handleSearchToneChange,
         }
-      : { onPageChange: handlePageChange };
+      : {
+          onPageChange: handlePageChange,
+        };
 
   return (
     <div
       translate="no"
       className="notranslate relative isolate min-h-screen text-text"
       style={{
+        ...(navActiveSurface ? { "--nav-active-surface": navActiveSurface } : {}),
         transition: `color ${MOTION_ENTER_DURATION_MS}ms ${MOTION_ENTER_EASE}`,
       }}
     >

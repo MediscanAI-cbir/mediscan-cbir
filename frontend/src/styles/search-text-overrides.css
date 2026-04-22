@@ -1,0 +1,623 @@
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: 0 18px 34px rgba(2, 6, 23, 0.22);
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-controls-panel {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .text-search-header-badge,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-step-badge-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-action-button.mediscan-accent-action {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  color: #edf9fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-action-button.mediscan-accent-action:hover {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  color: #edf9fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.24) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .text-search-detail-icon-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 44%, var(--theme-accent-light, #a9e3ee) 56%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 44%, var(--theme-accent-light, #a9e3ee) 56%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  color: #000000 !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .text-search-detail-chip-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card > label,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card > div > label,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card p.font-semibold.uppercase {
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-label,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-sublabel {
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-shell,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .image-search-mode-shell-accent {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  border: 2px solid color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option.search-mode-option-selected,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option.mediscan-accent-chip {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-result-card,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-result-card.mediscan-accent-surface,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-result-preview {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-results-export-button-accent,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-results-export-button-accent:hover,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-results-pagination-button-accent,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-results-pagination-button-accent:hover,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-results-pagination-button-active-accent,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-results-pagination-button-active-accent:hover {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-ai-summary-panel {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent .search-ai-summary-panel .search-conclusion-header {
+  border-bottom: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note .text-search-guide-icon,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note .text-search-guide-chip {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-card {
+  transform: translate3d(0, -3px, 0);
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-icon,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-chip {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 22%, transparent),
+    0 0 22px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 20%, transparent),
+    0 0 34px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 10%, transparent) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted h2,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted h3 {
+  color: #edf9fb !important;
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 20%, transparent),
+    0 0 24px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 12%, transparent);
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted p {
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note .text-search-guide-icon {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note .text-search-guide-chip {
+  background: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 82%, white 18%) !important;
+  background-color: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 82%, white 18%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 18%, #072033 82%) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-card,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note.text-search-filter-note-highlighted .text-search-guide-card {
+  transform: translate3d(0, -4px, 0) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-icon,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-chip,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note.text-search-filter-note-highlighted .text-search-guide-icon,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note.text-search-filter-note-highlighted .text-search-guide-chip {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 22%, transparent),
+    0 0 22px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 20%, transparent),
+    0 0 34px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 10%, transparent) !important;
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted h2,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted h3,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note.text-search-filter-note-highlighted h2,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note.text-search-filter-note-highlighted h3 {
+  transform: translate3d(0, -1px, 0) !important;
+  color: #edf9fb !important;
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 20%, transparent),
+    0 0 24px color-mix(in srgb, var(--theme-accent-light, #a9e3ee) 12%, transparent);
+}
+
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted p,
+[data-theme="dark"] .search-workspace-text.search-workspace-accent #text-search-filter-note.text-search-filter-note-highlighted p {
+  transform: translate3d(0, -1px, 0) !important;
+  color: #d8e6ee !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent.search-semantic-theme {
+  background-color: color-mix(in srgb, #cce1e5 58%, white 42%);
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent::before,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent::after {
+  background: none;
+  opacity: 0;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel {
+  --theme-accent: #cce1e5;
+  --theme-accent-light: #cce1e5;
+  --theme-accent-pale: #cce1e5;
+  --color-accent: #1d4047;
+  --color-accent-light: #1d4047;
+  --color-accent-soft: #cce1e5;
+  --color-accent-pale: #cce1e5;
+  --color-accent-readable: #1d4047;
+  --color-accent-readable-strong: #173941;
+  --search-panel-border: #cce1e5;
+  --search-surface-elevated: #cce1e5;
+  --search-surface-preview: #cce1e5;
+  --search-input-bg: #cce1e5;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel.mediscan-accent-surface,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel.mediscan-accent-surface {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border-color: #cce1e5 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .search-workspace-field {
+  background-color: color-mix(in srgb, #cce1e5 42%, white 58%) !important;
+  border-color: color-mix(in srgb, #cce1e5 72%, white 28%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .search-workspace-field:focus {
+  background-color: color-mix(in srgb, #cce1e5 48%, white 52%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel textarea.search-workspace-field:focus,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel textarea.search-workspace-field:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .mediscan-accent-chip,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-chip {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  background: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 64%, white 36%) !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .text-search-header-badge,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .image-search-step-badge-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .image-search-step-badge-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .image-search-step-badge-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-step-badge-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .mediscan-accent-text,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .text-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-text,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .text-accent {
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .text-muted,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-visual-stage-panel .placeholder\:text-muted::placeholder,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .text-muted {
+  color: #3f6470 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-controls-panel,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .image-search-mode-shell-accent {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border-color: #cce1e5 !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-action-button,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-action,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .button-solid-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-action-button:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-action:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .button-solid-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-slider-track-accent {
+  background-color: color-mix(in srgb, #cce1e5 42%, white 58%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-slider-track-accent::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-controls-stage-panel .search-slider-track-accent::-moz-range-thumb {
+  background-color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card {
+  background-color: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  background: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  border-color: color-mix(in srgb, #cce1e5 72%, white 28%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-workspace-field,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .bg-bg,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel select.search-workspace-field {
+  background-color: color-mix(in srgb, #cce1e5 42%, white 58%) !important;
+  border-color: color-mix(in srgb, #cce1e5 72%, white 28%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-workspace-field:focus {
+  background-color: color-mix(in srgb, #cce1e5 48%, white 52%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card > label,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card > div > label,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card p.font-semibold.uppercase,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-label,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-sublabel,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel label.text-muted,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .text-muted {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-toolbar-button,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .mediscan-accent-outline-button {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-toolbar-button:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .mediscan-accent-outline-button:hover {
+  background-color: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, white 22%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .image-search-mode-shell-accent {
+  background-color: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #1d4047 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option.search-mode-option-selected,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-mode-option.mediscan-accent-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent {
+  --search-slider-track-color: color-mix(in srgb, #cce1e5 68%, white 32%) !important;
+  --search-slider-thumb-color: #1d4047 !important;
+  accent-color: #1d4047 !important;
+  background-color: color-mix(in srgb, #cce1e5 68%, white 32%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-filter-score-value-accent {
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent::-moz-range-thumb {
+  background-color: #1d4047 !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(29, 64, 71, 0.22) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-card,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-card.mediscan-accent-surface,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-preview {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-card:hover {
+  border-color: transparent !important;
+  box-shadow:
+    0 18px 34px color-mix(in srgb, #cce1e5 34%, transparent),
+    0 6px 14px color-mix(in srgb, #cce1e5 22%, transparent) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-rank-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-results-export-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-results-pagination-button-active-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-button-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: transparent !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-results-export-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-results-pagination-button-active-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-button-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-results-pagination-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-compare-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-detail-download-accent {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  background: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-results-pagination-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-result-compare-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-detail-download-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  background: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  border-color: color-mix(in srgb, #cce1e5 80%, white 20%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-panel {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-panel .search-conclusion-icon,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-icon,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .text-search-guide-icon {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-panel .search-conclusion-note,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-panel .search-conclusion-chip {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-regenerate {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .text-search-guide-stage .border-t {
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note {
+  --theme-accent: color-mix(in srgb, #cce1e5 78%, #1d4047 22%);
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note .text-search-guide-icon,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note .text-search-guide-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-card {
+  transform: translate3d(0, -2px, 0);
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-icon,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted .text-search-guide-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, #cce1e5 18%, transparent),
+    0 0 18px color-mix(in srgb, #cce1e5 24%, transparent),
+    0 0 28px color-mix(in srgb, #cce1e5 12%, transparent) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted h2,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted h3 {
+  color: color-mix(in srgb, #173941 78%, white 22%) !important;
+  text-shadow:
+    0 0 12px color-mix(in srgb, #cce1e5 24%, transparent),
+    0 0 20px color-mix(in srgb, #cce1e5 14%, transparent);
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-mode-note.text-search-mode-note-highlighted p {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .text-search-guide-card {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .text-search-guide-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-filter-note .text-search-guide-icon,
+:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent #text-search-filter-note .text-search-guide-chip {
+  background-color: #1c4ed8 !important;
+  background: #1c4ed8 !important;
+  border-color: #1c4ed8 !important;
+  color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-text .info-trigger,
+:root:not([data-theme="dark"]) .search-workspace-text .info-trigger:hover {
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  background-color: rgba(148, 163, 184, 0.28) !important;
+  background: rgba(148, 163, 184, 0.28) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+[data-theme="dark"] .search-workspace-text .info-trigger,
+[data-theme="dark"] .search-workspace-text .info-trigger:hover {
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  background-color: rgba(148, 163, 184, 0.14) !important;
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: rgba(226, 232, 240, 0.9) !important;
+}

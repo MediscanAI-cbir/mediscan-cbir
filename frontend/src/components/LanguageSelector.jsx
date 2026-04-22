@@ -5,26 +5,17 @@
 
 import { useState, useRef, useEffect, useContext } from "react";
 import { Moon, Sun, Globe, ChevronDown, Check } from "lucide-react";
-import { LangContext } from "../context/LangContext";
-import { useTheme } from "../context/ThemeContext";
+import { LangContext } from "../context/LangContextValue";
+import { useTheme } from "../context/useTheme";
 
 /**
  * Composant permettant à l'utilisateur de :
  * - Basculer entre le thème clair et sombre.
- * - Choisir la langue de l'interface parmi 11 langues disponibles.
+ * - Choisir la langue de l'interface entre le français et l'anglais.
  * 
- * Langues supportées : 
- * - arabe
- * - allemand
+ * Langues supportées :
  * - anglais
- * - espagnol
  * - français
- * - italien
- * - japonais
- * - coréen
- * - portugais
- * - turc
- * - chinois
  *
  * @component
  * @returns {JSX.Element}
@@ -53,22 +44,10 @@ export default function LanguageSelector() {
   /** Icône affichée selon le thème actif */
   const ThemeIcon = theme === "dark" ? Moon : Sun;
 
-  /**
-   * Liste complète des langues disponibles.
-   * @type {Array<{id: string, label: string, flag: string}>}
-   */
+  /** @type {Array<{id: string, label: string}>} */
   const languages = [
-    { id: "ar", label: "العربية", flag: "🇸🇦" },
-    { id: "de", label: "Deutsch", flag: "🇩🇪" },
-    { id: "en", label: "English", flag: "🇬🇧" },
-    { id: "es", label: "Español", flag: "🇪🇸" },
-    { id: "fr", label: "Français", flag: "🇫🇷" },
-    { id: "it", label: "Italiano", flag: "🇮🇹" },
-    { id: "ja", label: "日本語", flag: "🇯🇵" },
-    { id: "ko", label: "한국어", flag: "🇰🇷" },
-    { id: "pt", label: "Português", flag: "🇵🇹" },
-    { id: "tr", label: "Türkçe", flag: "🇹🇷" },
-    { id: "zh", label: "简体中文", flag: "🇨🇳" },
+    { id: "en", label: "English" },
+    { id: "fr", label: "Français" },
   ];
   
   return (
@@ -92,7 +71,7 @@ export default function LanguageSelector() {
       {/* Dropdown (Menu déroulant)*/}
       {open && (
         <div 
-          className={`settings-menu absolute bottom-full mb-2 w-44 rounded-2xl overflow-hidden md:bottom-auto md:top-full md:mt-2 md:mb-0 transition-all duration-200 ${lang === "ar" ? "left-0" : "right-0"} `}>
+          className="settings-menu settings-menu-enter absolute bottom-full right-0 mb-2 w-44 rounded-2xl overflow-hidden transition-all duration-200 md:bottom-auto md:top-full md:mt-2 md:mb-0">
           {/* Section Thème */}
           <div className="px-3 pt-3 pb-1">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-1.5">
@@ -134,7 +113,7 @@ export default function LanguageSelector() {
             </p>
             
             <div className="flex flex-col gap-0.5 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
-              {languages.map(({ id, label, flag }) => (
+              {languages.map(({ id, label }) => (
                 <button
                   type="button"
                   key={id}
@@ -142,8 +121,7 @@ export default function LanguageSelector() {
                   className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0
                     ${lang === id ? "settings-option-active" : "settings-option-inactive"}`}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm grayscale-[0.2]">{flag}</span>
+                  <div className="flex items-center">
                     <span>{label}</span>
                   </div>
                   {lang === id && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}

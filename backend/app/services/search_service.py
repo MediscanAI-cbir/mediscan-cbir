@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from mediscan.process import configure_cpu_environment
+
+configure_cpu_environment()
+
 import faiss as faiss_lib
 
 from backend.app.image_utils import sanitize_image_id

@@ -10,6 +10,11 @@ sont comptés comme "miss" et tirent la métrique vers le bas.
 Usage :
     PYTHONPATH=src python scripts/evaluation/evaluate_strict.py --mode semantic --k 10 --n-queries 2000 --seed 42
     PYTHONPATH=src python scripts/evaluation/evaluate_strict.py --mode visual   --k 10 --n-queries 2000 --seed 42
+
+Note :
+    Cette evaluation s'appuie sur les vecteurs deja presents dans l'index FAISS
+    via ``query_from_index``. Les fichiers image de requete ne sont donc pas
+    necessaires localement pour lancer l'evaluation.
 """
 
 from __future__ import annotations
@@ -26,7 +31,7 @@ from dotenv import load_dotenv
 
 from mediscan.process import configure_cpu_environment
 from mediscan.runtime import resolve_path
-from mediscan.search import load_resources, query
+from mediscan.search import load_resources, query_from_index
 
 load_dotenv()
 configure_cpu_environment()
@@ -68,21 +73,32 @@ def evaluate_strict(query_rows, resources, k, gt_full, gt_strict, mode):
     """
     query_results = []
     result_details = []
-    images_manquantes = 0
+    query_ids_absents = 0
+    paths_absents = 0
+
+    total_queries = len(query_rows)
 
     for i, query_row in enumerate(query_rows, start=1):
-        image_path = resolve_path(str(query_row.get("path", "")))
-        if not image_path.exists():
-            images_manquantes += 1
-            continue
+        if i == 1 or i % 25 == 0 or i == total_queries:
+            print(f"[progress] {i}/{total_queries} images", flush=True)
 
         query_id       = query_row.get("image_id", "")
+        if query_id not in resources.row_index_by_image_id:
+            query_ids_absents += 1
+            continue
+
+        query_path_raw = str(query_row.get("path", "")).strip()
+        if query_path_raw:
+            image_path = resolve_path(query_path_raw)
+            if not image_path.exists():
+                paths_absents += 1
+
         gt_query       = gt_strict[query_id]  # garanti d'avoir les 3 annotations
         modalite_query = gt_query["modalite"]
         organe_query   = gt_query["organe"]
         mo_query       = gt_query["mo"]
 
-        results = query(resources=resources, image=image_path, k=k, exclude_self=True)
+        results = query_from_index(resources=resources, image_id=query_id, k=k, exclude_self=True)
 
         hit_modalite = False
         hit_organe   = False
@@ -128,8 +144,16 @@ def evaluate_strict(query_rows, resources, k, gt_full, gt_strict, mode):
         if i % 50 == 0:
             print(f"  Evalue {i}/{len(query_rows)} requetes...")
 
-    if images_manquantes > 0:
-        print(f"[WARN] {images_manquantes} images introuvables ignorees sur {len(query_rows)} requetes.")
+    if query_ids_absents > 0:
+        print(
+            f"[WARN] {query_ids_absents} query_ids absents de l'index ont ete ignores "
+            f"sur {len(query_rows)} requetes."
+        )
+    if paths_absents > 0:
+        print(
+            f"[WARN] {paths_absents} chemins image manquants detectes, "
+            "mais l'evaluation a continue via les vecteurs deja presents dans l'index."
+        )
 
     return query_results, result_details
 
@@ -161,6 +185,10 @@ def main():
     parser.add_argument("--n-queries", type=int, default=2000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", default="proofs/perf")
+    parser.add_argument("--embedder", default=None)
+    parser.add_argument("--index-path", default=None)
+    parser.add_argument("--ids-path", default=None)
+    parser.add_argument("--model-name", default=None)
     args = parser.parse_args()
 
     print("Chargement ground truth...")
@@ -177,7 +205,14 @@ def main():
     print(f"  Ground truth STRICT  : {len(gt_strict):,} images (annotées dans les 3 CSV)")
     print(f"  Couverture stricte   : {100*len(gt_strict)/len(gt_full):.1f}%")
 
-    resources = load_resources(mode=args.mode)
+    resources = load_resources(
+        mode=args.mode,
+        embedder=args.embedder,
+        model_name=args.model_name,
+        index_path=args.index_path,
+        ids_path=args.ids_path,
+        load_embedder=False,
+    )
     print(f"Index charge : {resources.index.ntotal} vecteurs")
 
     # FILTRE 2 : sélectionner uniquement les requêtes avec annotation complète

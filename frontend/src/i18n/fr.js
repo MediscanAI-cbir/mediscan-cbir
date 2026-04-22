@@ -3,7 +3,6 @@ export const fr = {
   nav: {
     home: "Accueil",
     scan: "Scanner & Chercher",
-    features: "Fonctionnalités",
     contact: "Contact",
     startFree: "Scanner & Chercher",
     aboutUs: "À propos",
@@ -11,14 +10,13 @@ export const fr = {
 
   // Home Page
   home: {
-    heroLabel: "IMAGE - TEXT GUIDED MEDICAL RETRIEVAL",
+    heroLabel: "RECHERCHE MÉDICALE GUIDÉE PAR IMAGE ET TEXTE",
     badge: "Analyse Médicale par IA",
     headline1: "Réduire l'incertitude.",
     headline2: "Accélérer le diagnostic.",
-    description: "Explorer des archives d'imagerie médicale par contenu visuel ou par description textuelle, retrouver des cas visuellement ou sémantiquement apparentés, et découvrir un prototype universitaire de CBIR via un workflow de similarité structuré.",
+    description: "MEDISCAN vous permet d'explorer des examens médicaux en quelques secondes. Identifiez des cas similaires, accédez aux bons cas au bon moment.",
     cta1: "Scanner & Chercher",
     cta1Link: "/search",
-    cta2Link: "/features",
     cta2: "En Savoir Plus",
 
     stats: {
@@ -34,21 +32,21 @@ export const fr = {
 
     whyChoose: {
       headline: "Pourquoi MEDISCAN AI ?",
-      description: "Prototype universitaire conçu pour explorer des workflows de recherche d'images médicales pour la démonstration, l'enseignement et l'expérimentation.",
+      description: "Servir la santé et la recherche, image par image, pas à pas.",
       features: [
         {
           icon: "route",
-          title: "Intelligent Retrieval",
+          title: "Recherche Intelligente",
           desc: "Recherche par similarité visuelle ou sémantique dans un workflow rapide et lisible sur données radiologiques.",
         },
         {
           icon: "brain",
-          title: "Diagnostic Support",
+          title: "Soutien Diagnostique",
           desc: "Comparez des cas pertinents, soutenez l’interprétation et renforcez la confiance diagnostique.",
         },
         {
           icon: "blocks",
-          title: "Scalable Research Infrastructure",
+          title: "Infrastructure de Recherche Scalable",
           desc: "Fonctionne localement avec une pile FastAPI plus React simple et un enrichissement de métadonnées optionnel.",
         },
       ],
@@ -77,42 +75,88 @@ export const fr = {
     },
 
     modes: {
-      headline: "Deux modes de recherche complementaires",
-      description: "Une voie visuelle pour la similarite structurelle et une voie interpretative pour l'exploration de cas cliniquement pertinents.",
+      headline: "Deux entrées. Une seule mission.",
+      description: "Commencez par une image ou une phrase clinique. MEDISCAN trouve ce qui compte.",
       rootLabel: "Recherche MEDISCAN",
       visual: {
         title: "Analyse Visuelle",
-        items: [
-          "Recherche par similarité visuelle",
-        ],
+        items: ["Recherche par similarité visuelle"],
         desc: "Trouvez les images avec des structures anatomiques et des caractéristiques visuelles similaires.",
         use: "Utiliser quand : Anatomie comparative, correspondance morphologique, similarité structurelle.",
       },
       semantic: {
         title: "Analyse Interprétative",
-        items: [
-          "Recherche par similarité sémantique",
-          "Recherche guidée par texte",
-        ],
+        items: ["Recherche par similarité sémantique", "Recherche guidée par texte"],
         desc: "Découvrez les cas avec pathologie et signification clinique comparables.",
         use: "Utiliser quand : Découverte de maladie, raisonnement diagnostique, sélection basée sur les preuves.",
       },
+      imageEntry: {
+        badge: "ENTRÉE IMAGE",
+        title: "Recherche par Glisser-Déposer",
+        desc: "Déposez une image médicale, puis choisissez votre profondeur d'analyse. Deux modes, un seul dépôt.",
+        visual: {
+          label: "Analyse Visuelle",
+          caption: "Forme · Structure · Texture",
+        },
+        semantic: {
+          label: "Analyse Sémantique",
+          caption: "Pathologie · Diagnostic · Sens",
+        },
+      },
+      textEntry: {
+        badge: "ENTRÉE TEXTE",
+        title: "Recherche par Texte",
+        desc: "Décrivez une anomalie ou un diagnostic. Langage naturel, précision clinique.",
+        semantic: {
+          label: "Recherche Sémantique",
+          caption: "Clinique · Contextuelle · Directe",
+        },
+      },
+    },
+
+    hub: {
+      headline: "Recherche médicale",
+      description: "Choisissez l'approche la plus pertinente pour explorer des cas proches.",
+      centerLabel: "Propulsé par",
+      centerName: "MEDISCAN AI",
+      cards: [
+        {
+          title: "Analyse Visuelle",
+          desc: "Correspondance par forme anatomique, texture tissulaire et motifs structurels.",
+        },
+        {
+          title: "Recherche Contextuelle",
+          desc: "Remontez les cas avec une pathologie et une signification clinique comparables.",
+        },
+        {
+          title: "Entrée par Image",
+          desc: "Déposez n'importe quelle image DICOM ou médicale. Traitement instantané.",
+        },
+        {
+          title: "Requête Textuelle",
+          desc: "Décrivez un signe clinique en langage naturel. Obtenez des résultats classés sémantiquement.",
+        },
+        {
+          title: "Analyse Interprétative",
+          desc: "Recherche par image pour retrouver des cas médicalement et sémantiquement proches.",
+        },
+      ],
     },
 
     useCases: {
-      headline: "Conçu pour les Professionnels de Santé",
-      audience: "Radiologues, anatomopathologistes, systèmes hospitaliers et centres de recherche.",
-      inlineDescription: "Retrouvez des cas antérieurs, comparez des spécimens similaires, réduisez les examens redondants et accélérez l’identification de cohortes dans un même workflow.",
+      headline: "Conçu pour les personnes s'intéressant au domaine médical",
+      audience: "Personnel médical, étudiants en médecine, systèmes hospitaliers et centres de recherche.",
+      inlineDescription: "",
       roles: [
         {
           icon: "stethoscope",
-          title: "Radiologues",
-          desc: "Trouvez instantanément des cas antérieurs. Renforcez la confiance diagnostique grâce aux données historiques.",
+          title: "Personnel médical",
+          desc: "Retrouvez plus vite des cas comparables et appuyez l'interprétation avec des données historiques pertinentes.",
         },
         {
-          icon: "microscope",
-          title: "Anatomopathologistes",
-          desc: "Explorez des spécimens et des échantillons tissulaires comparables dans votre référentiel.",
+          icon: "book",
+          title: "Étudiants en médecine",
+          desc: "Apprenez à partir de cas comparables et renforcez le raisonnement diagnostique avec des exemples concrets.",
         },
         {
           icon: "hospital",
@@ -124,18 +168,6 @@ export const fr = {
           title: "Centres de Recherche",
           desc: "Accélérez les études en identifiant rapidement les cohortes de patients pertinentes.",
         },
-      ],
-    },
-
-    features: {
-      headline: "Fonctionnalités Puissantes",
-      list: [
-        { title: "Vitesse Éclair", desc: "Latence inférieure à la seconde sur des millions d'images" },
-        { title: "Intelligence Interprétative", desc: "IA entraînée sur des ensembles de données médicales annotées" },
-        { title: "Recherche Duale", desc: "Modes de recherche visuel et sémantique sur le même jeu de données" },
-        { title: "Prototype de Recherche", desc: "Conçu pour la démonstration, l'expérimentation et la lecture du code" },
-        { title: "Export des Résultats", desc: "Exporter les résultats visibles en JSON, CSV ou PDF" },
-        { title: "API Ouverte", desc: "Endpoints REST simples pour intégrations locales et tests" },
       ],
     },
 
@@ -274,7 +306,7 @@ export const fr = {
       modeInfoLabel: "Voir l’aide rapide sur les modes d’analyse",
       selectionGuide: {
         label: "COMBINAISON",
-        title: "Combiner filtres et relance multi-sélection",
+        title: "Filtres et relance multi-sélection",
         description: "Les filtres servent à resserrer la liste visible. La relance multi-sélection permet ensuite de repartir d’un petit groupe d’images déjà pertinentes pour lancer une nouvelle recherche plus ciblée.",
         note: "Exemple : légende + score minimum pour isoler quelques cas, puis relance multi-sélection pour explorer des voisins encore plus proches.",
       },
@@ -369,22 +401,22 @@ export const fr = {
         title: "Affiner les résultats de votre recherche par texte",
         description: "Les filtres agissent sur la liste déjà trouvée. Ils affinent l’affichage sans relancer la recherche.",
         caption: {
-          label: "LÉGENDE, CUI ET RÉFÉRENCE",
-          title: "Retrouver un type de cas dans les résultats textuels",
+          label: "LÉGENDE ET CUI",
+          title: "Retrouver un type de cas",
           description: "Le filtre légende cherche dans les descriptions déjà remontées. Les filtres CUI resserrent ensuite par modalité, anatomie ou pathologie, et la référence permet de retrouver un identifiant précis.",
-          note: "Pratique pour passer d’une requête large à une sélection plus ciblée.",
+          note: "Pratique pour passer d’une requête large à une sélection plus ciblée, en resserrant progressivement les résultats les plus utiles.",
         },
         score: {
           label: "SCORE ET TRI",
-          title: "Garder les correspondances les plus proches de votre texte",
-          description: "Le score minimum retire les résultats les moins proches de votre description. Score ↓ garde les meilleurs en tête ; score ↑ montre les cas plus limites.",
-          note: "Montez le seuil si vous voulez une liste plus stricte.",
+          title: "Garder les meilleurs résultats",
+          description: "Le score minimum fixe un seuil de similarité : en l’augmentant, vous masquez les résultats les moins pertinents. Le tri Score ↓ affiche d’abord les correspondances les plus fortes, tandis que Score ↑ fait remonter les résultats les plus faibles parmi ceux qui restent.",
+          note: "Augmentez le seuil pour une sélection plus stricte ; baissez-le pour élargir la liste.",
         },
         order: {
           label: "COMBINAISON",
           title: "Construire une lecture plus ciblée",
           description: "Le plus efficace est de combiner plusieurs filtres pour isoler rapidement le sous-ensemble utile.",
-          note: "Exemple : mot-clé de légende + score minimum + anatomie.",
+          note: "Exemple : mot-clé de légende + score minimum + anatomie, pour isoler plus vite un sous-ensemble réellement pertinent.",
         },
       },
       compare: "Comparer",
@@ -471,65 +503,20 @@ export const fr = {
   //About Page
   about: {
     headline: "À propos de MEDISCAN AI",
-    eyebrow: "Prototype universitaire",
-    description:
-      "Un projet universitaire combinant vision par ordinateur, recherche vectorielle et modèles de langage afin d'assister l'interprétation d'images médicales par recherche de similarité.",
-    missionVision: "Mission & Vision",
+    eyebrow: "Notre but ?",
+    description: "Faciliter l'exploration d'images médicales et l'interprétation assistée par IA.",
+    missionVision: "Engagement & Vision",
     mission: {
-      title: "Notre mission",
+      title: "Notre engagement",
       image: "/mission.png",
       image_d: "/mission_d.png",
-      text: "Permettre aux professionnels de santé de rechercher dans des archives d'images médicales par similarité visuelle ou sémantique, et d'obtenir une interprétation assistée par IA rapide et contextualisée.",
+      text: "Rendre la recherche d'images médicales accessible, rapide et utile pour ceux qui soignent, cherchent et apprennent.",
     },
     vision: {
-      title: "Notre objectif",
+      title: "Notre vision",
       image: "/goal.png",
       image_d: "/goal_d.png",
-      text: "Construire une première étape vers des outils d'aide au diagnostic basés sur l'IA — en respectant la confidentialité des données médicales et en s'améliorant continuellement grâce à de nouvelles données.",
-    },
-    architecture: {
-      title: "Fonctionnement",
-      cards: [
-        {
-          image: "/vector.png",
-          image_d: "/vector_d.png",
-          title: "Encodage vectoriel",
-          text: "Deux modes : visuel (DINOv2) pour la similarité structurelle, et sémantique (BioMedCLIP) pour le sens médical. Chaque image est transformée en un vecteur multidimensionnel.",
-        },
-        {
-          image: "/faiss_about.png",
-          image_d: "/faiss_about_d.png",
-          title: "Recherche de similarité FAISS",
-          text: "Moteur vectoriel haute performance récupérant les k images les plus proches avec scores de similarité, légendes et références de fichiers.",
-        },
-        {
-          image: "/llm.png",
-          image_d: "/llm_d.png",
-          title: "Interprétation LLM",
-          text: "Les légendes des résultats correspondants sont envoyées à un modèle de langage (Groq + LLaMA) pour générer une conclusion médicale synthétique avec un niveau de confiance et des recommandations.",
-        },
-        {
-          image: "/export.png",
-          image_d: "/export_d.png",
-          title: "Export",
-          text: "Les résultats peuvent être exportés en JSON, CSV ou PDF avec les images pour une analyse ou un reporting ultérieur.",
-        },
-      ],
-    },
-    pipeline: {
-      title: "Pipeline de traitement",
-      steps: [
-        { title: "Téléversement de l’image", desc: "L’utilisateur envoie une image médicale via l’interface React." },
-        { title: "Vectorisation", desc: "L’image est transformée en vecteur numérique (mode visuel ou sémantique)." },
-        { title: "Recherche de similarité", desc: "FAISS compare le vecteur à la base indexée → top-k résultats." },
-        { title: "Affichage et filtrage", desc: "Grille d’images interactive avec tri, filtrage par score et recherche textuelle." },
-        { title: "Analyse IA", desc: "Les légendes des résultats sont envoyées à Groq + LLaMA pour une conclusion médicale synthétique." },
-        { title: "Export", desc: "Téléchargement des résultats en JSON, CSV ou PDF avec images." },
-      ],
-    },
-    stack: {
-      title: "Stack technique",
-      items: ["React", "FastAPI", "FAISS", "DINOv2", "BioMedCLIP", "Groq", "LLaMA", "Python", "NumPy"],
+      text: "Un outil médical intelligent, éthique et conçu dans le respect des données patients.",
     },
     team: {
       title: "L’équipe",
@@ -735,15 +722,167 @@ export const fr = {
 
   // Page Fonctionnalités
   features: {
-    headline: "Fonctionnalités Puissantes",
-    description: "Tout ce qu'il faut pour l'analyse et l'exploration d'images de grade clinique.",
-    list: [
-      { title: "Vitesse Éclair", desc: "Latence inférieure à la seconde sur des millions d'images grâce à l'indexation FAISS." },
-      { title: "Intelligence Interprétative", desc: "IA entraînée sur des datasets biomédicaux annotés (BioMedCLIP)." },
-      { title: "Recherche Duale", desc: "Modes de recherche visuel et sémantique sur le même jeu de données." },
-      { title: "Prototype de Recherche", desc: "Conçu pour la démonstration, l'expérimentation et la lisibilité du code." },
-      { title: "Export des Résultats", desc: "Exporter les résultats visibles en JSON, CSV ou PDF." },
-      { title: "API Ouverte", desc: "Endpoints REST simples pour intégrations locales et tests." },
+    heroEyebrow: "Fonctionnalités",
+    heroHeadline: "Des fonctionnalités claires pour des usages cliniques exigeants.",
+    heroDescription: "MEDISCAN rassemble la recherche de cas similaires, la comparaison visuelle et la lecture des résultats dans une interface sobre, fiable et directement exploitable.",
+    heroCta: "Accéder à la recherche",
+    heroNote: "Un appui produit pour comparer, explorer et documenter des cas proches sans surpromesse.",
+    heroPanelEyebrow: "Valeur produit",
+    heroPanelCaption: "Usage professionnel",
+    heroSignals: [
+      {
+        icon: "search",
+        title: "Recherche immédiate",
+        desc: "Lancer une recherche à partir d'une image de référence, sans friction inutile.",
+      },
+      {
+        icon: "compare",
+        title: "Comparaison lisible",
+        desc: "Mettre rapidement en regard plusieurs cas proches pour gagner du temps à la lecture.",
+      },
+      {
+        icon: "frame",
+        title: "Cadre d'usage clair",
+        desc: "Un outil d'appui conçu pour rester à sa juste place dans le workflow clinique.",
+      },
+    ],
+
+    showcaseEyebrow: "Potentiels d'usage",
+    showcaseHeadline: "Des fonctionnalités concrètes pour lire plus vite, avec plus de clarté.",
+    showcaseDescription: "Des fonctionnalités claires pour trouver, comparer et exploiter des cas proches plus sereinement.",
+    showcaseCards: [
+      {
+        icon: "visual",
+        label: "Similarité visuelle",
+        title: "Similarité visuelle",
+        desc: "Retrouvez les radiographies, scanners et IRM les plus proches de votre cas, à partir de données d'imagerie réelles.",
+        points: [
+          "Données d'imagerie réelles",
+          "Recherche par apparence visuelle",
+        ],
+      },
+      {
+        icon: "semantic",
+        label: "Similarité sémantique",
+        title: "Similarité sémantique",
+        desc: "Identifiez les cas partageant le même contexte diagnostique à partir d'une description textuelle.",
+        points: [
+          "Index d'embeddings BioMedCLIP",
+          "Recherche par sens clinique",
+        ],
+      },
+      {
+        icon: "upload",
+        label: "Entrée image",
+        title: "Upload image",
+        desc: "Glissez-déposez une image ou sélectionnez un fichier pour lancer votre recherche.",
+        points: [
+          "Upload sécurisé en API",
+          "Prise en charge image locale ou URL",
+        ],
+      },
+      {
+        icon: "text",
+        label: "Requête texte",
+        title: "Recherche texte",
+        desc: "Saisissez une description ou collez un texte pour lancer votre recherche.",
+        points: [
+          "Entrée textuelle directe",
+          "Recherche text-to-image",
+        ],
+      },
+      {
+        icon: "filter",
+        label: "Filtre intelligent",
+        title: "Filtre intelligent",
+        desc: "Ciblez anatomie, modalité ou pathologie grâce à un vocabulaire médical structuré avec CUI, normes de similarité et suggestions intelligentes.",
+        points: [
+          "Filtrage par CUI et normes",
+          "Suggestions contextuelles",
+        ],
+      },
+      {
+        icon: "relaunch",
+        label: "Multi-relance",
+        title: "Multi-relance",
+        desc: "Relancez une recherche depuis un ou plusieurs résultats sélectionnés pour affiner l'exploration.",
+        points: [
+          "Endpoint search-by-id",
+          "Endpoint search-by-ids",
+        ],
+      },
+      {
+        icon: "ai",
+        label: "Synthèse IA",
+        title: "Synthèse clinique IA",
+        desc: "Générez une synthèse des cas similaires pour appuyer vos entretiens, votre triage et vos décisions médicales.",
+        points: [
+          "Analyse basée sur top résultats",
+          "Intégration Groq configurable",
+        ],
+      },
+      {
+        icon: "api",
+        label: "API stable",
+        title: "API stable",
+        desc: "Des endpoints robustes avec validation des entrées et des réponses cohérentes pour une intégration fiable.",
+        points: [
+          "Santé service monitorée",
+          "Ressources chargées à la demande",
+        ],
+      },
+    ],
+
+    trustEyebrow: "Robustesse et sécurité",
+    trustHeadline: "Un cadre d'usage conçu pour durer dans des environnements exigeants.",
+    trustDescription: "La page met l'accent sur ce qu'un produit de ce type doit vraiment apporter : des résultats lisibles, un usage sécurisé, une confidentialité claire et une continuité d'utilisation sérieuse.",
+    trustCalloutEyebrow: "Positionnement",
+    trustCalloutTitle: "Un outil d'appui, pas un raccourci",
+    trustCalloutDescription: "MEDISCAN aide à comparer, explorer et documenter des cas proches. L'interprétation et la décision clinique restent entre les mains des professionnels de santé.",
+    trustCards: [
+      {
+        icon: "robust",
+        title: "Robustesse des réponses",
+        desc: "Présenter des résultats cohérents et ordonnés pour limiter les variations inutiles d'une recherche à l'autre.",
+        detail: "Une expérience plus stable, donc plus simple à relire et à partager.",
+      },
+      {
+        icon: "secure",
+        title: "Sécurité des usages",
+        desc: "Proposer un cadre de travail qui reste sobre dans ses promesses et respecte le rôle du professionnel de santé.",
+        detail: "Le produit appuie la lecture de cas, sans se présenter comme un diagnostic.",
+      },
+      {
+        icon: "privacy",
+        title: "Confidentialité",
+        desc: "Garder une approche claire de la gestion des données pour favoriser la confiance dans les contextes sensibles.",
+        detail: "Une page qui met la discrétion et la maîtrise d'usage au premier plan.",
+      },
+      {
+        icon: "continuity",
+        title: "Continuité d'usage",
+        desc: "Maintenir une interface lisible et régulière, y compris lorsque l'outil s'inscrit dans une routine clinique exigeante.",
+        detail: "Une expérience pensée pour rester constante au quotidien.",
+      },
+    ],
+
+    prevLabel: "Précédent",
+    nextLabel: "Suivant",
+    carouselLabel: "Carrousel des fonctionnalités produit",
+    disclaimerLabel: "Cadre d'usage",
+    disclaimer: "Outil d'assistance destiné aux professionnels de santé qualifiés. Ne remplace pas le jugement clinique et n'est pas présenté comme un dispositif de diagnostic.",
+  },
+  demos: {
+    demoEyebrow: "Démos",
+    tryLabel: "Tester",
+    demoDescription: "Découvrez MediScan en action à travers des cas d'usage réels.",
+    prevLabel: "Précédent",
+    nextLabel: "Suivant",
+    carouselLabel: "Carrousel de démos",
+    demoCards: [
+      { type: "image", srcs: ["/Visual_Dark1.png", "/Visual_Dark2.png"], alt: "Démo 1", label: "Similarité visuelle", desc: "Recherche d'examens similaires à partir d'une image de référence, par comparaison visuelle.", interval: 3500 },
+      { type: "image", srcs: ["/Sem_Dark1.png", "/Sem_Dark2.png"], alt: "Démo 2", label: "Similarité sémantique", desc: "Recherche d'examens correspondants à partir d'une description textuelle en langage médical.", interval: 3500 },
+      { type: "image", src: null, alt: "Démo 3", label: "Démo 3" },
     ],
   },
 };

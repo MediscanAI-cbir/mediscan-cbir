@@ -1,0 +1,1205 @@
+/* Bloc global extrait de l'ancien index.css: tokens, resets, animations et utilitaires partagés. */
+/* ── Typographie ── */
+:root {
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --motion-enter-duration: 1650ms;
+  --motion-enter-delay: 180ms;
+  --motion-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Tokens de couleur — mode clair ── */
+:root {
+  --palette-title: #1e293b;
+  --palette-text: #1e293b;
+  --palette-muted: #64748b;
+  --palette-visual: #1d4ed8;
+  --palette-visual-light: #3b82f6;
+  --palette-visual-pale: #eff6ff;
+  --palette-semantic: #0891b2;
+  --palette-semantic-light: #06b6d4;
+  --palette-semantic-pale: #ecfeff;
+  --palette-surface: rgba(255, 255, 255, 0.9);
+  --palette-bg: #f8fafc;
+  --palette-bg-soft: #eef6ff;
+  --palette-border: #d9e4f1;
+  --palette-footer: #0f172a;
+  --palette-footer-muted: #94a3b8;
+  --palette-danger: #ef4444;
+  --palette-on-strong: #ffffff;
+  --theme-title: var(--palette-title);
+  --theme-primary: var(--palette-visual);
+  --theme-primary-light: var(--palette-visual-light);
+  --theme-primary-pale: var(--palette-visual-pale);
+  --theme-accent: var(--palette-semantic);
+  --theme-accent-light: var(--palette-semantic-light);
+  --theme-accent-pale: var(--palette-semantic-pale);
+  --semantic-accent: var(--palette-semantic);
+  --semantic-accent-light: var(--palette-semantic-light);
+  --semantic-accent-pale: var(--palette-semantic-pale);
+  --theme-surface: var(--palette-surface);
+  --theme-bg: var(--palette-bg);
+  --theme-bg-soft: var(--palette-bg-soft);
+  --theme-border: var(--palette-border);
+  --theme-text: var(--palette-text);
+  --theme-muted: var(--palette-muted);
+  --theme-footer: var(--palette-footer);
+  --theme-footer-muted: var(--palette-footer-muted);
+  --theme-danger: var(--palette-danger);
+  --theme-on-strong: var(--palette-on-strong);
+  --mediscan-primary-surface-border: color-mix(in srgb, var(--theme-primary) 16%, transparent);
+  --mediscan-primary-surface-fill: color-mix(in srgb, var(--theme-primary) 34%, var(--theme-bg-soft));
+  --mediscan-primary-surface-shadow: color-mix(in srgb, var(--theme-primary) 8%, transparent);
+  --mediscan-primary-chip-border: color-mix(in srgb, var(--theme-primary) 14%, transparent);
+  --mediscan-primary-chip-fill: color-mix(in srgb, var(--theme-primary-pale) 64%, white 36%);
+  --mediscan-primary-chip-text: color-mix(in srgb, var(--theme-primary) 52%, var(--theme-text));
+  --mediscan-primary-text-color: color-mix(in srgb, var(--theme-primary) 38%, var(--theme-text));
+  --mediscan-primary-outline-border: color-mix(in srgb, var(--theme-primary) 14%, transparent);
+  --mediscan-primary-outline-fill: color-mix(in srgb, white 84%, var(--theme-primary) 16%);
+  --mediscan-primary-outline-text: color-mix(in srgb, var(--theme-primary) 44%, var(--theme-text));
+  --mediscan-primary-outline-hover-border: color-mix(in srgb, var(--theme-primary) 18%, transparent);
+  --mediscan-primary-outline-hover-fill: color-mix(in srgb, white 78%, var(--theme-primary) 22%);
+  --mediscan-primary-outline-hover-text: color-mix(in srgb, var(--theme-primary) 52%, var(--theme-text));
+  --mediscan-primary-selected-border: color-mix(in srgb, var(--theme-primary) 18%, transparent);
+  --mediscan-primary-selected-ring: color-mix(in srgb, var(--theme-primary) 12%, transparent);
+  --mediscan-primary-selected-shadow: color-mix(in srgb, var(--theme-primary) 8%, transparent);
+  --mediscan-primary-button-shadow: color-mix(in srgb, var(--theme-primary) 18%, transparent);
+  --mediscan-primary-button-hover-shadow: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  --mediscan-accent-surface-border: color-mix(in srgb, var(--theme-accent) 16%, transparent);
+  --mediscan-accent-surface-fill: color-mix(in srgb, var(--theme-accent) 34%, var(--theme-bg-soft));
+  --mediscan-accent-surface-shadow: color-mix(in srgb, var(--theme-accent) 8%, transparent);
+  --mediscan-accent-chip-border: color-mix(in srgb, var(--theme-accent) 14%, transparent);
+  --mediscan-accent-chip-fill: color-mix(in srgb, var(--theme-accent-pale) 62%, white 38%);
+  --mediscan-accent-chip-text: color-mix(in srgb, var(--theme-accent) 56%, var(--theme-text));
+  --mediscan-accent-text-color: color-mix(in srgb, var(--theme-accent) 42%, var(--theme-text));
+  --mediscan-accent-outline-border: color-mix(in srgb, var(--theme-accent) 14%, transparent);
+  --mediscan-accent-outline-fill: color-mix(in srgb, white 84%, var(--theme-accent) 16%);
+  --mediscan-accent-outline-text: color-mix(in srgb, var(--theme-accent) 48%, var(--theme-text));
+  --mediscan-accent-outline-hover-border: color-mix(in srgb, var(--theme-accent) 18%, transparent);
+  --mediscan-accent-outline-hover-fill: color-mix(in srgb, white 78%, var(--theme-accent) 22%);
+  --mediscan-accent-outline-hover-text: color-mix(in srgb, var(--theme-accent) 56%, var(--theme-text));
+  --mediscan-accent-selected-border: color-mix(in srgb, var(--theme-accent) 18%, transparent);
+  --mediscan-accent-selected-ring: color-mix(in srgb, var(--theme-accent) 12%, transparent);
+  --mediscan-accent-selected-shadow: color-mix(in srgb, var(--theme-accent) 8%, transparent);
+  --mediscan-accent-button-shadow: color-mix(in srgb, var(--theme-accent) 16%, transparent);
+  --mediscan-accent-button-hover-shadow: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  --mediscan-visual-block-base: var(--theme-primary);
+  --mediscan-visual-block-light: var(--theme-primary-light);
+  --mediscan-visual-block-pale: var(--theme-primary-pale);
+  --mediscan-visual-block-surface-border: color-mix(in srgb, var(--mediscan-visual-block-base) 16%, transparent);
+  --mediscan-visual-block-surface-fill: color-mix(in srgb, var(--mediscan-visual-block-base) 34%, white);
+  --mediscan-visual-block-chip-border: color-mix(in srgb, var(--mediscan-visual-block-base) 14%, transparent);
+  --mediscan-visual-block-chip-fill: color-mix(in srgb, var(--mediscan-visual-block-pale) 64%, white 36%);
+  --mediscan-visual-block-text: color-mix(in srgb, var(--mediscan-visual-block-base) 52%, var(--theme-text));
+  --mediscan-visual-block-soft-text: color-mix(in srgb, var(--mediscan-visual-block-base) 38%, var(--theme-text));
+  --mediscan-visual-block-shadow: color-mix(in srgb, var(--mediscan-visual-block-base) 8%, transparent);
+  --mediscan-interpretive-block-base: var(--theme-accent);
+  --mediscan-interpretive-block-light: var(--theme-accent-light);
+  --mediscan-interpretive-block-pale: var(--theme-accent-pale);
+  --mediscan-interpretive-block-surface-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 16%, transparent);
+  --mediscan-interpretive-block-surface-fill: color-mix(in srgb, var(--mediscan-interpretive-block-base) 34%, white);
+  --mediscan-interpretive-block-chip-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 14%, transparent);
+  --mediscan-interpretive-block-chip-fill: color-mix(in srgb, var(--mediscan-interpretive-block-pale) 62%, white 38%);
+  --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 56%, var(--theme-text));
+  --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 42%, var(--theme-text));
+  --mediscan-interpretive-block-shadow: color-mix(in srgb, var(--mediscan-interpretive-block-base) 8%, transparent);
+  --home-tree-root-border: rgba(37, 73, 132, 0.2);
+  --home-tree-root-bg-top: rgba(235, 244, 255, 0.99);
+  --home-tree-root-bg-mid: rgba(208, 223, 244, 0.98);
+  --home-tree-root-bg-bottom: rgba(176, 198, 232, 0.96);
+  --home-tree-root-shadow: rgba(27, 60, 104, 0.13);
+  --home-tree-root-icon-border: rgba(24, 77, 151, 0.18);
+  --home-tree-root-icon-bg: rgba(24, 77, 151, 0.12);
+  --home-tree-root-icon-color: #1b4a83;
+  --home-tree-root-label: #1a416d;
+  --home-tree-blue-border: var(--mediscan-visual-block-surface-border);
+  --home-tree-blue-bg-top: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-bg-mid: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-bg-bottom: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-shadow: var(--mediscan-visual-block-shadow);
+  --home-tree-blue-icon-border: var(--mediscan-visual-block-chip-border);
+  --home-tree-blue-icon-bg: var(--mediscan-visual-block-chip-fill);
+  --home-tree-blue-icon-color: var(--mediscan-visual-block-text);
+  --home-tree-blue-label: var(--mediscan-visual-block-text);
+  --home-tree-blue-parent-border: var(--mediscan-visual-block-surface-border);
+  --home-tree-blue-parent-bg-top: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-parent-bg-mid: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-parent-bg-bottom: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-parent-shadow: var(--mediscan-visual-block-shadow);
+  --home-tree-blue-parent-icon-border: var(--mediscan-visual-block-chip-border);
+  --home-tree-blue-parent-icon-bg: var(--mediscan-visual-block-chip-fill);
+  --home-tree-blue-parent-icon-color: var(--mediscan-visual-block-text);
+  --home-tree-blue-parent-label: var(--mediscan-visual-block-text);
+  --home-tree-accent-border: var(--mediscan-interpretive-block-surface-border);
+  --home-tree-accent-bg-top: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-bg-mid: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-bg-bottom: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-shadow: var(--mediscan-interpretive-block-shadow);
+  --home-tree-accent-icon-border: var(--mediscan-interpretive-block-chip-border);
+  --home-tree-accent-icon-bg: var(--mediscan-interpretive-block-chip-fill);
+  --home-tree-accent-icon-color: var(--mediscan-interpretive-block-text);
+  --home-tree-accent-label: var(--mediscan-interpretive-block-text);
+  --home-tree-accent-parent-border: var(--mediscan-interpretive-block-surface-border);
+  --home-tree-accent-parent-bg-top: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-parent-bg-mid: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-parent-bg-bottom: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-parent-shadow: var(--mediscan-interpretive-block-shadow);
+  --home-tree-accent-parent-icon-border: var(--mediscan-interpretive-block-chip-border);
+  --home-tree-accent-parent-icon-bg: var(--mediscan-interpretive-block-chip-fill);
+  --home-tree-accent-parent-icon-color: var(--mediscan-interpretive-block-text);
+  --home-tree-accent-parent-label: var(--mediscan-interpretive-block-text);
+  --tree-wire-neutral: color-mix(in srgb, var(--theme-border) 72%, white 28%);
+  --tree-wire-primary-tint: color-mix(in srgb, var(--theme-primary) 24%, white 76%);
+  --tree-wire-primary-mid: color-mix(in srgb, var(--theme-primary) 58%, white 42%);
+  --tree-wire-primary-soft: color-mix(in srgb, var(--theme-primary) 72%, white 28%);
+  --tree-wire-primary-glow: color-mix(in srgb, var(--theme-primary) 15%, transparent);
+  --tree-wire-accent-tint: color-mix(in srgb, var(--theme-accent) 24%, white 76%);
+  --tree-wire-accent-mid: color-mix(in srgb, var(--theme-accent) 58%, white 42%);
+  --tree-wire-accent-soft: color-mix(in srgb, var(--theme-accent) 72%, white 28%);
+  --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 15%, transparent);
+  --mediscan-shared-surface: color-mix(in srgb, var(--theme-bg-soft) 74%, var(--theme-surface) 26%);
+  --mediscan-shared-surface-border: color-mix(in srgb, var(--theme-border) 56%, transparent);
+  --mediscan-shared-surface-shadow: 0 10px 22px rgba(2, 6, 23, 0.12);
+  --nav-glass-surface: rgba(246, 250, 255, 0.76);
+  --nav-glass-border: rgba(255, 255, 255, 0.62);
+  --nav-glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    0 12px 28px rgba(15, 23, 42, 0.12);
+  --nav-glass-blur: 12px;
+  --nav-glass-bottom-shadow: 0 16px 32px -24px rgba(15, 23, 42, 0.42);
+  --nav-glass-fade-color: color-mix(in srgb, var(--nav-glass-surface) 66%, transparent);
+  --nav-glass-fade-height: 24px;
+  --nav-glass-fade-blur: 8px;
+  --page-default-surface-bg: var(--theme-bg);
+  --page-home-surface-bg: color-mix(in srgb, var(--theme-bg) 50%, #d3dae2 50%);
+  --page-search-hub-surface-bg: var(--page-home-surface-bg);
+  --nav-active-surface: var(--page-default-surface-bg);
+}
+
+/* ── Tokens de couleur — mode sombre ── */
+[data-theme="dark"] {
+  --palette-title: #e8f1f7;
+  --palette-text: #d8e6ee;
+  --palette-muted: #91a6b5;
+  --palette-visual: #6fa7dc;
+  --palette-visual-light: #8bbbe4;
+  --palette-visual-pale: #10283f;
+  --palette-semantic: #7ccfe3;
+  --palette-semantic-light: #a9e3ee;
+  --palette-semantic-pale: #102f3a;
+  --palette-surface: rgba(13, 24, 34, 0.9);
+  --palette-bg: #061018;
+  --palette-bg-soft: #0b1a24;
+  --palette-border: #1e3442;
+  --palette-footer: #030a10;
+  --palette-footer-muted: #839aa8;
+  --palette-danger: #f37b7b;
+  --palette-on-strong: #f6fbfb;
+  --theme-title: var(--palette-title);
+  --theme-primary: var(--palette-visual);
+  --theme-primary-light: var(--palette-visual-light);
+  --theme-primary-pale: var(--palette-visual-pale);
+  --theme-accent: var(--palette-semantic);
+  --theme-accent-light: var(--palette-semantic-light);
+  --theme-accent-pale: var(--palette-semantic-pale);
+  --semantic-accent: var(--palette-semantic);
+  --semantic-accent-light: var(--palette-semantic-light);
+  --semantic-accent-pale: var(--palette-semantic-pale);
+  --theme-surface: var(--palette-surface);
+  --theme-bg: var(--palette-bg);
+  --theme-bg-soft: var(--palette-bg-soft);
+  --theme-border: var(--palette-border);
+  --theme-text: var(--palette-text);
+  --theme-muted: var(--palette-muted);
+  --theme-footer: var(--palette-footer);
+  --theme-footer-muted: var(--palette-footer-muted);
+  --theme-danger: var(--palette-danger);
+  --theme-on-strong: var(--palette-on-strong);
+  --mediscan-primary-surface-border: color-mix(in srgb, var(--theme-primary) 20%, transparent);
+  --mediscan-primary-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.88) 66%, var(--theme-primary) 34%);
+  --mediscan-primary-surface-shadow: rgba(2, 6, 23, 0.18);
+  --mediscan-primary-chip-border: color-mix(in srgb, var(--theme-primary) 20%, transparent);
+  --mediscan-primary-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.9) 78%, var(--theme-primary) 22%);
+  --mediscan-primary-chip-text: color-mix(in srgb, var(--theme-primary) 52%, white 48%);
+  --mediscan-primary-text-color: color-mix(in srgb, var(--theme-primary) 38%, white 62%);
+  --mediscan-primary-outline-border: color-mix(in srgb, var(--theme-primary) 20%, transparent);
+  --mediscan-primary-outline-fill: rgba(12, 19, 31, 0.86);
+  --mediscan-primary-outline-text: color-mix(in srgb, var(--theme-primary) 42%, white 58%);
+  --mediscan-primary-outline-hover-border: color-mix(in srgb, var(--theme-primary) 26%, transparent);
+  --mediscan-primary-outline-hover-fill: rgba(16, 24, 38, 0.92);
+  --mediscan-primary-outline-hover-text: color-mix(in srgb, var(--theme-primary) 48%, white 52%);
+  --mediscan-primary-selected-border: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  --mediscan-primary-selected-ring: color-mix(in srgb, var(--theme-primary) 14%, transparent);
+  --mediscan-primary-selected-shadow: rgba(2, 6, 23, 0.2);
+  --mediscan-primary-button-shadow: rgba(2, 6, 23, 0.28);
+  --mediscan-primary-button-hover-shadow: rgba(2, 6, 23, 0.32);
+  --mediscan-accent-surface-border: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  --mediscan-accent-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.88) 66%, var(--theme-accent) 34%);
+  --mediscan-accent-surface-shadow: rgba(2, 6, 23, 0.18);
+  --mediscan-accent-chip-border: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  --mediscan-accent-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.9) 78%, var(--theme-accent) 22%);
+  --mediscan-accent-chip-text: color-mix(in srgb, var(--theme-accent) 52%, white 48%);
+  --mediscan-accent-text-color: color-mix(in srgb, var(--theme-accent) 40%, white 60%);
+  --mediscan-accent-outline-border: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  --mediscan-accent-outline-fill: rgba(12, 19, 31, 0.86);
+  --mediscan-accent-outline-text: color-mix(in srgb, var(--theme-accent) 44%, white 56%);
+  --mediscan-accent-outline-hover-border: color-mix(in srgb, var(--theme-accent) 26%, transparent);
+  --mediscan-accent-outline-hover-fill: rgba(16, 24, 38, 0.92);
+  --mediscan-accent-outline-hover-text: color-mix(in srgb, var(--theme-accent) 50%, white 50%);
+  --mediscan-accent-selected-border: color-mix(in srgb, var(--theme-accent) 22%, transparent);
+  --mediscan-accent-selected-ring: color-mix(in srgb, var(--theme-accent) 14%, transparent);
+  --mediscan-accent-selected-shadow: rgba(2, 6, 23, 0.2);
+  --mediscan-accent-button-shadow: rgba(2, 6, 23, 0.28);
+  --mediscan-accent-button-hover-shadow: rgba(2, 6, 23, 0.32);
+  --mediscan-visual-block-base: var(--theme-primary);
+  --mediscan-visual-block-light: var(--theme-primary-light);
+  --mediscan-visual-block-pale: var(--theme-primary-pale);
+  --mediscan-visual-block-surface-border: color-mix(in srgb, var(--mediscan-visual-block-base) 24%, transparent);
+  --mediscan-visual-block-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.9) 74%, var(--mediscan-visual-block-base) 26%);
+  --mediscan-visual-block-chip-border: color-mix(in srgb, var(--mediscan-visual-block-base) 28%, transparent);
+  --mediscan-visual-block-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.88) 76%, var(--mediscan-visual-block-base) 24%);
+  --mediscan-visual-block-text: color-mix(in srgb, var(--mediscan-visual-block-base) 64%, white 36%);
+  --mediscan-visual-block-soft-text: color-mix(in srgb, var(--mediscan-visual-block-base) 46%, white 54%);
+  --mediscan-visual-block-shadow: color-mix(in srgb, var(--mediscan-visual-block-base) 22%, transparent);
+  --mediscan-interpretive-block-base: var(--theme-accent);
+  --mediscan-interpretive-block-light: var(--theme-accent-light);
+  --mediscan-interpretive-block-pale: var(--theme-accent-pale);
+  --mediscan-interpretive-block-surface-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 24%, transparent);
+  --mediscan-interpretive-block-surface-fill: color-mix(in srgb, rgba(10, 16, 28, 0.9) 74%, var(--mediscan-interpretive-block-base) 26%);
+  --mediscan-interpretive-block-chip-border: color-mix(in srgb, var(--mediscan-interpretive-block-base) 28%, transparent);
+  --mediscan-interpretive-block-chip-fill: color-mix(in srgb, rgba(10, 16, 28, 0.88) 76%, var(--mediscan-interpretive-block-base) 24%);
+  --mediscan-interpretive-block-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 66%, white 34%);
+  --mediscan-interpretive-block-soft-text: color-mix(in srgb, var(--mediscan-interpretive-block-base) 48%, white 52%);
+  --mediscan-interpretive-block-shadow: color-mix(in srgb, var(--mediscan-interpretive-block-base) 22%, transparent);
+  --home-tree-root-border: rgba(111, 167, 220, 0.18);
+  --home-tree-root-bg-top: rgba(9, 28, 42, 0.95);
+  --home-tree-root-bg-mid: rgba(12, 38, 58, 0.9);
+  --home-tree-root-bg-bottom: rgba(15, 50, 72, 0.82);
+  --home-tree-root-shadow: rgba(1, 8, 14, 0.34);
+  --home-tree-root-icon-border: rgba(111, 167, 220, 0.2);
+  --home-tree-root-icon-bg: rgba(111, 167, 220, 0.12);
+  --home-tree-root-icon-color: #d8e9f7;
+  --home-tree-root-label: #d8e6ee;
+  --home-tree-blue-border: var(--mediscan-visual-block-surface-border);
+  --home-tree-blue-bg-top: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-bg-mid: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-bg-bottom: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-shadow: var(--mediscan-visual-block-shadow);
+  --home-tree-blue-icon-border: var(--mediscan-visual-block-chip-border);
+  --home-tree-blue-icon-bg: var(--mediscan-visual-block-chip-fill);
+  --home-tree-blue-icon-color: var(--mediscan-visual-block-text);
+  --home-tree-blue-label: var(--mediscan-visual-block-text);
+  --home-tree-blue-parent-border: var(--mediscan-visual-block-surface-border);
+  --home-tree-blue-parent-bg-top: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-parent-bg-mid: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-parent-bg-bottom: var(--mediscan-visual-block-surface-fill);
+  --home-tree-blue-parent-shadow: var(--mediscan-visual-block-shadow);
+  --home-tree-blue-parent-icon-border: var(--mediscan-visual-block-chip-border);
+  --home-tree-blue-parent-icon-bg: var(--mediscan-visual-block-chip-fill);
+  --home-tree-blue-parent-icon-color: var(--mediscan-visual-block-text);
+  --home-tree-blue-parent-label: var(--mediscan-visual-block-text);
+  --home-tree-accent-border: var(--mediscan-interpretive-block-surface-border);
+  --home-tree-accent-bg-top: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-bg-mid: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-bg-bottom: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-shadow: var(--mediscan-interpretive-block-shadow);
+  --home-tree-accent-icon-border: var(--mediscan-interpretive-block-chip-border);
+  --home-tree-accent-icon-bg: var(--mediscan-interpretive-block-chip-fill);
+  --home-tree-accent-icon-color: var(--mediscan-interpretive-block-text);
+  --home-tree-accent-label: var(--mediscan-interpretive-block-text);
+  --home-tree-accent-parent-border: var(--mediscan-interpretive-block-surface-border);
+  --home-tree-accent-parent-bg-top: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-parent-bg-mid: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-parent-bg-bottom: var(--mediscan-interpretive-block-surface-fill);
+  --home-tree-accent-parent-shadow: var(--mediscan-interpretive-block-shadow);
+  --home-tree-accent-parent-icon-border: var(--mediscan-interpretive-block-chip-border);
+  --home-tree-accent-parent-icon-bg: var(--mediscan-interpretive-block-chip-fill);
+  --home-tree-accent-parent-icon-color: var(--mediscan-interpretive-block-text);
+  --home-tree-accent-parent-label: var(--mediscan-interpretive-block-text);
+  --tree-wire-neutral: color-mix(in srgb, var(--theme-border) 84%, transparent);
+  --tree-wire-primary-tint: color-mix(in srgb, rgba(8, 12, 20, 0.92) 72%, var(--theme-primary) 28%);
+  --tree-wire-primary-mid: color-mix(in srgb, rgba(8, 12, 20, 0.56) 46%, var(--theme-primary) 54%);
+  --tree-wire-primary-soft: color-mix(in srgb, rgba(8, 12, 20, 0.42) 28%, var(--theme-primary-light) 72%);
+  --tree-wire-primary-glow: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  --tree-wire-accent-tint: color-mix(in srgb, rgba(8, 12, 20, 0.92) 72%, var(--theme-accent) 28%);
+  --tree-wire-accent-mid: color-mix(in srgb, rgba(8, 12, 20, 0.56) 46%, var(--theme-accent) 54%);
+  --tree-wire-accent-soft: color-mix(in srgb, rgba(8, 12, 20, 0.42) 28%, var(--theme-accent-light) 72%);
+  --tree-wire-accent-glow: color-mix(in srgb, var(--theme-accent) 22%, transparent);
+  --mediscan-shared-surface: #0e151e;
+  --mediscan-shared-surface-border: rgba(82, 94, 112, 0.34);
+  --mediscan-shared-surface-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.015),
+    0 12px 24px rgba(2, 6, 23, 0.26);
+  --nav-glass-surface: rgba(14, 21, 30, 0.78);
+  --nav-glass-border: rgba(195, 206, 220, 0.14);
+  --nav-glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 16px 34px rgba(2, 6, 23, 0.32);
+  --nav-glass-blur: 12px;
+  --nav-glass-bottom-shadow: 0 20px 40px -26px rgba(2, 6, 23, 0.78);
+  --nav-glass-fade-color: rgba(6, 11, 17, 0.64);
+  --nav-glass-fade-height: 26px;
+  --nav-glass-fade-blur: 10px;
+  --page-default-surface-bg: var(--theme-bg);
+  --page-home-surface-bg:
+    radial-gradient(circle at 12% 12%, rgba(30, 41, 59, 0.26) 0%, rgba(30, 41, 59, 0) 24%),
+    radial-gradient(circle at 88% 16%, rgba(51, 65, 85, 0.26) 0%, rgba(51, 65, 85, 0) 22%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0) 30%),
+    var(--theme-bg-soft);
+  --page-search-hub-surface-bg: var(--page-home-surface-bg);
+  --nav-active-bg: var(--page-default-surface-bg);
+  --nav-active-surface: var(--page-default-surface-bg);
+  --nav-night-solid-bg: #081119;
+  --nav-night-solid-hover-bg: #0d1822;
+  --nav-night-solid-panel-bg: #0b141d;
+  --nav-night-solid-panel-strong-bg: #111c27;
+}
+
+@theme {
+  --color-title: var(--theme-title);
+  --color-primary: var(--theme-primary);
+  --color-primary-light: var(--theme-primary-light);
+  --color-primary-pale: var(--theme-primary-pale);
+  --color-accent: var(--theme-accent);
+  --color-accent-light: var(--theme-accent-light);
+  --color-accent-pale: var(--theme-accent-pale);
+  --color-visual: var(--theme-primary);
+  --color-semantic: var(--theme-accent);
+  --color-surface: var(--theme-surface);
+  --color-bg: var(--theme-bg);
+  --color-bg-soft: var(--theme-bg-soft);
+  --color-border: var(--theme-border);
+  --color-text: var(--theme-text);
+  --color-muted: var(--theme-muted);
+  --color-footer: var(--theme-footer);
+  --color-footer-muted: var(--theme-footer-muted);
+  --color-danger: var(--theme-danger);
+  --color-on-strong: var(--theme-on-strong);
+}
+
+html {
+  /* scroll-behavior: smooth retiré intentionnellement :
+     la valeur "smooth" est héritée par window.scrollTo({ behavior:"auto" }),
+     ce qui anime le scroll lors des navigations React et crée des sauts visuels.
+     La navigation est entièrement gérée par les transitions JS du composant App. */
+  scroll-behavior: auto;
+}
+
+html,
+body {
+  font-family: var(--font-body);
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
+}
+
+body.search-modal-open nav.sticky {
+  opacity: 0 !important;
+  transform: translateY(-100%) !important;
+  pointer-events: none !important;
+}
+
+
+/* ── View Transition : révélation circulaire pour le changement de thème ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 9999;
+}
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+/* ── Animation icône thème (Sun → Moon et vice-versa) ── */
+@keyframes theme-icon-enter {
+  from { transform: rotate(-90deg) scale(0.4); opacity: 0; }
+  to   { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+.theme-icon-enter {
+  animation: theme-icon-enter 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes by-image-panel-enter-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-42px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes by-image-panel-enter-down {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -38px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes by-image-panel-enter-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 38px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes by-image-panel-enter-right {
+  from {
+    opacity: 0;
+    transform: translate3d(42px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.by-image-panel-enter-left {
+  animation: by-image-panel-enter-left 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.by-image-panel-enter-right {
+  animation: by-image-panel-enter-right 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.by-image-panel-enter-down {
+  animation: by-image-panel-enter-down 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.by-image-panel-enter-up {
+  animation: by-image-panel-enter-up 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mediscan-upload-preview-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.965);
+    filter: saturate(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(1);
+  }
+}
+
+@keyframes mediscan-upload-preview-image-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mediscan-stage-panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.988);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes mediscan-results-stage-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.988);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes mediscan-results-card-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.mediscan-upload-preview-enter {
+  animation: mediscan-upload-preview-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-upload-preview-image {
+  animation: mediscan-upload-preview-image-in 1080ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-stage-panel-enter {
+  animation: mediscan-stage-panel-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-results-stage-enter {
+  animation: mediscan-results-stage-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mediscan-results-card-enter {
+  animation: mediscan-results-card-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes search-conclusion-body-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.985);
+    filter: saturate(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(1);
+  }
+}
+
+.search-conclusion-body-enter {
+  transform-origin: top center;
+  animation: search-conclusion-body-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-conclusion-body-enter {
+    animation: none;
+  }
+}
+
+@keyframes quick-note-heading-glow-primary {
+  0%, 100% {
+    filter: none;
+    transform: translate3d(0, 0, 0);
+  }
+  38% {
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 18%, transparent));
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-heading-glow-accent {
+  0%, 100% {
+    filter: none;
+    transform: translate3d(0, 0, 0);
+  }
+  38% {
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--theme-accent) 18%, transparent));
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-title-glow-primary {
+  0%, 100% {
+    color: var(--theme-title);
+    text-shadow: none;
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    color: color-mix(in srgb, var(--theme-title) 66%, var(--search-primary-base, var(--theme-primary)) 34%);
+    text-shadow:
+      0 0 12px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 20%, transparent),
+      0 0 22px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 14%, transparent);
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-title-glow-accent {
+  0%, 100% {
+    color: var(--theme-title);
+    text-shadow: none;
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    color: color-mix(in srgb, var(--theme-title) 66%, var(--theme-accent) 34%);
+    text-shadow:
+      0 0 12px color-mix(in srgb, var(--theme-accent) 20%, transparent),
+      0 0 22px color-mix(in srgb, var(--theme-accent) 14%, transparent);
+    transform: translate3d(0, -1px, 0);
+  }
+}
+
+@keyframes quick-note-icon-glow-primary {
+  0%, 100% {
+    box-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 16%, transparent),
+      0 0 22px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 22%, transparent),
+      0 0 34px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 10%, transparent);
+    transform: translate3d(0, -2px, 0) scale(1.04);
+  }
+}
+
+@keyframes quick-note-icon-glow-accent {
+  0%, 100% {
+    box-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-accent) 16%, transparent),
+      0 0 22px color-mix(in srgb, var(--theme-accent) 22%, transparent),
+      0 0 34px color-mix(in srgb, var(--theme-accent) 10%, transparent);
+    transform: translate3d(0, -2px, 0) scale(1.04);
+  }
+}
+
+@keyframes quick-note-chip-glow-primary {
+  0%, 100% {
+    box-shadow: none;
+    text-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 16%, transparent),
+      0 0 18px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 8%, transparent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 18%, transparent);
+    transform: translate3d(0, -1px, 0) scale(1.02);
+  }
+}
+
+@keyframes quick-note-chip-glow-accent {
+  0%, 100% {
+    box-shadow: none;
+    text-shadow: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-accent) 16%, transparent),
+      0 0 18px color-mix(in srgb, var(--theme-accent) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--theme-accent) 8%, transparent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--theme-accent) 18%, transparent);
+    transform: translate3d(0, -1px, 0) scale(1.02);
+  }
+}
+
+.quick-note-heading-glow-primary {
+  animation: quick-note-heading-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-heading-glow-accent {
+  animation: quick-note-heading-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-title-glow-primary {
+  display: inline-block;
+  animation: quick-note-title-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-title-glow-accent {
+  display: inline-block;
+  animation: quick-note-title-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-copy-glow-primary {
+  animation: quick-note-title-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-copy-glow-accent {
+  animation: quick-note-title-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-icon-glow-primary {
+  animation: quick-note-icon-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-icon-glow-accent {
+  animation: quick-note-icon-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-chip-glow-primary {
+  animation: quick-note-chip-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quick-note-chip-glow-accent {
+  animation: quick-note-chip-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.info-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 9999px;
+  background: transparent;
+  color: rgba(100, 116, 139, 0.86);
+  box-shadow: none;
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.info-trigger:hover {
+  transform: translate3d(0, -1px, 0);
+}
+
+.analysis-mode-info-trigger {
+  border-color: rgba(148, 163, 184, 0.28);
+  background: rgba(148, 163, 184, 0.18);
+  color: #475569;
+  border-radius: 9999px;
+}
+
+.info-trigger-primary:hover {
+  border-color: color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 24%, transparent);
+  color: color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 70%, var(--theme-title) 30%);
+}
+
+.info-trigger-accent:hover {
+  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
+  color: color-mix(in srgb, var(--theme-accent) 70%, var(--theme-title) 30%);
+}
+
+.info-trigger-glow-primary {
+  animation: quick-note-icon-glow-primary 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.info-trigger-glow-accent {
+  animation: quick-note-icon-glow-accent 1700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+[data-theme="dark"] .info-trigger {
+  border-color: rgba(148, 163, 184, 0.16);
+  background: transparent;
+  color: rgba(203, 213, 225, 0.82);
+}
+
+[data-theme="dark"] .analysis-mode-info-trigger {
+  border-color: rgba(148, 163, 184, 0.22);
+  background: rgba(148, 163, 184, 0.14);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+[data-theme="dark"] .info-trigger-primary:hover {
+  border-color: color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 22%, transparent);
+}
+
+[data-theme="dark"] .info-trigger-accent:hover {
+  border-color: color-mix(in srgb, var(--theme-accent) 22%, transparent);
+}
+
+/* ── Animation label langue (EN / FR) ── */
+@keyframes lang-label-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lang-label-enter {
+  display: inline-block;
+  animation: lang-label-enter 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes settings-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.settings-menu-enter {
+  transform-origin: bottom right;
+  animation: settings-menu-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (min-width: 768px) {
+  .settings-menu-enter {
+    transform-origin: top right;
+  }
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Curseur pointer sur tous les boutons */
+button {
+  cursor: pointer;
+}
+
+/* inversement */
+.flip-horizontal {
+  transform: scaleX(-1);
+}
+
+/* Focus visible propre */
+:focus-visible {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Navbar logo */
+.nav-logo {
+  display: block;
+  opacity: 1;
+  transition:
+    filter 200ms ease,
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+[data-theme="dark"] .nav-logo {
+  filter: brightness(1.08) saturate(1.08) contrast(1.04)
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.24));
+}
+
+/* ── Taxonomie des surfaces ── */
+
+/* Hero : pleine largeur, fort contraste, fond dégradé */
+.surface-hero {
+  background: linear-gradient(135deg, var(--theme-primary-pale) 0%, var(--theme-bg-soft) 60%, var(--theme-bg) 100%);
+}
+
+/* Panel outil : fond légèrement opaque, bordure structurante */
+.surface-panel {
+  background-color: var(--theme-surface);
+  border: 1.5px solid var(--theme-border);
+  border-radius: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+/* Card résultat : plus subtile, hover distinct */
+.surface-result {
+  background-color: var(--theme-bg-soft);
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.surface-result:hover {
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--theme-primary) 10%, transparent);
+  transform: translateY(-2px);
+}
+
+/* Card info/marketing : dégradé doux */
+.surface-info {
+  background: linear-gradient(135deg, var(--theme-primary-pale) 0%, var(--theme-surface) 100%);
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 20%, transparent);
+  border-radius: 1rem;
+}
+
+.button-solid-primary,
+.button-solid-accent {
+  border: 1px solid transparent;
+  color: var(--theme-on-strong);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+.button-solid-primary {
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-light) 100%);
+  box-shadow: 0 12px 26px var(--mediscan-primary-button-shadow);
+}
+
+.button-solid-accent {
+  background: linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-accent-light) 100%);
+  box-shadow: 0 12px 26px var(--mediscan-accent-button-shadow);
+}
+
+.button-solid-primary:hover,
+.button-solid-accent:hover {
+  transform: translateY(-1px);
+}
+
+.button-solid-primary:hover {
+  box-shadow: 0 16px 30px var(--mediscan-primary-button-hover-shadow);
+}
+
+.button-solid-accent:hover {
+  box-shadow: 0 16px 30px var(--mediscan-accent-button-hover-shadow);
+}
+
+.mediscan-primary-surface {
+  border-color: var(--mediscan-primary-surface-border);
+  background-color: var(--mediscan-primary-surface-fill);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--theme-bg-soft) 80%, transparent),
+    0 10px 24px var(--mediscan-primary-surface-shadow);
+}
+
+.mediscan-primary-chip {
+  border-color: var(--mediscan-primary-chip-border);
+  background: var(--mediscan-primary-chip-fill);
+  color: var(--mediscan-primary-chip-text);
+}
+
+.mediscan-primary-text {
+  color: var(--mediscan-primary-text-color);
+}
+
+.mediscan-primary-outline-button {
+  border-color: var(--mediscan-primary-outline-border);
+  background: var(--mediscan-primary-outline-fill);
+  color: var(--mediscan-primary-outline-text);
+}
+
+.mediscan-primary-outline-button:hover {
+  border-color: var(--mediscan-primary-outline-hover-border);
+  background: var(--mediscan-primary-outline-hover-fill);
+  color: var(--mediscan-primary-outline-hover-text);
+}
+
+.mediscan-primary-action {
+  border-color: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  background-color: color-mix(in srgb, var(--theme-primary) 72%, #36506e 28%);
+  color: var(--theme-on-strong);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--theme-primary) 10%, transparent);
+}
+
+.mediscan-primary-action:hover {
+  background-color: color-mix(in srgb, var(--theme-primary) 76%, #324a66 24%);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--theme-primary) 12%, transparent);
+}
+
+.mediscan-primary-selected {
+  border-color: var(--mediscan-primary-selected-border);
+  box-shadow:
+    0 0 0 1px var(--mediscan-primary-selected-ring),
+    0 8px 18px var(--mediscan-primary-selected-shadow);
+}
+
+.mediscan-accent-surface {
+  border-color: var(--mediscan-accent-surface-border);
+  background-color: var(--mediscan-accent-surface-fill);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--theme-bg-soft) 80%, transparent),
+    0 10px 24px var(--mediscan-accent-surface-shadow);
+}
+
+.mediscan-accent-chip {
+  border-color: var(--mediscan-accent-chip-border);
+  background: var(--mediscan-accent-chip-fill);
+  color: var(--mediscan-accent-chip-text);
+}
+
+.mediscan-accent-text {
+  color: var(--mediscan-accent-text-color);
+}
+
+.mediscan-accent-outline-button {
+  border-color: var(--mediscan-accent-outline-border);
+  background: var(--mediscan-accent-outline-fill);
+  color: var(--mediscan-accent-outline-text);
+}
+
+.mediscan-accent-outline-button:hover {
+  border-color: var(--mediscan-accent-outline-hover-border);
+  background: var(--mediscan-accent-outline-hover-fill);
+  color: var(--mediscan-accent-outline-hover-text);
+}
+
+.mediscan-accent-action {
+  border-color: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  background-color: color-mix(in srgb, var(--theme-accent) 72%, #2d4f5c 28%);
+  color: var(--theme-on-strong);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--theme-accent) 10%, transparent);
+}
+
+.mediscan-accent-action:hover {
+  background-color: color-mix(in srgb, var(--theme-accent) 76%, #294a56 24%);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--theme-accent) 12%, transparent);
+}
+
+.mediscan-accent-selected {
+  border-color: var(--mediscan-accent-selected-border);
+  box-shadow:
+    0 0 0 1px var(--mediscan-accent-selected-ring),
+    0 8px 18px var(--mediscan-accent-selected-shadow);
+}
+
+[data-theme="dark"] .mediscan-primary-surface {
+  border-color: var(--mediscan-primary-surface-border);
+  background-color: var(--mediscan-primary-surface-fill);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 22px var(--mediscan-primary-surface-shadow);
+}
+
+[data-theme="dark"] .mediscan-primary-chip {
+  border-color: var(--mediscan-primary-chip-border);
+  background: var(--mediscan-primary-chip-fill);
+  color: var(--mediscan-primary-chip-text);
+}
+
+[data-theme="dark"] .mediscan-primary-text {
+  color: var(--mediscan-primary-text-color);
+}
+
+[data-theme="dark"] .mediscan-primary-outline-button {
+  border-color: var(--mediscan-primary-outline-border);
+  background: var(--mediscan-primary-outline-fill);
+  color: var(--mediscan-primary-outline-text);
+}
+
+[data-theme="dark"] .mediscan-primary-outline-button:hover {
+  border-color: var(--mediscan-primary-outline-hover-border);
+  background: var(--mediscan-primary-outline-hover-fill);
+  color: var(--mediscan-primary-outline-hover-text);
+}
+
+[data-theme="dark"] .mediscan-primary-action {
+  border-color: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  background-color: color-mix(in srgb, rgba(10, 16, 28, 0.74) 34%, var(--theme-primary) 66%);
+  color: var(--theme-on-strong);
+  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.22);
+}
+
+[data-theme="dark"] .mediscan-primary-action:hover {
+  background-color: color-mix(in srgb, rgba(10, 16, 28, 0.66) 28%, var(--theme-primary-light) 72%);
+  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.24);
+}
+
+[data-theme="dark"] .mediscan-primary-selected {
+  border-color: var(--mediscan-primary-selected-border);
+  box-shadow:
+    0 0 0 1px var(--mediscan-primary-selected-ring),
+    0 10px 22px var(--mediscan-primary-selected-shadow);
+}
+
+[data-theme="dark"] .mediscan-accent-surface {
+  border-color: var(--mediscan-accent-surface-border);
+  background-color: var(--mediscan-accent-surface-fill);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 22px var(--mediscan-accent-surface-shadow);
+}
+
+[data-theme="dark"] .mediscan-accent-chip {
+  border-color: var(--mediscan-accent-chip-border);
+  background: var(--mediscan-accent-chip-fill);
+  color: var(--mediscan-accent-chip-text);
+}
+
+[data-theme="dark"] .mediscan-accent-text {
+  color: var(--mediscan-accent-text-color);
+}
+
+[data-theme="dark"] .mediscan-accent-outline-button {
+  border-color: var(--mediscan-accent-outline-border);
+  background: var(--mediscan-accent-outline-fill);
+  color: var(--mediscan-accent-outline-text);
+}
+
+[data-theme="dark"] .mediscan-accent-outline-button:hover {
+  border-color: var(--mediscan-accent-outline-hover-border);
+  background: var(--mediscan-accent-outline-hover-fill);
+  color: var(--mediscan-accent-outline-hover-text);
+}
+
+[data-theme="dark"] .mediscan-accent-action {
+  border-color: color-mix(in srgb, var(--theme-accent) 22%, transparent);
+  background-color: color-mix(in srgb, rgba(10, 16, 28, 0.74) 34%, var(--theme-accent) 66%);
+  color: var(--theme-on-strong);
+  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.22);
+}
+
+[data-theme="dark"] .mediscan-accent-action:hover {
+  background-color: color-mix(in srgb, rgba(10, 16, 28, 0.66) 28%, var(--theme-accent-light) 72%);
+  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.24);
+}
+
+[data-theme="dark"] .mediscan-accent-selected {
+  border-color: var(--mediscan-accent-selected-border);
+  box-shadow:
+    0 0 0 1px var(--mediscan-accent-selected-ring),
+    0 10px 22px var(--mediscan-accent-selected-shadow);
+}
+
+[data-theme="dark"] .button-solid-primary {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, rgba(8, 14, 24, 0.9) 62%, var(--theme-primary) 38%) 0%,
+      color-mix(in srgb, rgba(8, 14, 24, 0.88) 42%, var(--theme-primary-light) 58%) 100%
+    );
+  border-color: color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  color: var(--theme-on-strong);
+  box-shadow: 0 14px 30px var(--mediscan-primary-button-shadow);
+}
+
+[data-theme="dark"] .button-solid-accent {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, rgba(8, 14, 24, 0.9) 62%, var(--theme-accent) 38%) 0%,
+      color-mix(in srgb, rgba(8, 14, 24, 0.88) 42%, var(--theme-accent-light) 58%) 100%
+    );
+  border-color: color-mix(in srgb, var(--theme-accent) 22%, transparent);
+  color: var(--theme-on-strong);
+  box-shadow: 0 14px 30px var(--mediscan-accent-button-shadow);
+}
+
+[data-theme="dark"] .button-solid-primary:hover {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, rgba(8, 14, 24, 0.84) 54%, var(--theme-primary) 46%) 0%,
+      color-mix(in srgb, rgba(8, 14, 24, 0.8) 34%, var(--theme-primary-light) 66%) 100%
+    );
+  border-color: color-mix(in srgb, var(--theme-primary-light) 30%, transparent);
+  box-shadow: 0 16px 34px var(--mediscan-primary-button-hover-shadow);
+}
+
+[data-theme="dark"] .button-solid-accent:hover {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, rgba(8, 14, 24, 0.84) 54%, var(--theme-accent) 46%) 0%,
+      color-mix(in srgb, rgba(8, 14, 24, 0.8) 34%, var(--theme-accent-light) 66%) 100%
+    );
+  border-color: color-mix(in srgb, var(--theme-accent-light) 30%, transparent);
+  box-shadow: 0 16px 34px var(--mediscan-accent-button-hover-shadow);
+}
+
+/* Slider sans scrollbar visible */
+.features-slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* Conteneur standard : max-w unifié sur toutes les pages */
+.page-container {
+  max-width: 1320px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}

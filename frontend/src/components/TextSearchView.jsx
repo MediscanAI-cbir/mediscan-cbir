@@ -1,9 +1,18 @@
 import { BadgePercent, Info, Search, Sparkles, Tags } from "lucide-react";
-import { useState, useContext, useEffect, useMemo, useRef } from "react";
-import { LangContext } from "../context/LangContext";
+import { useState, useContext, useEffect, useMemo, useRef, useCallback } from "react";
+import { LangContext } from "../context/LangContextValue";
 import Controls from "./Controls";
 import StatusBar from "./StatusBar";
 import ResultsGrid from "./ResultsGrid";
+import {
+  SearchCaptionFilterCard,
+  SearchCuiFilterCard,
+  SearchFilterPanelHeader,
+  SearchReferenceFilterCard,
+  SearchScoreFilterCard,
+  SearchSortFilterCard,
+} from "./SearchFilterSections";
+import { SearchGuideCard, SearchGuideSectionHeader } from "./SearchGuideSections";
 import { searchText as apiSearchText } from "../api";
 import ClinicalConclusion from "./ClinicalConclusion";
 import {
@@ -12,11 +21,24 @@ import {
   exportResultsAsJson,
   exportResultsAsPdf,
   filterResultsPayload,
-  getResultCuiSet,
   getSuggestedCaptionFilters,
 } from "../utils/searchResults";
-import { getResultsGridScrollTargetY, smoothScrollTo } from "../utils/resultsScroll";
+import { getResultsGridScrollTargetY } from "../utils/resultsScroll";
+import {
+  buildAvailableCuiByType,
+  clearTimeoutRef,
+  getGuideHighlightClasses,
+  getSelectedCaptionFilters,
+  restartNoteHighlight,
+  scrollToInfoSection,
+} from "../utils/searchViewHelpers";
 import { CUI_TYPES } from "../data/cuiCategories";
+
+// Ajuste cette valeur selon le rendu souhaite: negatif = moins bas, positif = plus bas.
+const TEXT_SEARCH_SCROLL_OFFSET = 60;
+const TEXT_SEARCH_SCROLL_MAX_RETRIES = 4;
+const TEXT_SEARCH_SCROLL_RETRY_DELAY_MS = 160;
+const TEXT_SEARCH_SCROLL_TOLERANCE = 6;
 
 function getFilterToggleStateClasses(isActive) {
   if (isActive) return "mediscan-accent-chip font-semibold shadow-sm";
@@ -46,24 +68,83 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const [activeCaptionFilterIds, setActiveCaptionFilterIds] = useState([]);
 
   // UI
+  const [quickNoteHighlighted, setQuickNoteHighlighted] = useState(false);
   const [filterNoteHighlighted, setFilterNoteHighlighted] = useState(false);
   const [entryAnimationsActive, setEntryAnimationsActive] = useState(true);
+  const quickNoteHighlightTimerRef = useRef(null);
   const filterNoteHighlightTimerRef = useRef(null);
   const scrollTimerRef = useRef(0);
-  const resultsAutoScrollTimerRef = useRef(0);
+  const scrollRetryTimerRef = useRef(0);
   const scrollCancelRef = useRef(null);
   const pendingSearchScrollRef = useRef(false);
+  const resultsAnchorRef = useRef(null);
+  const resultsStageRef = useRef(null);
   const resultsGridRef = useRef(null);
+  const hasSearchResults = Boolean(results);
+  const resultCount = results?.results?.length ?? 0;
+
+  const cancelSearchAutoScroll = useCallback(() => {
+    window.clearTimeout(scrollRetryTimerRef.current);
+    scrollRetryTimerRef.current = 0;
+    scrollCancelRef.current?.();
+    scrollCancelRef.current = null;
+  }, []);
+
+  const runSearchAutoScrollAttempt = useCallback((attempt = 0) => {
+    const targetNode = resultsStageRef.current || resultsAnchorRef.current;
+    if (!targetNode || typeof window === "undefined") {
+      pendingSearchScrollRef.current = false;
+      return;
+    }
+
+    const targetY = getResultsGridScrollTargetY(targetNode, TEXT_SEARCH_SCROLL_OFFSET);
+
+    const finalizeAttempt = () => {
+      scrollCancelRef.current = null;
+
+      const latestTargetNode = resultsStageRef.current || resultsAnchorRef.current;
+      if (!latestTargetNode || typeof window === "undefined") {
+        pendingSearchScrollRef.current = false;
+        return;
+      }
+
+      const latestTargetY = getResultsGridScrollTargetY(latestTargetNode, TEXT_SEARCH_SCROLL_OFFSET);
+      const remainingDelta = Math.abs(window.scrollY - latestTargetY);
+
+      if (remainingDelta <= TEXT_SEARCH_SCROLL_TOLERANCE || attempt >= TEXT_SEARCH_SCROLL_MAX_RETRIES) {
+        pendingSearchScrollRef.current = false;
+        return;
+      }
+
+      scrollRetryTimerRef.current = window.setTimeout(() => {
+        scrollRetryTimerRef.current = 0;
+        runSearchAutoScrollAttempt(attempt + 1);
+      }, TEXT_SEARCH_SCROLL_RETRY_DELAY_MS);
+    };
+
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+      window.scrollTo(0, targetY);
+      finalizeAttempt();
+      return;
+    }
+
+    window.scrollTo({ top: targetY, behavior: "smooth" });
+    const settleDelay = attempt === 0 ? 760 : 460;
+    const settleTimer = window.setTimeout(finalizeAttempt, settleDelay);
+    scrollCancelRef.current = () => {
+      window.clearTimeout(settleTimer);
+    };
+  }, []);
 
   useEffect(() => {
     onChromeToneChange?.("accent");
     return () => {
-      window.clearTimeout(filterNoteHighlightTimerRef.current);
-      window.clearTimeout(scrollTimerRef.current);
-      window.clearTimeout(resultsAutoScrollTimerRef.current);
-      scrollCancelRef.current?.();
+      clearTimeoutRef(quickNoteHighlightTimerRef);
+      clearTimeoutRef(filterNoteHighlightTimerRef);
+      clearTimeoutRef(scrollTimerRef);
+      cancelSearchAutoScroll();
     };
-  }, [onChromeToneChange]);
+  }, [cancelSearchAutoScroll, onChromeToneChange]);
 
   useEffect(() => {
     const timerId = window.setTimeout(() => setEntryAnimationsActive(false), 1300);
@@ -71,8 +152,10 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   }, []);
 
   useEffect(() => {
-    if (loading || !results || !pendingSearchScrollRef.current) {
-      if (!loading && !results) pendingSearchScrollRef.current = false;
+    if (loading || !hasSearchResults || !pendingSearchScrollRef.current) {
+      if (!loading && !hasSearchResults) {
+        pendingSearchScrollRef.current = false;
+      }
       return undefined;
     }
 
@@ -83,24 +166,17 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     firstFrame = requestAnimationFrame(() => {
       secondFrame = requestAnimationFrame(() => {
         settleTimer = window.setTimeout(() => {
-          const gridNode = resultsGridRef.current;
-          if (!gridNode) { pendingSearchScrollRef.current = false; return; }
-
-          // Ajuste cet offset pour modifier la position de scroll (positif = plus bas, negatif = plus haut).
-          const TEXT_SEARCH_SCROLL_OFFSET = 65;
-          const boundedTargetY = getResultsGridScrollTargetY(gridNode, TEXT_SEARCH_SCROLL_OFFSET);
-          scrollCancelRef.current?.();
-
-          if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
-            window.scrollTo(0, boundedTargetY);
+          const targetNode = resultsStageRef.current || resultsAnchorRef.current;
+          if (!targetNode || typeof window === "undefined") {
             pendingSearchScrollRef.current = false;
             return;
           }
 
-          scrollCancelRef.current = smoothScrollTo(boundedTargetY, 1100, () => {
-            scrollCancelRef.current = null;
-            pendingSearchScrollRef.current = false;
-          });
+          if (resultsGridRef.current) {
+            resultsGridRef.current.scrollTop = 0;
+          }
+          cancelSearchAutoScroll();
+          runSearchAutoScrollAttempt(0);
         }, 100);
       });
     });
@@ -109,17 +185,20 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
       cancelAnimationFrame(firstFrame);
       cancelAnimationFrame(secondFrame);
       window.clearTimeout(settleTimer);
-      scrollCancelRef.current?.();
+      cancelSearchAutoScroll();
     };
-  }, [loading, results]);
+  }, [cancelSearchAutoScroll, hasSearchResults, loading, resultCount, runSearchAutoScrollAttempt]);
 
   async function handleSearch() {
     const trimmed = query.trim();
     if (!trimmed) return;
 
+    cancelSearchAutoScroll();
+    if (resultsGridRef.current) {
+      resultsGridRef.current.scrollTop = 0;
+    }
     setLoading(true);
     setStatus(null);
-    setResults(null);
     resetFilters();
     pendingSearchScrollRef.current = true;
 
@@ -161,43 +240,27 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     await exportResultsAsPdf(filteredResults ?? results, "results_text.pdf");
   }
 
-  function restartNoteHighlight(setter, timerRef) {
-    window.clearTimeout(timerRef.current);
-    setter(false);
-    requestAnimationFrame(() => {
-      setter(true);
-      timerRef.current = window.setTimeout(() => setter(false), 2200);
-    });
-  }
-
-  function animateScrollTo(targetY, onComplete) {
-    window.clearTimeout(scrollTimerRef.current);
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
-      window.scrollTo(0, targetY);
-      onComplete?.();
-      return;
-    }
-    window.scrollTo({ top: targetY, behavior: "smooth" });
-    scrollTimerRef.current = window.setTimeout(() => {
-      scrollTimerRef.current = 0;
-      onComplete?.();
-    }, 760);
-  }
-
-  function scrollToInfoSection(sectionId, eyebrowId, onComplete) {
-    const section = document.getElementById(sectionId);
-    if (!section) return;
-    const navOffset = window.innerWidth >= 1024 ? 112 : window.innerWidth >= 768 ? 96 : 84;
-    const targetY = Math.max(0, section.getBoundingClientRect().top + window.scrollY - navOffset - 24);
-    animateScrollTo(targetY, onComplete);
-  }
-
   function handleFilterInfoClick() {
-    scrollToInfoSection(
-      "text-search-filter-note",
-      "text-search-filter-note-eyebrow",
-      () => restartNoteHighlight(setFilterNoteHighlighted, filterNoteHighlightTimerRef),
-    );
+    scrollToInfoSection({
+      sectionId: "text-search-filters-note",
+      eyebrowId: "text-search-filters-note-eyebrow",
+      scrollTimerRef,
+      onComplete: () => restartNoteHighlight(setFilterNoteHighlighted, filterNoteHighlightTimerRef),
+    });
+
+    window.clearTimeout(quickNoteHighlightTimerRef.current);
+    setQuickNoteHighlighted(false);
+    window.clearTimeout(filterNoteHighlightTimerRef.current);
+    setFilterNoteHighlighted(false);
+  }
+
+  function handleModeInfoClick() {
+    scrollToInfoSection({
+      sectionId: "text-search-quick-note",
+      eyebrowId: "text-search-quick-note-eyebrow",
+      scrollTimerRef,
+      onComplete: () => restartNoteHighlight(setQuickNoteHighlighted, quickNoteHighlightTimerRef),
+    });
   }
 
   function handleCaptionFilterToggle(filterId) {
@@ -207,9 +270,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   }
 
   const selectedCaptionFilters = useMemo(
-    () => activeCaptionFilterIds
-      .map((id) => CURATED_CAPTION_FILTERS.find((e) => e.id === id))
-      .filter(Boolean),
+    () => getSelectedCaptionFilters(activeCaptionFilterIds, CURATED_CAPTION_FILTERS),
     [activeCaptionFilterIds],
   );
 
@@ -218,44 +279,31 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     [results],
   );
 
-  const filterOptions = {
-    minScore,
-    captionFilter: searchText,
-    sortOrder,
-    cuiFilter,
-    cuiModalite,
-    cuiAnatomie,
-    cuiFinding,
-    referenceFilter,
-    captionTermGroups: selectedCaptionFilters.map((e) => e.terms),
-  };
+  const filterOptions = useMemo(
+    () => ({
+      minScore,
+      captionFilter: searchText,
+      sortOrder,
+      cuiFilter,
+      cuiModalite,
+      cuiAnatomie,
+      cuiFinding,
+      referenceFilter,
+      captionTermGroups: selectedCaptionFilters.map((e) => e.terms),
+    }),
+    [minScore, searchText, sortOrder, cuiFilter, cuiModalite, cuiAnatomie, cuiFinding, referenceFilter, selectedCaptionFilters],
+  );
 
   const filteredResults = useMemo(
     () => filterResultsPayload(results, filterOptions),
-    [results, minScore, searchText, sortOrder, cuiFilter, cuiModalite, cuiAnatomie, cuiFinding, referenceFilter, selectedCaptionFilters],
+    [results, filterOptions],
   );
   const displayResults = filteredResults ?? results;
 
   const availableCuiByType = useMemo(() => {
-    const raw = results?.results ?? [];
-    const found = { modalite: new Set(), anatomie: new Set(), finding: new Set() };
-    for (const result of raw) {
-      const cuis = getResultCuiSet(result);
-      for (const [type, entries] of Object.entries(CUI_TYPES)) {
-        if (!(type in found)) continue;
-        for (const { cui } of entries) {
-          if (cuis.has(cui)) found[type].add(cui);
-        }
-      }
-    }
-    return {
-      modalite: CUI_TYPES.modalite.filter(({ cui }) => found.modalite.has(cui)),
-      anatomie: CUI_TYPES.anatomie.filter(({ cui }) => found.anatomie.has(cui)),
-      finding: CUI_TYPES.finding.filter(({ cui }) => found.finding.has(cui)),
-    };
+    return buildAvailableCuiByType(results?.results ?? [], CUI_TYPES);
   }, [results]);
 
-  const resultCount = displayResults?.results?.length ?? 0;
   const activeFilterCount = [
     minScore > 0,
     Boolean(searchText.trim()),
@@ -267,13 +315,25 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     Boolean(cuiFinding),
     sortOrder !== "desc",
   ].filter(Boolean).length;
+  const cuiSelectGroups = [
+    { label: filters.cuiModalite, value: cuiModalite, onChange: setCuiModalite, options: availableCuiByType.modalite },
+    { label: filters.cuiAnatomie, value: cuiAnatomie, onChange: setCuiAnatomie, options: availableCuiByType.anatomie },
+    { label: filters.cuiFinding, value: cuiFinding, onChange: setCuiFinding, options: availableCuiByType.finding },
+  ];
+  const sortOptions = [
+    { value: "desc", label: filters.sortDesc },
+    { value: "asc", label: filters.sortAsc },
+  ];
 
   const hasSuggestedCaptionFilters = suggestedCaptionFilters.length > 0;
   const hasResults = Boolean(results);
-  const lockedResultsStageHeightClass = "lg:h-[54.5rem]";
   const uploadEntryClass = entryAnimationsActive ? "by-image-panel-enter-left" : "";
   const controlsEntryClass = entryAnimationsActive ? "by-image-panel-enter-down" : "";
   const launchEntryClass = entryAnimationsActive ? "by-image-panel-enter-up" : "";
+  const infoEntryClass = entryAnimationsActive ? "by-image-panel-enter-up" : "";
+  const infoStepLabel = query.trim() ? content.pendingStep : content.readyStep;
+  const infoTitle = query.trim() ? content.pendingTitle : content.readyTitle;
+  const infoDescription = query.trim() ? content.pendingDescription : content.readyDescription;
   const detailChips = query.trim()
     ? [
         { id: "mode", label: content.quickNoteChip },
@@ -285,6 +345,87 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
         { id: "count", label: `${t.search.numResults}: ${k}` },
         { id: "lang", label: content.langNote },
       ];
+  const filterPanelTitleClassName = "text-sm font-bold uppercase tracking-[0.18em] text-title";
+  const filterPanelInfoButtonClassName = `info-trigger info-trigger-accent inline-flex h-5.5 w-5.5 items-center justify-center ${filterNoteHighlighted ? "info-trigger-glow-accent" : ""} focus:outline-none focus:ring-2 focus:ring-accent/25`;
+  const filterPanelActiveCountClassName = "image-search-step-badge-accent mediscan-accent-chip inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold";
+  const filterPanelHintClassName = "mt-1 text-xs leading-5 text-muted";
+  const filterPanelResetButtonClassName = `search-toolbar-button rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all ${activeFilterCount > 0 ? "cursor-pointer mediscan-accent-outline-button" : "cursor-not-allowed opacity-45 border-border bg-bg text-muted"}`;
+  const filterLabelClassName = "text-[10px] text-muted font-semibold uppercase tracking-wider";
+  const filterInputClassName = "search-workspace-field w-full rounded-xl border border-border bg-bg py-2.5 px-3 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent";
+  const filterSelectLabelClassName = "block text-[10px] text-muted/70 font-medium uppercase tracking-wider truncate";
+  const filterSelectClassName = "search-workspace-field w-full appearance-none rounded-lg border border-border bg-bg px-2 py-2 pr-6 text-xs text-text focus:outline-none focus:border-accent disabled:opacity-40 disabled:cursor-not-allowed";
+  const filterScoreSliderClassName = "search-slider-track search-slider-track-accent h-1.5 w-full rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer";
+  const filterScoreValueClassName = "search-filter-score-value-accent min-w-[2.8rem] text-right text-sm font-bold mediscan-accent-text";
+  const filterScoreScaleClassName = "mt-2 flex items-center justify-between text-[11px] text-muted";
+  const filterSortShellClassName = "image-search-mode-shell image-search-mode-shell-accent mt-1.5 flex gap-1 rounded-xl border p-1";
+  const getCaptionFilterButtonClassName = (isActive) =>
+    `search-mode-option inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-xs font-medium transition-all ${getFilterToggleStateClasses(isActive)}`;
+  const getSortOptionClassName = (_value, isActive) =>
+    `search-mode-option flex-1 rounded-[0.8rem] border border-transparent px-3 py-2 text-xs font-medium transition-all ${getFilterToggleStateClasses(isActive)}`;
+  const quickGuideHighlightClasses = getGuideHighlightClasses(quickNoteHighlighted, "accent");
+  const filterGuideHighlightClasses = getGuideHighlightClasses(filterNoteHighlighted, "accent");
+  const legendCards = [
+    {
+      id: "interpretive",
+      icon: <Search className="h-4.5 w-4.5" />,
+      iconWrapperClassName: `text-search-legend-interpretive-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${quickGuideHighlightClasses.icon}`,
+      label: content.legend.interpretive.label,
+      title: content.legend.interpretive.title,
+      description: content.legend.interpretive.description,
+      note: content.legend.interpretive.note,
+      headingClassName: `flex flex-wrap items-center gap-2 ${quickGuideHighlightClasses.heading}`,
+      chipClassName: `text-search-legend-interpretive-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${quickGuideHighlightClasses.chip}`,
+      titleClassName: `text-base font-bold text-title ${quickGuideHighlightClasses.title}`,
+      descriptionClassName: `mt-3 text-sm leading-7 text-muted ${quickGuideHighlightClasses.copy}`,
+      noteClassName: `mt-2 text-xs leading-6 text-muted ${quickGuideHighlightClasses.copy}`,
+    },
+    {
+      id: "writing",
+      icon: <Info className="h-4.5 w-4.5" />,
+      iconWrapperClassName: `text-search-legend-writing-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${quickGuideHighlightClasses.icon}`,
+      label: content.legend.writing.label,
+      title: content.legend.writing.title,
+      description: content.legend.writing.description,
+      note: content.legend.writing.note,
+      headingClassName: `flex flex-wrap items-center gap-2 ${quickGuideHighlightClasses.heading}`,
+      chipClassName: `text-search-legend-writing-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${quickGuideHighlightClasses.chip}`,
+      titleClassName: `text-base font-bold text-title ${quickGuideHighlightClasses.title}`,
+      descriptionClassName: `mt-3 text-sm leading-7 text-muted ${quickGuideHighlightClasses.copy}`,
+      noteClassName: `mt-2 text-xs leading-6 text-muted ${quickGuideHighlightClasses.copy}`,
+    },
+  ];
+  const filterGuideCards = [
+    {
+      id: "caption",
+      icon: <Tags className="h-4.5 w-4.5" />,
+      iconWrapperClassName: `search-filter-guide-badge-icon search-filter-guide-caption-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${filterGuideHighlightClasses.icon}`,
+      chipClassName: `search-filter-guide-badge-chip search-filter-guide-caption-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${filterGuideHighlightClasses.chip}`,
+      label: filters.guide.caption.label,
+      title: filters.guide.caption.title,
+      description: filters.guide.caption.description,
+      note: filters.guide.caption.note,
+    },
+    {
+      id: "score",
+      icon: <BadgePercent className="h-4.5 w-4.5" />,
+      iconWrapperClassName: `search-filter-guide-badge-icon search-filter-guide-score-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${filterGuideHighlightClasses.icon}`,
+      chipClassName: `search-filter-guide-badge-chip search-filter-guide-score-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${filterGuideHighlightClasses.chip}`,
+      label: filters.guide.score.label,
+      title: filters.guide.score.title,
+      description: filters.guide.score.description,
+      note: filters.guide.score.note,
+    },
+    {
+      id: "order",
+      icon: <Sparkles className="h-4.5 w-4.5" />,
+      iconWrapperClassName: `search-filter-guide-badge-icon search-filter-guide-combination-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${filterGuideHighlightClasses.icon}`,
+      chipClassName: `search-filter-guide-badge-chip search-filter-guide-combination-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${filterGuideHighlightClasses.chip}`,
+      label: filters.guide.order.label,
+      title: filters.guide.order.title,
+      description: filters.guide.order.description,
+      note: filters.guide.order.note,
+    },
+  ];
 
   return (
     <div className="search-workspace search-workspace-text search-workspace-accent search-semantic-theme bg-transparent">
@@ -305,13 +446,22 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
           <h1 className="text-4xl md:text-5xl font-bold text-title mb-3">
             {content.headline}
           </h1>
-          <span className="mediscan-accent-chip inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium">
+          <span className="text-search-header-badge image-search-step-badge-accent mediscan-accent-chip inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
               <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
             </svg>
             {content.badge}
           </span>
+          <button
+            type="button"
+            onClick={handleModeInfoClick}
+            className={`ml-2 info-trigger info-trigger-accent inline-flex h-5.5 w-5.5 -translate-y-0.5 items-center justify-center text-sm font-medium ${quickNoteHighlighted ? "info-trigger-glow-accent" : ""} focus:outline-none focus:ring-2 focus:ring-accent/25`}
+            aria-label={content.modeInfoLabel}
+            title={content.modeInfoLabel}
+          >
+            i
+          </button>
         </div>
       </section>
 
@@ -322,13 +472,12 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
           {/* Left — Panneau 1 : textarea (sticky) */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-24">
-              <div className={`image-search-panel mediscan-accent-surface rounded-2xl border shadow-sm backdrop-blur-sm p-5 flex flex-col lg:h-[29.25rem] ${uploadEntryClass}`}>
+              <div className={`image-search-panel image-search-visual-stage-panel mediscan-accent-surface rounded-2xl border shadow-sm backdrop-blur-sm p-5 flex flex-col lg:h-[29.25rem] ${uploadEntryClass}`}>
                 <div className="mb-3">
-                  <span className="mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
+                  <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
                     {content.step1}
                   </span>
                 </div>
-                <p className="text-sm text-muted mb-3">{content.step1Desc}</p>
                 <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                   {content.label}{" "}
                   <span className="normal-case font-normal">({content.langNote})</span>
@@ -354,9 +503,9 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
           <div className="lg:col-span-2">
 
             {/* Panneau 2 : Controls */}
-            <div className={`image-search-panel mediscan-accent-surface rounded-2xl border shadow-sm backdrop-blur-sm p-5 flex flex-col lg:h-[14rem] mb-5 ${controlsEntryClass}`}>
+            <div className={`image-search-panel image-search-controls-stage-panel mediscan-accent-surface rounded-2xl border shadow-sm backdrop-blur-sm p-5 flex flex-col lg:h-[14rem] mb-5 ${controlsEntryClass}`}>
               <div className="mb-3">
-                <span className="mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
+                <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
                   {content.step2}
                 </span>
               </div>
@@ -376,99 +525,78 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
 
             <StatusBar status={status?.type === "error" ? status : null} tone="accent" />
 
-            {/* Panneau 3 : Info panel — toujours visible */}
-            {!loading && (
-              <div className={`image-search-panel mediscan-accent-surface rounded-2xl p-6 md:p-7 border shadow-sm flex flex-col justify-between text-left lg:h-[14rem] ${launchEntryClass}`}>
-                <div>
-                  <span className="mediscan-accent-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
-                    {query.trim() ? content.pendingStep : content.readyStep}
-                  </span>
-                  {query.trim() ? (
-                    <div className="mt-4 flex items-start gap-3">
-                      <div className="mediscan-accent-chip flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border">
-                        <Search className="w-4.5 h-4.5" strokeWidth={1.8} />
-                      </div>
-                      <div>
-                        <h3 className="text-xl md:text-[1.35rem] font-bold mediscan-accent-text">{content.pendingTitle}</h3>
-                        <p className="mt-2 max-w-xl text-sm leading-6 text-muted">{content.pendingDescription}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-4 flex items-start gap-3">
-                      <div className="mediscan-accent-chip flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border">
-                        <Search className="w-4.5 h-4.5" strokeWidth={1.8} />
-                      </div>
-                      <div>
-                        <h3 className="text-xl md:text-[1.35rem] font-bold mediscan-accent-text">{content.readyTitle}</h3>
-                        <p className="mt-2 max-w-xl text-sm leading-6 text-muted">{content.readyDescription}</p>
-                      </div>
-                    </div>
-                  )}
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {detailChips.map((chip) => (
-                      <span
-                        key={chip.id}
-                        className="mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
-                      >
-                        {chip.label}
-                      </span>
-                    ))}
+            {/* Panneau 3 : Info panel — stable pendant la recherche */}
+            <div className={`image-search-panel image-search-visual-stage-panel mediscan-accent-surface rounded-2xl p-6 md:p-7 border shadow-sm flex flex-col justify-between text-left lg:h-[14rem] ${launchEntryClass}`}>
+              <div>
+                <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
+                  {infoStepLabel}
+                </span>
+                <div className="mt-4 flex items-start gap-3">
+                  <div className="mediscan-accent-chip text-search-detail-icon-accent flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border">
+                    {loading ? (
+                      <span className="inline-block h-4.5 w-4.5 rounded-full border-2 border-current/25 border-t-current animate-spin" />
+                    ) : (
+                      <Search className="w-4.5 h-4.5" strokeWidth={1.8} />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-xl md:text-[1.35rem] font-bold mediscan-accent-text">{infoTitle}</h3>
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-muted">{infoDescription}</p>
                   </div>
                 </div>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {detailChips.map((chip) => (
+                    <span
+                      key={chip.id}
+                      className="image-search-step-badge-accent mediscan-accent-chip text-search-detail-chip-accent inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]"
+                    >
+                      {chip.label}
+                    </span>
+                  ))}
+                </div>
               </div>
-            )}
-
-            {loading && (
-              <div className="image-search-panel mediscan-accent-surface rounded-2xl p-10 border shadow-sm flex items-center justify-center lg:h-[14rem]">
-                <span className="inline-block h-8 w-8 rounded-full border-2 border-accent/25 border-t-accent animate-spin" />
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Results + Filters */}
+          <div
+            ref={resultsAnchorRef}
+            className="lg:col-span-3 h-0"
+            aria-hidden="true"
+            style={{ overflowAnchor: "none" }}
+          />
+
           {hasResults && (
             <div className="lg:col-span-3">
-              <div ref={resultsGridRef} className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(300px,0.88fr)_minmax(0,2.12fr)] lg:items-start lg:gap-6">
+              <div
+                ref={resultsStageRef}
+                className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(300px,0.88fr)_minmax(0,2.12fr)] lg:items-start lg:gap-6"
+                style={{ overflowAnchor: "none" }}
+              >
 
                 {/* Filter sidebar */}
                 <div className="lg:self-start">
-                  <div className="image-search-panel mediscan-results-stage-enter mediscan-accent-surface rounded-2xl border p-5 shadow-sm backdrop-blur-sm lg:flex lg:flex-col overflow-y-auto" style={{ maxHeight: "calc(100vh - 7rem)" }}>
-
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-title">
-                            {filters.title}
-                          </h3>
-                          <button
-                            type="button"
-                            onClick={handleFilterInfoClick}
-                            className="inline-flex h-5.5 w-5.5 items-center justify-center rounded-md text-muted transition-all hover:bg-accent/6 hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent/25"
-                            aria-label={filters.infoLabel}
-                            title={filters.infoLabel}
-                          >
-                            <Info className="h-4 w-4" strokeWidth={2} />
-                          </button>
-                          {activeFilterCount > 0 && (
-                            <span className="mediscan-accent-chip inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold">
-                              {activeFilterCount}
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-1 text-xs leading-5 text-muted">{filters.refineHint}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={resetFilters}
-                        disabled={activeFilterCount === 0}
-                        className={`search-toolbar-button rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all ${activeFilterCount > 0 ? "cursor-pointer mediscan-accent-outline-button" : "cursor-not-allowed opacity-45 border-border bg-bg text-muted"}`}
-                      >
-                        {filters.reset}
-                      </button>
-                    </div>
+                  <div
+                    className="image-search-panel image-search-filter-stage-panel mediscan-accent-surface rounded-2xl border p-5 shadow-sm backdrop-blur-sm"
+                  >
+                    <SearchFilterPanelHeader
+                      title={filters.title}
+                      titleClassName={filterPanelTitleClassName}
+                      infoLabel={filters.infoLabel}
+                      onInfoClick={handleFilterInfoClick}
+                      infoButtonClassName={filterPanelInfoButtonClassName}
+                      activeFilterCount={activeFilterCount}
+                      activeCountClassName={filterPanelActiveCountClassName}
+                      hint={filters.refineHint}
+                      hintClassName={filterPanelHintClassName}
+                      onReset={resetFilters}
+                      resetDisabled={activeFilterCount === 0}
+                      resetLabel={filters.reset}
+                      resetButtonClassName={filterPanelResetButtonClassName}
+                    />
 
                     <div className="mt-4 flex items-center gap-2">
-                      <span className="mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
+                      <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
                         {content.step3}
                       </span>
                       <span className="text-sm font-semibold text-title">
@@ -477,147 +605,64 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
                     </div>
 
                     <div className="mt-4 flex flex-col gap-3">
+                      <SearchCaptionFilterCard
+                        label={filters.caption}
+                        labelClassName={filterLabelClassName}
+                        value={searchText}
+                        onChange={setSearchText}
+                        placeholder={filters.captionPlaceholder}
+                        inputWrapperClassName="mt-1.5"
+                        inputClassName={filterInputClassName}
+                        suggestedFilters={hasSuggestedCaptionFilters ? suggestedCaptionFilters : []}
+                        activeFilterIds={activeCaptionFilterIds}
+                        onToggleFilter={handleCaptionFilterToggle}
+                        getToggleClassName={getCaptionFilterButtonClassName}
+                        quickTermsLabel={filters.quickTerms}
+                        quickTermsLabelClassName="mb-1.5 text-[10px] text-muted font-medium uppercase tracking-wider"
+                        quickTermsListClassName="flex flex-wrap gap-1.5"
+                      />
 
-                      {/* Caption */}
-                      <div className="rounded-[1.2rem] border border-border/70 bg-bg/60 p-3.5">
-                        <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">
-                          {filters.caption}
-                        </label>
-                        <input
-                          type="text"
-                          value={searchText}
-                          onChange={(e) => setSearchText(e.target.value)}
-                          placeholder={filters.captionPlaceholder}
-                          className="search-workspace-field mt-1.5 w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent"
-                        />
-                        {hasSuggestedCaptionFilters && (
-                          <div className="mt-2.5">
-                            <p className="text-[10px] text-muted font-medium uppercase tracking-wider mb-1.5">
-                              {filters.quickTerms}
-                            </p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {suggestedCaptionFilters.map((entry) => {
-                                const isActive = activeCaptionFilterIds.includes(entry.id);
-                                return (
-                                  <button
-                                    key={entry.id}
-                                    type="button"
-                                    onClick={() => handleCaptionFilterToggle(entry.id)}
-                                    className={`search-mode-option inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-xs font-medium transition-all ${getFilterToggleStateClasses(isActive)}`}
-                                  >
-                                    <span>{entry.label}</span>
-                                    <span className="opacity-70">{entry.count}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      <SearchCuiFilterCard
+                        label={filters.cui}
+                        labelClassName={filterLabelClassName}
+                        value={cuiFilter}
+                        onChange={setCuiFilter}
+                        placeholder={filters.cuiPlaceholder}
+                        inputClassName={`${filterInputClassName} mt-1.5`}
+                        selectGroups={cuiSelectGroups}
+                        selectLabelClassName={filterSelectLabelClassName}
+                        selectClassName={filterSelectClassName}
+                        lang={lang}
+                      />
 
-                      {/* CUI code + 3 selects */}
-                      <div className="rounded-[1.2rem] border border-border/70 bg-bg/60 p-3.5">
-                        <div>
-                          <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">
-                            {filters.cui}
-                          </label>
-                          <input
-                            type="text"
-                            value={cuiFilter}
-                            onChange={(e) => setCuiFilter(e.target.value)}
-                            placeholder={filters.cuiPlaceholder}
-                            className="search-workspace-field mt-1.5 w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent"
-                          />
-                        </div>
-                        <div className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                          {[
-                            [filters.cuiModalite, cuiModalite, setCuiModalite, availableCuiByType.modalite],
-                            [filters.cuiAnatomie, cuiAnatomie, setCuiAnatomie, availableCuiByType.anatomie],
-                            [filters.cuiFinding, cuiFinding, setCuiFinding, availableCuiByType.finding],
-                          ].map(([label, value, setter, options]) => (
-                            <div key={label}>
-                              <label className="block text-[10px] text-muted/70 font-medium uppercase tracking-wider truncate">
-                                {label}
-                              </label>
-                              <div className="relative mt-1">
-                                <select
-                                  value={value}
-                                  onChange={(e) => setter(e.target.value)}
-                                  disabled={options.length === 0}
-                                  className="search-workspace-field w-full appearance-none rounded-lg border border-border bg-bg px-2 py-2 pr-6 text-xs text-text focus:outline-none focus:border-accent disabled:opacity-40 disabled:cursor-not-allowed"
-                                >
-                                  <option value="">—</option>
-                                  {options.map(({ cui, label_fr, label_en }) => (
-                                    <option key={cui} value={cui}>
-                                      {lang === "fr" ? label_fr : label_en}
-                                    </option>
-                                  ))}
-                                </select>
-                                <svg
-                                  className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted"
-                                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                                >
-                                  <polyline points="6 9 12 15 18 9" />
-                                </svg>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                      <SearchScoreFilterCard
+                        label={filters.minScore}
+                        labelClassName={filterLabelClassName}
+                        value={minScore}
+                        onChange={setMinScore}
+                        sliderClassName={filterScoreSliderClassName}
+                        scoreClassName={filterScoreValueClassName}
+                        scaleClassName={filterScoreScaleClassName}
+                      />
 
-                      {/* Score min */}
-                      <div className="rounded-[1.2rem] border border-border/70 bg-bg/60 p-3.5">
-                        <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">
-                          {filters.minScore}
-                        </label>
-                        <div className="mt-2.5 flex items-center gap-3">
-                          <input
-                            type="range" min="0" max="1" step="0.01"
-                            value={minScore}
-                            onChange={(e) => setMinScore(Number(e.target.value))}
-                            className="search-slider-track search-slider-track-accent h-1.5 w-full rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer"
-                          />
-                          <span className="min-w-[2.8rem] text-right text-sm font-bold mediscan-accent-text">
-                            {Math.round(minScore * 100)}%
-                          </span>
-                        </div>
-                        <div className="mt-2 flex items-center justify-between text-[11px] text-muted">
-                          <span>0%</span><span>100%</span>
-                        </div>
-                      </div>
+                      <SearchReferenceFilterCard
+                        label={filters.reference}
+                        labelClassName={filterLabelClassName}
+                        value={referenceFilter}
+                        onChange={setReferenceFilter}
+                        placeholder={filters.referencePlaceholder}
+                        inputClassName={`${filterInputClassName} mt-1.5`}
+                      />
 
-                      {/* Référence */}
-                      <div className="rounded-[1.2rem] border border-border/70 bg-bg/60 p-3.5">
-                        <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">
-                          {filters.reference}
-                        </label>
-                        <input
-                          type="text"
-                          value={referenceFilter}
-                          onChange={(e) => setReferenceFilter(e.target.value)}
-                          placeholder={filters.referencePlaceholder}
-                          className="search-workspace-field mt-1.5 w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent"
-                        />
-                      </div>
-
-                      {/* Tri */}
-                      <div className="rounded-[1.2rem] border border-border/70 bg-bg/60 p-3.5">
-                        <label className="text-[10px] text-muted font-semibold uppercase tracking-wider">
-                          {filters.sort}
-                        </label>
-                        <div className="image-search-mode-shell image-search-mode-shell-accent mt-1.5 flex gap-1 rounded-xl border p-1">
-                          {[["desc", filters.sortDesc], ["asc", filters.sortAsc]].map(([value, label]) => (
-                            <button
-                              key={value}
-                              type="button"
-                              onClick={() => setSortOrder(value)}
-                              className={`search-mode-option flex-1 rounded-[0.8rem] border border-transparent px-3 py-2 text-xs font-medium transition-all ${getFilterToggleStateClasses(sortOrder === value)}`}
-                            >
-                              {label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                      <SearchSortFilterCard
+                        label={filters.sort}
+                        labelClassName={filterLabelClassName}
+                        shellClassName={filterSortShellClassName}
+                        options={sortOptions}
+                        currentValue={sortOrder}
+                        onChange={setSortOrder}
+                        getOptionClassName={getSortOptionClassName}
+                      />
 
                     </div>
                   </div>
@@ -629,8 +674,8 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
                     data={displayResults}
                     className="mt-0"
                     headerHiddenOnDesktop
-                    animateOnMount
-                    desktopLockedHeightClass={lockedResultsStageHeightClass}
+                    animateOnMount={false}
+                    cardsGridExternalRef={resultsGridRef}
                     onExportJson={exportJSON}
                     onExportCsv={exportCSV}
                     onExportPdf={exportPDF}
@@ -643,48 +688,74 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
         </div>
       </div>
 
-      {/* Filter guide */}
-      <section id="text-search-filter-note" className="max-w-[1400px] mx-auto px-4 pb-14 sm:px-6">
-        <div className="border-t border-border/70 pt-7">
-          <div className="max-w-3xl">
-            <p
-              id="text-search-filter-note-eyebrow"
-              className={`text-[11px] font-semibold uppercase tracking-[0.18em] text-muted ${filterNoteHighlighted ? "quick-note-heading-glow-accent" : ""}`}
-            >
-              {filters.guide.eyebrow}
-            </p>
-            <h2 className="mt-4 text-xl font-bold text-title md:text-2xl">
-              {filters.guide.title}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-7 text-muted">
-              {filters.guide.description}
-            </p>
+      <section
+        id="text-search-quick-note"
+        className="text-search-guide-fixed-interpretive scroll-mt-28 max-w-[1400px] mx-auto px-4 pb-28 sm:px-6 lg:pb-36"
+      >
+        <div className={`${infoEntryClass} text-search-guide-divider border-t border-border/70 pt-7`}>
+          <SearchGuideSectionHeader
+            eyebrowId="text-search-quick-note-eyebrow"
+            eyebrow={content.legendEyebrow}
+            title={content.legendTitle}
+            description={content.legendDescription}
+            eyebrowClassName="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted"
+            titleClassName="mt-4 text-xl font-bold text-title md:text-2xl"
+            descriptionClassName="mt-2 max-w-2xl text-sm leading-7 text-muted"
+          />
+
+          <div className="mt-6 grid gap-6 md:grid-cols-2">
+            {legendCards.map((card) => (
+              <SearchGuideCard
+                key={card.id}
+                icon={card.icon}
+                iconWrapperClassName={card.iconWrapperClassName}
+                label={card.label}
+                title={card.title}
+                description={card.description}
+                note={card.note}
+                headingClassName={card.headingClassName}
+                chipClassName={card.chipClassName}
+                titleClassName={card.titleClassName}
+                descriptionClassName={card.descriptionClassName}
+                noteClassName={card.noteClassName}
+              />
+            ))}
           </div>
 
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
-            {[
-              [Tags, filters.guide.caption],
-              [BadgePercent, filters.guide.score],
-              [Sparkles, filters.guide.order],
-            ].map(([Icon, section]) => (
-              <article key={section.label} className="flex items-start gap-4">
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-accent/18 bg-accent-pale text-accent ${filterNoteHighlighted ? "quick-note-icon-glow-accent" : ""}`}>
-                  <Icon className="h-4.5 w-4.5" />
-                </div>
-                <div className="min-w-0">
-                  <div className={`flex flex-wrap items-center gap-2 ${filterNoteHighlighted ? "quick-note-heading-glow-accent" : ""}`}>
-                    <span className={`mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${filterNoteHighlighted ? "quick-note-chip-glow-accent" : ""}`}>
-                      {section.label}
-                    </span>
-                    <h3 className={`text-base font-bold text-title ${filterNoteHighlighted ? "quick-note-title-glow-accent" : ""}`}>
-                      {section.title}
-                    </h3>
-                  </div>
-                  <p className="mediscan-accent-text mt-3 text-sm leading-7">{section.description}</p>
-                  <p className="mt-2 text-xs leading-6 text-muted">{section.note}</p>
-                </div>
-              </article>
-            ))}
+          <div
+            id="text-search-filters-note"
+            className="text-search-guide-divider mt-10 border-t border-border/70 pt-7"
+          >
+            <SearchGuideSectionHeader
+              eyebrowId="text-search-filters-note-eyebrow"
+              eyebrow={filters.guide.eyebrow}
+              title={filters.guide.title}
+              description={filters.guide.description}
+              eyebrowClassName={`text-[11px] font-semibold uppercase tracking-[0.18em] text-muted ${filterGuideHighlightClasses.heading}`}
+              titleClassName={`mt-4 text-xl font-bold text-title md:text-2xl ${filterGuideHighlightClasses.title}`}
+              descriptionClassName={`mt-2 max-w-2xl text-sm leading-7 text-muted ${filterGuideHighlightClasses.copy}`}
+            />
+
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              {filterGuideCards.map((card) => (
+                <SearchGuideCard
+                  key={card.id}
+                  icon={card.icon}
+                  label={card.label}
+                  title={card.title}
+                  description={card.description}
+                  note={card.note}
+                  articleClassName="flex h-full items-stretch gap-4 self-stretch"
+                  iconWrapperClassName={card.iconWrapperClassName}
+                  contentClassName="grid min-h-full min-w-0 flex-1 grid-rows-[auto_1fr_auto]"
+                  headingClassName={`flex flex-wrap items-center gap-2 ${filterGuideHighlightClasses.heading}`}
+                  chipClassName={card.chipClassName}
+                  titleClassName={`text-base font-bold text-title ${filterGuideHighlightClasses.title}`}
+                  descriptionClassName={`mt-3 text-sm leading-7 text-muted ${filterGuideHighlightClasses.copy}`}
+                  noteClassName={`self-end pt-2 text-xs leading-6 text-muted ${filterGuideHighlightClasses.copy}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>

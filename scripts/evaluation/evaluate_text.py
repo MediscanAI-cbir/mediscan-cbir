@@ -307,18 +307,28 @@ def save_csv(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluation text-to-image MediScan")
-    parser.add_argument("--mode", default="caption", choices=("caption", "keyword"))
+    parser.add_argument("--mode", default="caption", choices=("caption", "keyword", "both"))
     parser.add_argument("--k",          type=int, default=10)
     parser.add_argument("--n-queries",  type=int, default=200)
     parser.add_argument("--seed",       type=int, default=42)
     parser.add_argument("--output-dir", default="proofs/perf")
+    parser.add_argument("--embedder",   default=None, help="Surcharge optionnelle de l'embedder")
+    parser.add_argument("--model-name", default=None, help="Surcharge optionnelle du modele OpenCLIP/HF")
+    parser.add_argument("--index-path", default=None, help="Surcharge optionnelle de l'index FAISS")
+    parser.add_argument("--ids-path",   default=None, help="Surcharge optionnelle du fichier IDs JSON")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    resources = load_resources(mode="semantic")
+    resources = load_resources(
+        mode="semantic",
+        embedder=args.embedder,
+        model_name=args.model_name,
+        index_path=args.index_path,
+        ids_path=args.ids_path,
+    )
     print(f"Index charge : {resources.index.ntotal} vecteurs, dim={resources.index.d}")
 
     if args.mode in ("caption", "both"):

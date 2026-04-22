@@ -4,7 +4,7 @@
  */
 
 import { useContext, useEffect, useId, useMemo, useRef, useState, useCallback } from "react";
-import { LangContext } from "../context/LangContext";
+import { LangContext } from "../context/LangContextValue";
 
 /**
  * Zone interactive permettant à l'utilisateur de sélectionner ou glisser-déposer
@@ -57,15 +57,15 @@ export default function UploadZone({
   }, [previewUrl]);
 
   const dropZoneColorClass = dragOver
-    ? isAccent ? "border-accent bg-accent-pale" : "border-primary bg-primary-pale"
+    ? isAccent ? "border-accent bg-accent-pale" : "search-upload-dropzone-primary-drag"
     : isAccent ? "mediscan-accent-surface hover:border-accent/40"
     : useHomeVisualTone ? "mediscan-primary-surface hover:border-primary/40"
     : "border-border hover:border-primary hover:bg-primary-pale/50 bg-surface";
 
   const iconColorClass = dragOver
-    ? isAccent ? "bg-accent-pale text-accent border border-accent/30" : "bg-primary-pale text-primary border border-primary/30"
-    : isAccent ? "mediscan-accent-chip border"
-    : useHomeVisualTone ? "mediscan-primary-chip border"
+    ? isAccent ? "bg-accent-pale text-accent border border-accent/30" : "search-upload-icon-primary-drag border"
+    : isAccent ? "mediscan-accent-chip search-upload-icon-panel-accent"
+    : useHomeVisualTone ? "mediscan-primary-chip search-upload-icon-panel-primary"
     : "bg-primary-pale text-primary";
 
   /**
@@ -152,7 +152,7 @@ export default function UploadZone({
           ${fillHeight ? "flex-1" : ""}
           ${dropZoneColorClass}`}
       >
-        <div className={`${enableToneTransition ? "search-tone-transition " : ""}w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center ${iconColorClass}`}>
+        <div className={`${enableToneTransition ? "search-tone-transition " : ""}search-upload-icon-badge w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center ${iconColorClass}`}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />

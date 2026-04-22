@@ -7,6 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from mediscan.process import configure_cpu_environment
+
+configure_cpu_environment()
+
 import faiss
 import numpy as np
 from PIL import Image
@@ -29,9 +33,10 @@ MAX_K = 50
 class SearchResources:
     """Pre-loaded resources for running multiple queries without reloading."""
 
-    embedder: Embedder
+    embedder: Embedder | None
     index: faiss.Index
     rows: list[dict[str, str]]
+    row_index_by_image_id: dict[str, int]
 
 
 def _validate_k(k: int) -> None:
@@ -96,6 +101,7 @@ def load_resources(
     model_name: str | None = None,
     index_path: str | Path | None = None,
     ids_path: str | Path | None = None,
+    load_embedder: bool = True,
 ) -> SearchResources:
     """Load embedder, FAISS index, and metadata once for repeated queries."""
     set_faiss_threads(faiss)
@@ -115,13 +121,23 @@ def load_resources(
             f"Index/IDs mismatch: index.ntotal={faiss_index.ntotal}, ids={len(rows)}"
         )
 
-    image_embedder = build_embedder(embedder_name, model_name=model_name)
-    if image_embedder.dim != faiss_index.d:
-        raise RuntimeError(
-            f"Index dimension ({faiss_index.d}) does not match embedder ({image_embedder.dim})"
-        )
+    image_embedder: Embedder | None = None
+    if load_embedder:
+        image_embedder = build_embedder(embedder_name, model_name=model_name)
+        if image_embedder.dim != faiss_index.d:
+            raise RuntimeError(
+                f"Index dimension ({faiss_index.d}) does not match embedder ({image_embedder.dim})"
+            )
 
-    return SearchResources(embedder=image_embedder, index=faiss_index, rows=rows)
+    row_index_by_image_id = {
+        str(row.get("image_id", "")): idx for idx, row in enumerate(rows)
+    }
+    return SearchResources(
+        embedder=image_embedder,
+        index=faiss_index,
+        rows=rows,
+        row_index_by_image_id=row_index_by_image_id,
+    )
 
 
 def query(
@@ -141,6 +157,8 @@ def query(
     embedder = resources.embedder
     index = resources.index
     rows = resources.rows
+    if embedder is None:
+        raise RuntimeError("Image embedder is not loaded for this SearchResources instance")
 
     with Image.open(query_image) as pil_image:
         query_vector = embedder.encode_pil(pil_image).reshape(1, -1).astype(np.float32)
@@ -151,6 +169,41 @@ def query(
 
     excluded_image_ids = {query_image.stem} if exclude_self else set()
     excluded_paths = {str(query_image.resolve())} if exclude_self else set()
+    return collect_ranked_results(
+        rows=rows,
+        scores=scores[0],
+        indices=indices[0],
+        k=k,
+        excluded_image_ids=excluded_image_ids,
+        excluded_paths=excluded_paths,
+    )
+
+
+def query_from_index(
+    *,
+    resources: SearchResources,
+    image_id: str,
+    k: int,
+    exclude_self: bool = False,
+) -> list[dict[str, Any]]:
+    """Run one top-k retrieval query from a vector already stored in the FAISS index."""
+    _validate_k(k)
+
+    row_index = resources.row_index_by_image_id.get(image_id.strip())
+    if row_index is None:
+        raise KeyError(f"Image id not found in indexed rows: {image_id}")
+
+    index = resources.index
+    rows = resources.rows
+    query_vector = np.asarray(index.reconstruct(int(row_index)), dtype=np.float32).reshape(1, -1)
+
+    search_k = compute_search_k(k, index.ntotal, exclude_self=exclude_self)
+    scores, indices = index.search(query_vector, search_k)
+
+    row = rows[row_index]
+    relative_path = str(row.get("path", ""))
+    excluded_image_ids = {image_id} if exclude_self else set()
+    excluded_paths = {str(resolve_path(relative_path).resolve())} if exclude_self and relative_path else set()
     return collect_ranked_results(
         rows=rows,
         scores=scores[0],
@@ -231,6 +284,7 @@ __all__ = [
     "collect_ranked_results",
     "load_resources",
     "query",
+    "query_from_index",
     "query_text",
     "search_image",
 ]

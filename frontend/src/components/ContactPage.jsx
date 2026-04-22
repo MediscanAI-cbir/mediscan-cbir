@@ -5,7 +5,7 @@
 
 import { Mail, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 import { useState, useContext, useEffect } from "react";
-import { LangContext } from "../context/LangContext";
+import { LangContext } from "../context/LangContextValue";
 import { sendContactMessage } from "../api";
 
 
@@ -94,7 +94,7 @@ export default function ContactPage() {
     }`;
 
   return (
-    <div className="-mt-16 md:-mt-20">
+    <div className="home-page contact-page-surface -mt-16 md:-mt-20">
       <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-12 pt-28 md:pt-32 pb-20">
 
         {/* Header */}
@@ -102,6 +102,7 @@ export default function ContactPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-title tracking-tight mb-3 leading-tight">
             {content.headline}
           </h1>
+          <div className="w-10 h-0.5 bg-semantic mb-5 rounded" />
           <p className="text-base md:text-lg text-muted max-w-md leading-relaxed">
             {content.description}
           </p>
@@ -263,10 +264,9 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="contact-submit-button home-hero-button-primary w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 group"
+                    className="home-hero-button-primary home-hero-button-scan w-full text-sm font-semibold whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isSubmitting ? content.formSending : content.formSubmit}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" strokeWidth={2} />
                   </button>
                   <p className="text-xs text-muted/50 text-center mt-4">{content.formPrivacy}</p>
                 </div>

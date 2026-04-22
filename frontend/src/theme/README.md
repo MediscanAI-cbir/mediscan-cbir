@@ -2,6 +2,9 @@
 
 Le systeme de couleur a ete simplifie.
 
+La feuille de theme globale a ete fusionnee dans [app.css](/Users/taskin/Desktop/mediscan-main-test/frontend/src/styles/app.css).
+Il ne reste plus qu'un seul point d'entree CSS global.
+
 Les regles a suivre :
 
 1. Modifier les couleurs seulement dans [palettes.js](/Users/taskin/Desktop/Projet%20Semestre%206/test-mediscan/frontend/src/theme/palettes.js).

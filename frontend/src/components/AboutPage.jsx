@@ -4,8 +4,8 @@
  */
 
 import { useContext, useEffect, useState } from "react";
-import { LangContext } from "../context/LangContext";
-import { useTheme } from "../context/ThemeContext";
+import { LangContext } from "../context/LangContextValue";
+import { useTheme } from "../context/useTheme";
 
 /**
  * Icône SVG du logo GitHub.
@@ -141,13 +141,10 @@ export default function AboutPage() {
         : "opacity-0"
     }`;
 
-  const pipeline = content.pipeline?.steps || [];
-  const archCards = content.architecture?.cards || [];
-  const stackItems = content.stack?.items || [];
   const teamMembers = content.team?.members || [];
 
   return (
-    <div className="-mt-20 md:-mt-20">
+    <div className="home-page about-page-surface -mt-20 md:-mt-20">
       <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-12 pt-28 md:pt-32 pb-20">
 
         {/* ── Hero ── */}
@@ -181,7 +178,7 @@ export default function AboutPage() {
                   i === 0 ? anim("left") : anim("right")
                 }`}
               >
-                <div className="aspect-video overflow-hidden bg-semantic-pale">
+                <div className="h-48 overflow-hidden bg-semantic-pale">
                   {data.image ? (
                     <img
                       src={theme === "dark" ? data.image_d : data.image}
@@ -194,8 +191,8 @@ export default function AboutPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-6">
-                  <h3 className="font-semibold text-title mb-2">{data.title}</h3>
+                <div className="p-4">
+                  <h3 className="font-semibold text-title mb-1">{data.title}</h3>
                   <p className="text-sm text-muted leading-relaxed">{data.text}</p>
                 </div>
               </div>
@@ -204,76 +201,6 @@ export default function AboutPage() {
         </div>
 
         <div className="h-px bg-border my-12 mx-8 md:mx-21" />
-
-        {/* ── Architecture ── */}
-        <div className="mb-12">
-          <SectionLabel>{content.architecture?.title}</SectionLabel>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {archCards.map((card, i) => (
-              <div
-                key={i}
-                className={`rounded-2xl border border-border bg-bg overflow-hidden hover:border-text/20 transition-all duration-300 ${anim("up")}`}
-                style={{ animationDelay: `${i * 60}ms` }}
-              >
-                <div className="aspect-video overflow-hidden bg-visual-pale">
-                  {card.image ? (
-                    <img
-                      src={theme === "dark" ? card.image_d : card.image}
-                      alt={card.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted text-xs">
-                      Image à venir
-                    </div>
-                  )}
-                </div>
-                <div className="p-6">
-                  <h3 className="font-semibold text-title mb-2">{card.title}</h3>
-                  <p className="text-sm text-muted leading-relaxed">{card.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Pipeline CBIR ── */}
-        <div className="mb-12">
-          <SectionLabel>{content.pipeline?.title}</SectionLabel>
-          <ol className="flex flex-col">
-            {pipeline.map((step, i) => (
-              <li key={i} className="flex gap-4 items-start pb-6 last:pb-0">
-                <div className="flex flex-col items-center flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full bg-semantic-pale text-semantic text-xs font-bold flex items-center justify-center border border-border">
-                    {i + 1}
-                  </div>
-                  {i < pipeline.length - 1 && (
-                    <div className="flex-1 w-px bg-border mt-1 min-h-[24px]" />
-                  )}
-                </div>
-                <div className="pt-1">
-                  <h4 className="font-semibold text-title text-sm mb-0.5">{step.title}</h4>
-                  <p className="text-sm text-muted leading-relaxed">{step.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        {/* ── Stack ── */}
-        <div className="mb-12">
-          <SectionLabel>{content.stack?.title}</SectionLabel>
-          <div className="flex flex-wrap gap-2">
-            {stackItems.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs font-medium border border-border rounded-full px-3 py-1 text-muted bg-bg hover:border-text/20 transition-colors"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
 
         {/* ── Team ── */}
         {teamMembers.length > 0 && (

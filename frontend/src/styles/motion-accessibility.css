@@ -1,0 +1,30 @@
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .home-retrieval-tree {
+    --home-tree-motion-duration: 0ms !important;
+  }
+
+  .home-retrieval-tree .home-retrieval-card,
+  .home-retrieval-tree .home-retrieval-card-shell {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition-delay: 0ms !important;
+  }
+
+  .home-retrieval-tree .home-retrieval-wire {
+    --tree-wire-visibility: 1 !important;
+    --tree-wire-blur: 0px !important;
+    stroke-dashoffset: 0 !important;
+    transition-delay: 0ms !important;
+  }
+
+}

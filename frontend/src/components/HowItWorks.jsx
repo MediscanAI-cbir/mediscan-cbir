@@ -4,7 +4,7 @@
  */
 
 import { useContext } from "react";
-import { LangContext } from "../context/LangContext";
+import { LangContext } from "../context/LangContextValue";
 
 /**
  * Page décrivant les deux modes de recherche du système CBIR :

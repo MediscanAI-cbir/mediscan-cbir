@@ -1,0 +1,1492 @@
+[data-theme="dark"] .search-workspace-image .image-search-visual-stage-panel,
+[data-theme="dark"] .search-workspace-image .image-search-controls-stage-panel {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: 0 18px 34px rgba(2, 6, 23, 0.22);
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-step-badge-primary {
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  color: #eaf4fb !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-action-button.mediscan-primary-action {
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  color: #edf6fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-action-button.mediscan-primary-action:hover {
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 64%, black 36%) !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 64%, black 36%) !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.24) !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-mode-shell,
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .image-search-mode-shell-primary {
+  background: var(--search-primary-panel-bg, #10283f) !important;
+  background-color: var(--search-primary-panel-bg, #10283f) !important;
+  border: 2px solid color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-mode-option {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #d8e9f7 !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-mode-option:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #edf6fb !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-mode-option.search-mode-option-selected,
+[data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-mode-option.mediscan-primary-chip.search-mode-option-selected {
+  background: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 58%, black 42%) !important;
+  color: #edf6fb !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-upload-icon-panel-primary,
+[data-theme="dark"] .search-workspace-primary .image-search-detail-icon-primary {
+  background: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 44%, var(--search-primary-base-light, #5d9bd2) 56%) !important;
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 44%, var(--search-primary-base-light, #5d9bd2) 56%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  color: #000000 !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-detail-chip-primary {
+  background: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #edf6fb !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-results-export-button-primary,
+[data-theme="dark"] .search-workspace-primary .search-results-export-button-primary:hover,
+[data-theme="dark"] .search-workspace-primary .search-results-pagination-button-primary,
+[data-theme="dark"] .search-workspace-primary .search-results-pagination-button-primary:hover,
+[data-theme="dark"] .search-workspace-primary .search-results-pagination-button-active-primary,
+[data-theme="dark"] .search-workspace-primary .search-results-pagination-button-active-primary:hover,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-export-button-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-export-button-accent:hover,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-pagination-button-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-pagination-button-accent:hover,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent:hover {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .image-search-guide-fixed-visual .search-legend-visual-icon,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-legend-visual-chip {
+  background: var(--search-primary-panel-bg, #10283f) !important;
+  background-color: var(--search-primary-panel-bg, #10283f) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #edf6fb !important;
+}
+
+[data-theme="dark"] .image-search-guide-fixed-visual .search-legend-interpretive-icon,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-legend-interpretive-chip {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .image-search-guide-fixed-visual {
+  --image-search-home-visual-eye-color: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 82%, white 18%);
+  --image-search-home-visual-eye-ink: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 18%, #072033 82%);
+}
+
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-caption-icon,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-caption-chip,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-score-icon,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-score-chip,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-combination-icon,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-combination-chip,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-badge-icon,
+[data-theme="dark"] .image-search-guide-fixed-visual .search-filter-guide-badge-chip {
+  background: var(--image-search-home-visual-eye-color) !important;
+  background-color: var(--image-search-home-visual-eye-color) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: var(--image-search-home-visual-eye-ink) !important;
+}
+
+[data-theme="dark"] .text-search-guide-fixed-interpretive .text-search-legend-interpretive-icon,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .text-search-legend-interpretive-chip,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .text-search-legend-writing-icon,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .text-search-legend-writing-chip {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .text-search-guide-fixed-interpretive {
+  --text-search-filter-guide-color: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 82%, white 18%);
+  --text-search-filter-guide-ink: color-mix(in srgb, var(--theme-primary-light, #8bbbe4) 18%, #072033 82%);
+}
+
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-caption-icon,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-caption-chip,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-score-icon,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-score-chip,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-combination-icon,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-combination-chip,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-badge-icon,
+[data-theme="dark"] .text-search-guide-fixed-interpretive .search-filter-guide-badge-chip {
+  background: var(--text-search-filter-guide-color) !important;
+  background-color: var(--text-search-filter-guide-color) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: var(--text-search-filter-guide-ink) !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-filter-stage-panel {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: 0 18px 34px rgba(2, 6, 23, 0.22);
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-filter-stage-panel .search-filter-card {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .image-search-filter-stage-panel .search-filter-card-label,
+[data-theme="dark"] .search-workspace-primary .image-search-filter-stage-panel .search-filter-card-sublabel {
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-result-card,
+[data-theme="dark"] .search-workspace-primary .search-result-card.mediscan-primary-surface,
+[data-theme="dark"] .search-workspace-primary .search-result-preview {
+  background: var(--search-primary-panel-bg, #10283f) !important;
+  background-color: var(--search-primary-panel-bg, #10283f) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: 0 18px 34px rgba(2, 6, 23, 0.22);
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-label,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-sublabel {
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-card,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-card.mediscan-accent-surface,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-preview {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-selection-panel-primary,
+[data-theme="dark"] .search-workspace-primary .search-ai-summary-panel,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-selection-panel-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-ai-summary-panel {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-selection-panel-primary .search-conclusion-header,
+[data-theme="dark"] .search-workspace-primary .search-ai-summary-panel .search-conclusion-header,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-conclusion-header,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-header {
+  border-bottom: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-selection-panel-primary .search-conclusion-header .mediscan-primary-chip,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-conclusion-header .mediscan-accent-chip {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-step-badge-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-action-button.mediscan-accent-action {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  color: #edf9fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-action-button.mediscan-accent-action:hover {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  color: #edf9fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.24) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-shell,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .image-search-mode-shell-accent {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  border: 2px solid color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #d8e6ee !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #edf9fb !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option.search-mode-option-selected,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option.mediscan-accent-chip.search-mode-option-selected {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 58%, black 42%) !important;
+  color: #edf9fb !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-upload-icon-panel-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-detail-icon-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 44%, var(--theme-accent-light, #a9e3ee) 56%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 44%, var(--theme-accent-light, #a9e3ee) 56%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  color: #000000 !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .image-search-detail-chip-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  color: #edf9fb !important;
+}
+
+
+/* Force la teinte demandee sur les 3 blocs visuels de la page Image Search
+   en mode jour uniquement, meme si d'autres couches de style passent apres. */
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel.mediscan-primary-surface {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border-color: color-mix(in srgb, #acd2d9 76%, white 24%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-upload-dropzone,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-upload-preview,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-upload-meta,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-upload-remove,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .image-search-mode-shell-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .image-search-soft-control-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .image-search-file-meta-primary {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border-color: color-mix(in srgb, #acd2d9 76%, white 24%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .mediscan-primary-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-upload-icon-primary-drag {
+  background-color: color-mix(in srgb, #acd2d9 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #acd2d9 64%, white 36%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .mediscan-primary-text,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .text-primary {
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .text-muted,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .placeholder\:text-muted::placeholder {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-slider-track-primary {
+  background-color: color-mix(in srgb, #acd2d9 42%, white 58%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-slider-track-primary::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .search-slider-track-primary::-moz-range-thumb {
+  background-color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-primary {
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-primary .search-mode-confirm-copy,
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-primary .search-mode-confirm-button-secondary-primary,
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-primary .search-mode-confirm-button-primary {
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-primary .search-mode-confirm-button-secondary-primary {
+  background: color-mix(in srgb, #acd2d9 80%, white 20%) !important;
+  border-color: #8bb6be !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-primary .search-mode-confirm-button-primary {
+  background: color-mix(in srgb, #acd2d9 88%, white 12%) !important;
+  border-color: #8bb6be !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-accent {
+  background: #cce1e5 !important;
+  border-color: #cce1e5 !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-accent .search-mode-confirm-copy,
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-accent .search-mode-confirm-button-secondary-accent,
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-accent .search-mode-confirm-button-accent {
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-accent .search-mode-confirm-button-secondary-accent {
+  background: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-mode-confirm-popover-accent .search-mode-confirm-button-accent {
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-legend-visual-icon,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-legend-visual-chip {
+  background-color: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .text-title:not(.quick-note-title-glow-primary):not(.quick-note-title-glow-accent) {
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual {
+  --theme-title: #173b43;
+  --theme-primary: #acd2d9;
+  --theme-primary-light: color-mix(in srgb, #acd2d9 82%, #173b43 18%);
+  --theme-primary-pale: color-mix(in srgb, #acd2d9 16%, white 84%);
+  --search-primary-base: #acd2d9;
+  --search-primary-base-light: color-mix(in srgb, #acd2d9 82%, #173b43 18%);
+  --search-primary-base-pale: color-mix(in srgb, #acd2d9 16%, white 84%);
+}
+
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .text-muted:not(.quick-note-copy-glow-primary):not(.quick-note-copy-glow-accent),
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .placeholder\:text-muted::placeholder {
+  color: #5d7480 !important;
+}
+
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .image-search-guide-divider {
+  border-color: color-mix(in srgb, #acd2d9 52%, #cbd5e1 48%) !important;
+}
+
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-legend-visual-icon,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-legend-visual-chip {
+  background-color: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-caption-icon,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-caption-chip,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-score-icon,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-score-chip,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-combination-icon,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-combination-chip,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-badge-icon,
+:root:not([data-theme="dark"]) .image-search-guide-fixed-visual .search-filter-guide-badge-chip {
+  background-color: #1c4ed8 !important;
+  border-color: #1c4ed8 !important;
+  color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-title:not(.quick-note-title-glow-accent) {
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-muted:not(.quick-note-copy-glow-accent),
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .placeholder\:text-muted::placeholder {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-search-guide-divider {
+  border-color: color-mix(in srgb, #cce1e5 52%, #cbd5e1 48%) !important;
+}
+
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-search-legend-interpretive-icon,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-search-legend-interpretive-chip,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-search-legend-writing-icon,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .text-search-legend-writing-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-caption-icon,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-caption-chip,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-score-icon,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-score-chip,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-combination-icon,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-combination-chip,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-badge-icon,
+:root:not([data-theme="dark"]) .text-search-guide-fixed-interpretive .search-filter-guide-badge-chip {
+  background-color: #1c4ed8 !important;
+  border-color: #1c4ed8 !important;
+  color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .search-legend-interpretive-icon,
+:root:not([data-theme="dark"]) .search-legend-interpretive-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-legend-interpretive-title {
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-filter-guide-caption-icon,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-filter-guide-caption-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-filter-guide-score-icon,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-filter-guide-score-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-filter-guide-combination-icon,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-filter-guide-combination-chip {
+  background-color: #1c4ed8 !important;
+  border-color: #1c4ed8 !important;
+  color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-step-badge-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-controls-panel,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .image-search-mode-shell-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .mediscan-primary-chip {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border-color: color-mix(in srgb, #acd2d9 76%, white 24%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .image-search-mode-shell-primary {
+  border-width: 2px !important;
+  border-color: #acd2d9 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+    0 0 0 1px #acd2d9 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-mode-option-selected {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-action-button,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .mediscan-primary-action,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .button-solid-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-action-button:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .mediscan-primary-action:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .button-solid-primary:hover {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .info-trigger {
+  border-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .analysis-mode-info-trigger {
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  background-color: rgba(148, 163, 184, 0.28) !important;
+  background: rgba(148, 163, 184, 0.28) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  background: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-filter-card {
+  background-color: color-mix(in srgb, #acd2d9 48%, white 52%) !important;
+  border-color: color-mix(in srgb, #acd2d9 72%, white 28%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-workspace-field,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .bg-bg,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel select.search-workspace-field {
+  background-color: color-mix(in srgb, #acd2d9 34%, white 66%) !important;
+  border-color: color-mix(in srgb, #acd2d9 72%, white 28%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-workspace-field:focus {
+  background-color: color-mix(in srgb, #acd2d9 40%, white 60%) !important;
+  border-color: #acd2d9 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-filter-card > label,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-filter-card > div > label,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-filter-card p.font-semibold.uppercase,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-filter-card-label,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-filter-card-sublabel {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-toolbar-button,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .mediscan-primary-outline-button {
+  background-color: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-toolbar-button:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .mediscan-primary-outline-button:hover {
+  background-color: color-mix(in srgb, #acd2d9 56%, white 44%) !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-mode-option.mediscan-primary-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-mode-option.search-sort-option-active-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-mode-option.mediscan-primary-chip:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-mode-option.search-sort-option-active-primary:hover {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-sort-label-primary {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-sort-option-primary {
+  color: #acd2d9 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-sort-shell-primary {
+  background: transparent !important;
+  border-color: #acd2d9 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-sort-option-primary {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-sort-option-primary:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #acd2d9 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-card,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-card.mediscan-primary-surface {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  background: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-rank-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-preview {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  background: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-card:hover {
+  border-color: transparent !important;
+  box-shadow:
+    0 18px 34px color-mix(in srgb, #acd2d9 34%, transparent),
+    0 6px 14px color-mix(in srgb, #acd2d9 22%, transparent) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-compare-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-detail-download-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-chip-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-chip-remove-primary {
+  background-color: color-mix(in srgb, #acd2d9 44%, white 56%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-result-compare-button-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-detail-download-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-chip-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-chip-remove-primary:hover {
+  background-color: color-mix(in srgb, #acd2d9 56%, white 44%) !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-export-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-pagination-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-clear-button-primary {
+  background-color: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  background: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-export-button-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-export-button-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-pagination-button-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-clear-button-primary:hover {
+  background-color: color-mix(in srgb, #acd2d9 58%, white 42%) !important;
+  background: color-mix(in srgb, #acd2d9 58%, white 42%) !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-export-button-primary:hover {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-pagination-button-active-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-relaunch-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-button-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-results-pagination-button-active-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-relaunch-button-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-button-primary:hover {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-panel {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  background: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-icon {
+  background-color: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  border-color: color-mix(in srgb, #acd2d9 72%, white 28%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-regenerate {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .text-muted,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .mediscan-primary-text,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .text-primary {
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-slider-track-primary {
+  background-color: color-mix(in srgb, #acd2d9 42%, white 58%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-slider-track-primary::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .search-slider-track-primary::-moz-range-thumb {
+  background-color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-visual-stage-panel .image-search-step-badge-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .image-search-step-badge-primary {
+  background-color: #acd2d9 !important;
+  background: #acd2d9 !important;
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .mediscan-primary-text,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .mediscan-primary-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-remove-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-clear-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-relaunch-button-primary {
+  border-color: #acd2d9 !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-panel {
+  background-color: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  background: color-mix(in srgb, #acd2d9 66%, white 34%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-conclusion-icon,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-panel .search-conclusion-icon,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-icon {
+  background-color: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  border-color: color-mix(in srgb, #acd2d9 72%, white 28%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .mediscan-primary-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-conclusion-header .mediscan-primary-chip,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-remove-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-clear-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-relaunch-button-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-button-primary {
+  background-color: color-mix(in srgb, #acd2d9 82%, #173b43 18%) !important;
+  background: color-mix(in srgb, #acd2d9 82%, #173b43 18%) !important;
+  border-color: color-mix(in srgb, #acd2d9 84%, #173b43 16%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-remove-primary,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-clear-button-primary {
+  background-color: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  background: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  border-color: color-mix(in srgb, #acd2d9 72%, white 28%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-chip-remove-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-clear-button-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-relaunch-button-primary:hover {
+  background-color: color-mix(in srgb, #acd2d9 54%, white 46%) !important;
+  background: color-mix(in srgb, #acd2d9 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #acd2d9 78%, white 22%) !important;
+  color: #173b43 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .search-selection-relaunch-button-primary:hover,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-button-primary:hover {
+  background-color: color-mix(in srgb, #acd2d9 82%, #173b43 18%) !important;
+  background: color-mix(in srgb, #acd2d9 82%, #173b43 18%) !important;
+  border-color: color-mix(in srgb, #acd2d9 84%, #173b43 16%) !important;
+  color: #173b43 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-selection-panel-primary .analysis-mode-info-trigger {
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  background-color: rgba(148, 163, 184, 0.28) !important;
+  background: rgba(148, 163, 184, 0.28) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-panel .search-conclusion-note,
+:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-panel .search-conclusion-chip {
+  background-color: color-mix(in srgb, #acd2d9 46%, white 54%) !important;
+  border-color: color-mix(in srgb, #acd2d9 72%, white 28%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-slider-track-primary {
+  --search-slider-track-color: color-mix(in srgb, #acd2d9 68%, white 32%) !important;
+  --search-slider-thumb-color: #acd2d9 !important;
+  accent-color: #acd2d9 !important;
+  background-color: color-mix(in srgb, #acd2d9 68%, white 32%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel span.search-filter-score-value-primary {
+  color: #acd2d9 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-slider-track-primary::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-slider-track-primary::-moz-range-thumb {
+  background-color: #173b43 !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(23, 59, 67, 0.26) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-slider-track-primary:focus,
+:root:not([data-theme="dark"]) .search-workspace-primary .image-search-filter-stage-panel .search-slider-track-primary:focus-visible {
+  outline: 2px solid color-mix(in srgb, #acd2d9 70%, white 30%) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #acd2d9 34%, transparent) !important;
+}
+
+/* Neutral reset for Image Search interpretive mode before recoloring it. */
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent.search-semantic-theme {
+  background-color: color-mix(in srgb, #cce1e5 58%, white 42%);
+  --theme-accent: #cbd5e1;
+  --theme-accent-light: #b8c4d3;
+  --theme-accent-pale: rgba(248, 250, 252, 0.94);
+  --color-accent: #64748b;
+  --color-accent-light: #475569;
+  --color-accent-soft: rgba(255, 255, 255, 0.82);
+  --color-accent-pale: rgba(248, 250, 252, 0.94);
+  --color-accent-readable: #334155;
+  --color-accent-readable-strong: #1e293b;
+  --search-panel-border: rgba(148, 163, 184, 0.22);
+  --search-surface-neutral: rgba(255, 255, 255, 0.88);
+  --search-surface-elevated: rgba(255, 255, 255, 0.76);
+  --search-surface-preview: rgba(248, 250, 252, 0.94);
+  --search-input-bg: rgba(255, 255, 255, 0.82);
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent::before,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent::after {
+  background: none;
+  opacity: 0;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .mediscan-accent-action,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .button-solid-accent {
+  border-color: #334155;
+  background: #334155;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .mediscan-accent-action:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .button-solid-accent:hover {
+  border-color: #1e293b;
+  background: #1e293b;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .mediscan-accent-action,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .button-solid-accent {
+  border-color: #d8e6ee;
+  background: #d8e6ee;
+  color: #061018;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .mediscan-accent-action:hover,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .button-solid-accent:hover {
+  border-color: #e8f1f7;
+  background: #e8f1f7;
+  color: #061018;
+  box-shadow: none;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-slider-track-accent {
+  --search-slider-track-color: rgba(148, 163, 184, 0.26);
+  --search-slider-thumb-color: #334155;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-slider-track-accent {
+  --search-slider-track-color: rgba(139, 166, 184, 0.26);
+  --search-slider-thumb-color: #e2e8f0;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-card,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-card.mediscan-accent-surface {
+  background-color: var(--search-surface-neutral) !important;
+  background: var(--search-surface-neutral) !important;
+  border: 1px solid var(--search-panel-border) !important;
+  border-color: var(--search-panel-border) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-preview {
+  background-color: var(--search-surface-preview) !important;
+  background: var(--search-surface-preview) !important;
+  border: 1px solid color-mix(in srgb, var(--search-panel-border) 72%, transparent) !important;
+  border-color: color-mix(in srgb, var(--search-panel-border) 72%, transparent) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-card,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-card.mediscan-accent-surface {
+  background-color: var(--search-surface-neutral) !important;
+  background: var(--search-surface-neutral) !important;
+  border: 1px solid var(--search-panel-border) !important;
+  border-color: var(--search-panel-border) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-preview {
+  background-color: var(--search-surface-preview) !important;
+  background: var(--search-surface-preview) !important;
+  border: 1px solid color-mix(in srgb, var(--search-panel-border) 72%, transparent) !important;
+  border-color: color-mix(in srgb, var(--search-panel-border) 72%, transparent) !important;
+}
+
+/* Direct recolor for the first three Image Search interpretive panels. */
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel {
+  --theme-accent: #cce1e5;
+  --theme-accent-light: #cce1e5;
+  --theme-accent-pale: #cce1e5;
+  --color-accent: #1d4047;
+  --color-accent-light: #1d4047;
+  --color-accent-soft: #cce1e5;
+  --color-accent-pale: #cce1e5;
+  --color-accent-readable: #1d4047;
+  --color-accent-readable-strong: #173941;
+  --search-panel-border: #cce1e5;
+  --search-surface-elevated: #cce1e5;
+  --search-surface-preview: #cce1e5;
+  --search-input-bg: #cce1e5;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel.mediscan-accent-surface {
+  background-color: #cce1e5 !important;
+  border-color: #cce1e5 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-upload-dropzone,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-upload-preview,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-upload-meta,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-upload-remove,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .image-search-mode-shell-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .image-search-soft-control-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .image-search-file-meta-accent {
+  background-color: #cce1e5 !important;
+  border-color: #cce1e5 !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .mediscan-accent-chip {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 64%, white 36%) !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .mediscan-accent-text,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .text-accent {
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .text-muted,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .placeholder\:text-muted::placeholder {
+  color: #3f6470 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-slider-track-accent {
+  background-color: color-mix(in srgb, #cce1e5 42%, white 58%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-slider-track-accent::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .search-slider-track-accent::-moz-range-thumb {
+  background-color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-controls-panel,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .image-search-mode-shell-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-chip {
+  background-color: #cce1e5 !important;
+  border-color: #cce1e5 !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .image-search-mode-shell-accent {
+  border-width: 2px !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+    0 0 0 1px color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option:hover {
+  border-color: transparent !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option-selected {
+  background-color: transparent !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #1d4047 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-mode-option.mediscan-accent-chip.search-mode-option-selected {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-action-button,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-action,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .button-solid-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-action-button:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-action:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .button-solid-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  color: #173941 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .info-trigger {
+  border-color: #cce1e5 !important;
+  background-color: #cce1e5 !important;
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .analysis-mode-info-trigger {
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  background-color: rgba(148, 163, 184, 0.28) !important;
+  background: rgba(148, 163, 184, 0.28) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .text-muted,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .mediscan-accent-text,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .text-accent {
+  color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-slider-track-accent {
+  background-color: color-mix(in srgb, #cce1e5 42%, white 58%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-slider-track-accent::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .search-slider-track-accent::-moz-range-thumb {
+  background-color: #1d4047 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-visual-stage-panel .image-search-step-badge-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-controls-stage-panel .image-search-step-badge-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card {
+  background-color: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  background: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  border-color: color-mix(in srgb, #cce1e5 72%, white 28%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-workspace-field,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .bg-bg,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel select.search-workspace-field {
+  background-color: color-mix(in srgb, #cce1e5 42%, white 58%) !important;
+  border-color: color-mix(in srgb, #cce1e5 72%, white 28%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-workspace-field:focus {
+  background-color: color-mix(in srgb, #cce1e5 48%, white 52%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card > label,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card > div > label,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card p.font-semibold.uppercase,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-label,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-filter-card-sublabel,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-sort-label-primary,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel label.text-muted,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .text-muted {
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-toolbar-button,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .mediscan-accent-outline-button {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-toolbar-button:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .mediscan-accent-outline-button:hover {
+  background-color: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  border-color: color-mix(in srgb, #cce1e5 78%, white 22%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-mode-shell,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .image-search-mode-shell-accent {
+  background-color: color-mix(in srgb, #cce1e5 56%, white 44%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-mode-option {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #1d4047 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-mode-option:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-mode-option.search-mode-option-selected,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-mode-option.mediscan-accent-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent {
+  --search-slider-track-color: color-mix(in srgb, #cce1e5 68%, white 32%) !important;
+  --search-slider-thumb-color: #1d4047 !important;
+  accent-color: #1d4047 !important;
+  background-color: color-mix(in srgb, #cce1e5 68%, white 32%) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel span.search-filter-score-value-accent {
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent::-webkit-slider-thumb,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent::-moz-range-thumb {
+  background-color: #1d4047 !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(29, 64, 71, 0.22) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent:focus,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .image-search-filter-stage-panel .search-slider-track-accent:focus-visible {
+  outline: 2px solid color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #cce1e5 34%, transparent) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-card,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-card.mediscan-accent-surface {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-preview {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-card:hover {
+  border-color: transparent !important;
+  box-shadow:
+    0 18px 34px color-mix(in srgb, #cce1e5 34%, transparent),
+    0 6px 14px color-mix(in srgb, #cce1e5 22%, transparent) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-rank-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-compare-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-detail-download-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-chip-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-chip-remove-accent {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border: none !important;
+  border-color: transparent !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-result-compare-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-detail-download-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-chip-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-chip-accent:hover .search-selection-chip-remove-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-chip-remove-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  border-color: color-mix(in srgb, #cce1e5 80%, white 20%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-export-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-pagination-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-clear-button-accent {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  background: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-export-button-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-export-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-pagination-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-clear-button-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  background: color-mix(in srgb, #cce1e5 62%, white 38%) !important;
+  border-color: color-mix(in srgb, #cce1e5 80%, white 20%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-export-button-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-relaunch-button-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-button-accent {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-relaunch-button-accent:hover,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-button-accent:hover {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel {
+  background-color: #cce1e5 !important;
+  background: #cce1e5 !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-conclusion-icon,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-icon,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-icon {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent .mediscan-accent-chip {
+  background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, #1d4047 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-selection-chip-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-selection-chip-remove-accent,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-selection-clear-button-accent {
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #173941 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent .analysis-mode-info-trigger {
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  background-color: rgba(148, 163, 184, 0.28) !important;
+  background: rgba(148, 163, 184, 0.28) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image .info-trigger,
+:root:not([data-theme="dark"]) .search-workspace-image .info-trigger:hover {
+  border-color: rgba(148, 163, 184, 0.42) !important;
+  background-color: rgba(148, 163, 184, 0.28) !important;
+  background: rgba(148, 163, 184, 0.28) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+}
+
+[data-theme="dark"] .search-workspace-image .info-trigger,
+[data-theme="dark"] .search-workspace-image .info-trigger:hover {
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  background-color: rgba(148, 163, 184, 0.14) !important;
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: rgba(226, 232, 240, 0.9) !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-note,
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-chip {
+  background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
+  border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
+  color: #315761 !important;
+}
+
+:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-regenerate {
+  color: #315761 !important;
+}

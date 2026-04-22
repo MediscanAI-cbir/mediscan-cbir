@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import {
   COLOR_PALETTES,
@@ -7,8 +7,7 @@ import {
   applyPaletteVariables,
   isPaletteId,
 } from "../theme/palettes";
-
-export const ThemeContext = createContext();
+import { ThemeContext } from "./ThemeContextValue";
 
 function canUseAnimatedViewTransitions() {
   if (typeof document === "undefined" || typeof window === "undefined") {
@@ -18,14 +17,6 @@ function canUseAnimatedViewTransitions() {
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   return !prefersReduced && typeof document.startViewTransition === "function";
-}
-
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider");
-  }
-  return context;
 }
 
 function getInitialTheme() {

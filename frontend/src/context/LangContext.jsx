@@ -1,20 +1,14 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { en } from "../i18n/en";
 import { fr } from "../i18n/fr";
-import { es } from "../i18n/es";
-import { de } from "../i18n/de";
-import { it } from "../i18n/it";
-import { pt } from "../i18n/pt";
-import { tr } from "../i18n/tr";
-import { zh } from "../i18n/zh";
-import { ar } from "../i18n/ar";
-import { ja } from "../i18n/ja";
-import { ko } from "../i18n/ko";
+import { LangContext } from "./LangContextValue";
 
-export const LangContext = createContext();
+const translations = { en, fr };
 
-const translations = { en, fr, es, de, it, pt, tr, zh, ar, ja, ko };
+function normalizeLanguage(value) {
+  return value === "fr" ? "fr" : "en";
+}
 
 function canUseAnimatedViewTransitions() {
   if (typeof document === "undefined" || typeof window === "undefined") return false;
@@ -25,17 +19,15 @@ function canUseAnimatedViewTransitions() {
 }
 
 export function LangProvider({ children }) {
-  const [lang, setLang] = useState(() => localStorage.getItem("lang") || "en");
+  const [lang, setLang] = useState(() => normalizeLanguage(localStorage.getItem("lang")));
   const [langVisible, setLangVisible] = useState(true);
   const timerRef = useRef(null);
 
-  const t = translations[lang] || translations["en"];
+  const t = translations[lang];
 
   useEffect(() => {
-    document.documentElement.lang = lang; 
-
-    // Gérer la direction de l'interface pour les utilisateurs arabes
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = lang;
+    document.documentElement.dir = "ltr";
 
     localStorage.setItem("lang", lang);
 
@@ -45,13 +37,14 @@ export function LangProvider({ children }) {
   }, [lang]);
 
   const setLanguage = (newLang) => {
-    if (newLang === lang) return;
+    const nextLang = normalizeLanguage(newLang);
+    if (nextLang === lang) return;
 
     if (!canUseAnimatedViewTransitions()) {
       clearTimeout(timerRef.current);
       setLangVisible(false);
       timerRef.current = setTimeout(() => {
-        setLang(newLang);
+        setLang(nextLang);
         setLangVisible(true);
       }, 160);
       return;
@@ -59,7 +52,7 @@ export function LangProvider({ children }) {
 
     const transition = document.startViewTransition(() => {
       flushSync(() => {
-        setLang(newLang);
+        setLang(nextLang);
       });
     });
 

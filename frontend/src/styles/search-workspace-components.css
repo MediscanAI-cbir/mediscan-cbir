@@ -1,0 +1,404 @@
+.search-workspace,
+.search-workspace .image-search-panel,
+.search-workspace .search-workspace-back,
+.search-workspace .search-workspace-field,
+.search-workspace .search-toolbar,
+.search-workspace .search-mode-shell,
+.search-workspace .search-mode-option,
+.search-workspace .search-upload-dropzone,
+.search-workspace .search-upload-preview,
+.search-workspace .search-upload-meta,
+.search-workspace .search-upload-remove,
+.search-workspace .search-toolbar-button,
+.search-workspace .search-action-button,
+.search-workspace .search-conclusion-note,
+.search-workspace .search-conclusion-chip,
+.search-workspace .search-conclusion-icon,
+.search-workspace .search-conclusion-action,
+.search-workspace .search-conclusion,
+.search-result-card,
+.search-detail-modal,
+.search-compare-modal {
+  transition:
+    background-color var(--search-tone-duration) var(--search-tone-ease),
+    border-color     var(--search-tone-duration) var(--search-tone-ease),
+    color            var(--search-tone-duration) var(--search-tone-ease),
+    box-shadow       var(--search-tone-duration) var(--search-tone-ease),
+    opacity          var(--search-tone-duration) var(--search-tone-ease),
+    transform        var(--search-tone-duration) var(--search-tone-ease);
+}
+
+.search-workspace .search-tone-transition,
+.search-workspace .search-tone-sync,
+.search-workspace .text-title,
+.search-workspace .text-text,
+.search-workspace .text-muted,
+.search-workspace .mediscan-primary-surface,
+.search-workspace .mediscan-accent-surface,
+.search-workspace .mediscan-primary-chip,
+.search-workspace .mediscan-accent-chip,
+.search-workspace .mediscan-primary-selected,
+.search-workspace .mediscan-accent-selected,
+.search-workspace .button-solid-primary,
+.search-workspace .button-solid-accent,
+.search-workspace .mediscan-primary-text,
+.search-workspace .mediscan-accent-text {
+  transition:
+    background-color var(--search-tone-duration) var(--search-tone-ease),
+    border-color     var(--search-tone-duration) var(--search-tone-ease),
+    color            var(--search-tone-duration) var(--search-tone-ease),
+    box-shadow       var(--search-tone-duration) var(--search-tone-ease),
+    opacity          var(--search-tone-duration) var(--search-tone-ease),
+    filter           var(--search-tone-duration) var(--search-tone-ease),
+    transform        var(--search-tone-duration) var(--search-tone-ease);
+}
+
+.search-workspace .search-slider-track,
+.search-workspace .search-slider-track::-webkit-slider-thumb,
+.search-workspace .search-slider-track::-moz-range-thumb {
+  transition:
+    background-color var(--search-tone-duration) var(--search-tone-ease),
+    border-color     var(--search-tone-duration) var(--search-tone-ease),
+    box-shadow       var(--search-tone-duration) var(--search-tone-ease),
+    opacity          var(--search-tone-duration) var(--search-tone-ease);
+}
+
+.search-workspace .search-slider-track {
+  --search-slider-track-color: rgba(59, 130, 246, 0.2);
+  --search-slider-thumb-color: var(--color-primary);
+  background-color: var(--search-slider-track-color);
+}
+
+.search-workspace .search-slider-track-primary {
+  --search-slider-track-color: var(--search-primary-slider-track, rgba(59, 130, 246, 0.2));
+  --search-slider-thumb-color: var(--search-primary-slider-thumb, var(--color-primary));
+}
+
+.search-workspace .search-slider-track-accent {
+  --search-slider-track-color: rgba(99, 203, 176, 0.22);
+  --search-slider-thumb-color: var(--color-accent);
+}
+
+.search-workspace .search-slider-track::-webkit-slider-thumb {
+  background-color: var(--search-slider-thumb-color);
+}
+
+.search-workspace .search-slider-track::-moz-range-thumb {
+  background-color: var(--search-slider-thumb-color);
+}
+
+.search-workspace .text-title {
+  color: var(--search-title);
+}
+
+.search-workspace .text-text {
+  color: var(--search-text);
+}
+
+.search-workspace .text-muted,
+.search-workspace .placeholder\:text-muted::placeholder {
+  color: var(--search-muted);
+  opacity: 1;
+}
+
+.search-workspace .image-search-panel {
+  border-color: var(--search-panel-border);
+  box-shadow: var(--search-panel-shadow);
+  /* pas de backdrop-filter : fond opaque, le flou serait sans effet */
+}
+
+.search-workspace .ui-surface,
+.search-workspace .bg-surface,
+.search-conclusion,
+.search-result-card {
+  background-color: var(--search-surface-neutral);
+}
+
+.search-workspace .bg-bg,
+.search-result-preview,
+.search-workspace .search-workspace-field,
+.search-workspace .search-workspace-back,
+.search-workspace .search-mode-shell,
+.search-workspace .search-upload-meta,
+.search-workspace .search-upload-remove,
+.search-workspace .search-conclusion-chip {
+  background-color: var(--search-surface-elevated);
+}
+
+.search-workspace .mediscan-primary-surface,
+.search-result-card.mediscan-primary-surface {
+  background-color: var(--search-primary-panel-bg, var(--theme-primary-pale));
+  border-color: var(--search-primary-panel-border, var(--theme-primary));
+  box-shadow: var(--search-panel-shadow);
+}
+
+.search-workspace .mediscan-accent-surface,
+.search-result-card.mediscan-accent-surface {
+  background-color: var(--theme-accent-pale);
+  border-color: var(--theme-accent);
+  box-shadow: var(--search-panel-shadow);
+}
+
+.search-workspace .mediscan-primary-chip {
+  background-color: var(--search-primary-chip-bg, var(--theme-primary-pale));
+  border-color: var(--search-primary-chip-border, var(--theme-primary));
+  color: var(--search-primary-chip-text, var(--theme-primary));
+}
+
+.search-workspace .mediscan-accent-chip {
+  background-color: var(--theme-accent-pale);
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+.search-workspace .mediscan-primary-outline-button {
+  background-color: var(--search-primary-outline-bg, transparent);
+  border-color: var(--search-primary-outline-border, var(--theme-primary));
+  color: var(--search-primary-outline-text, var(--theme-primary));
+}
+
+.search-workspace .mediscan-primary-outline-button:hover {
+  background-color: var(--search-primary-outline-hover-bg, var(--theme-primary-pale));
+  border-color: var(--search-primary-outline-hover-border, var(--theme-primary));
+  color: var(--search-primary-outline-hover-text, var(--theme-primary));
+}
+
+.search-workspace .mediscan-accent-outline-button {
+  background-color: transparent;
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+.search-workspace .mediscan-accent-outline-button:hover {
+  background-color: var(--theme-accent-pale);
+  border-color: var(--theme-accent);
+}
+
+.search-workspace .mediscan-primary-action {
+  border-color: var(--search-primary-base, var(--theme-primary));
+  background-color: var(--search-primary-action-bg, var(--theme-primary));
+  color: white;
+  box-shadow: var(--search-primary-action-shadow, 0 14px 24px color-mix(in srgb, var(--theme-primary) 20%, transparent));
+}
+
+.search-workspace .mediscan-primary-action:hover {
+  background-color: var(--search-primary-action-hover-bg, var(--theme-primary-light));
+  box-shadow: var(--search-primary-action-shadow-hover, 0 18px 30px color-mix(in srgb, var(--theme-primary) 24%, transparent));
+}
+
+.search-workspace .mediscan-accent-action {
+  border-color: var(--theme-accent);
+  background-color: var(--theme-accent);
+  color: white;
+  box-shadow: 0 14px 24px color-mix(in srgb, var(--theme-accent) 20%, transparent);
+}
+
+.search-workspace .mediscan-accent-action:hover {
+  background-color: var(--theme-accent-light);
+  box-shadow: 0 18px 30px color-mix(in srgb, var(--theme-accent) 24%, transparent);
+}
+
+.search-workspace .search-workspace-back,
+.search-workspace .search-workspace-field,
+.search-workspace .search-mode-shell,
+.search-workspace .search-upload-preview,
+.search-workspace .search-upload-meta,
+.search-workspace .search-upload-remove {
+  border-color: var(--search-panel-border);
+  box-shadow: none;
+}
+
+.search-workspace .search-workspace-back,
+.search-workspace .search-workspace-back:hover {
+  border: none !important;
+  border-color: transparent !important;
+}
+
+.search-workspace-primary .search-workspace-back:hover {
+  border-color: var(--search-primary-outline-hover-border, var(--theme-primary));
+  color: var(--search-primary-outline-hover-text, var(--theme-primary));
+}
+
+.search-workspace-primary .search-workspace-field:focus {
+  border-color: var(--search-primary-base, var(--theme-primary));
+}
+
+.search-workspace-primary .search-upload-dropzone-primary-drag {
+  border-color: var(--search-primary-base, var(--theme-primary));
+  background: var(--search-primary-chip-bg, var(--theme-primary-pale));
+}
+
+.search-workspace-primary .search-upload-icon-primary-drag {
+  background: var(--search-primary-chip-bg, var(--theme-primary-pale));
+  color: var(--search-primary-chip-text, var(--theme-primary));
+  border-color: color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 30%, transparent);
+}
+
+.search-workspace-primary .search-status-spinner-primary {
+  border-color: color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 30%, transparent);
+  border-top-color: var(--search-primary-base, var(--theme-primary));
+}
+
+.search-workspace-primary .search-conclusion-note-primary {
+  color: var(--search-primary-text, var(--theme-primary));
+  border-color: var(--search-primary-outline-border, var(--theme-primary));
+  background: var(--search-primary-ghost-bg, color-mix(in srgb, var(--theme-primary) 5%, transparent));
+}
+
+.search-workspace-primary .search-conclusion-title-icon-primary {
+  color: var(--search-primary-base, var(--theme-primary));
+}
+
+.search-workspace-primary .search-selection-chip-primary {
+  border-color: var(--search-primary-ghost-border, color-mix(in srgb, var(--theme-primary) 14%, transparent));
+}
+
+.search-workspace-primary .search-selection-chip-primary:hover {
+  border-color: var(--search-primary-ghost-border-hover, color-mix(in srgb, var(--theme-primary) 28%, transparent));
+}
+
+.search-workspace-primary .search-selection-chip-remove-primary {
+  border-color: var(--search-primary-ghost-border, color-mix(in srgb, var(--theme-primary) 14%, transparent));
+}
+
+.search-workspace-primary .search-selection-chip-remove-primary:hover {
+  border-color: var(--search-primary-ghost-border-hover, color-mix(in srgb, var(--theme-primary) 28%, transparent));
+  color: var(--search-primary-ghost-text, var(--theme-primary));
+}
+
+.search-workspace-primary .search-result-compare-button-primary {
+  border: none;
+  border-color: transparent;
+  background: var(--search-primary-ghost-bg, color-mix(in srgb, var(--theme-primary) 5%, transparent));
+  color: var(--search-primary-ghost-text, var(--theme-primary));
+}
+
+.search-workspace-primary .search-result-compare-button-primary:hover {
+  border-color: transparent;
+  background: var(--search-primary-ghost-bg-hover, color-mix(in srgb, var(--theme-primary) 10%, transparent));
+  color: var(--search-primary-ghost-text, var(--theme-primary));
+}
+
+.search-workspace-primary .search-detail-download-primary {
+  color: var(--search-primary-base, var(--theme-primary));
+  border-color: var(--search-primary-ghost-border, color-mix(in srgb, var(--theme-primary) 14%, transparent));
+  background: var(--search-primary-ghost-bg, color-mix(in srgb, var(--theme-primary) 5%, transparent));
+}
+
+.search-workspace-primary .search-detail-download-primary:hover {
+  border-color: var(--search-primary-ghost-border-hover, color-mix(in srgb, var(--theme-primary) 28%, transparent));
+  background: var(--search-primary-ghost-bg-hover, color-mix(in srgb, var(--theme-primary) 10%, transparent));
+}
+
+.search-workspace-primary .search-result-focus-primary:focus,
+.search-workspace-primary .search-result-focus-primary:focus-visible {
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--search-primary-base, var(--theme-primary)) 20%, transparent),
+    var(--search-panel-shadow);
+}
+
+.search-workspace .search-workspace-field {
+  color: var(--search-text);
+  box-shadow: none;
+}
+
+.search-workspace .search-workspace-field:focus {
+  background-color: var(--search-surface-neutral);
+}
+
+.search-workspace .search-mode-option:hover,
+.search-workspace .search-toolbar-button:hover {
+  transform: translateY(-1px);
+}
+
+.search-workspace .search-upload-dropzone {
+  box-shadow: var(--search-soft-shadow);
+}
+
+.search-workspace .search-upload-preview {
+  box-shadow: var(--search-soft-shadow);
+}
+
+.search-workspace .search-result-preview {
+  background-color: var(--search-surface-preview);
+}
+
+[data-theme="dark"] .search-workspace .text-title {
+  color: var(--search-title);
+}
+
+[data-theme="dark"] .search-workspace .text-text {
+  color: var(--search-text);
+}
+
+[data-theme="dark"] .search-workspace .text-muted,
+[data-theme="dark"] .search-workspace .placeholder\:text-muted::placeholder {
+  color: var(--search-muted);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-primary-chip {
+  background-color: var(--search-primary-chip-bg, rgba(111, 167, 220, 0.14));
+  border-color: var(--search-primary-chip-border, rgba(111, 167, 220, 0.13));
+  color: var(--search-primary-chip-text, #d8e9f7);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-accent-chip {
+  background-color: rgba(124, 207, 227, 0.14);
+  border-color: rgba(124, 207, 227, 0.13);
+  color: var(--color-accent-readable);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-primary-outline-button {
+  background-color: var(--search-primary-outline-bg, rgba(8, 18, 27, 0.76));
+  border-color: var(--search-primary-outline-border, rgba(111, 167, 220, 0.14));
+  color: var(--search-primary-outline-text, #d8e9f7);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-primary-outline-button:hover {
+  background-color: var(--search-primary-outline-hover-bg, rgba(16, 40, 63, 0.86));
+  border-color: var(--search-primary-outline-hover-border, rgba(111, 167, 220, 0.23));
+  color: var(--search-primary-outline-hover-text, #d8e9f7);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-accent-outline-button {
+  background-color: rgba(8, 20, 24, 0.78);
+  border-color: rgba(124, 207, 227, 0.14);
+  color: var(--color-accent-readable);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-accent-outline-button:hover {
+  background-color: rgba(16, 49, 59, 0.86);
+  border-color: rgba(124, 207, 227, 0.22);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-primary-action {
+  background-color: var(--search-primary-action-bg, #4f8fca);
+  border-color: var(--search-primary-outline-border, rgba(111, 167, 220, 0.16));
+  box-shadow: var(--search-primary-action-shadow, 0 16px 28px rgba(8, 31, 52, 0.3));
+}
+
+[data-theme="dark"] .search-workspace .mediscan-primary-action:hover {
+  background-color: var(--search-primary-action-hover-bg, #5d9bd2);
+  box-shadow: var(--search-primary-action-shadow-hover, 0 16px 28px rgba(8, 31, 52, 0.3));
+}
+
+[data-theme="dark"] .search-workspace .mediscan-accent-action {
+  background-color: var(--color-accent);
+  border-color: rgba(124, 207, 227, 0.14);
+  color: #062331;
+  box-shadow: 0 16px 28px rgba(5, 42, 54, 0.28);
+}
+
+[data-theme="dark"] .search-workspace .mediscan-accent-action:hover {
+  background-color: #8bd8e8;
+  color: #06212b;
+}
+
+[data-theme="dark"] .search-workspace .search-workspace-back,
+[data-theme="dark"] .search-workspace .search-workspace-field,
+[data-theme="dark"] .search-workspace .search-mode-shell,
+[data-theme="dark"] .search-workspace .search-upload-preview,
+[data-theme="dark"] .search-workspace .search-upload-meta,
+[data-theme="dark"] .search-workspace .search-upload-remove {
+  border-color: var(--search-panel-border);
+}

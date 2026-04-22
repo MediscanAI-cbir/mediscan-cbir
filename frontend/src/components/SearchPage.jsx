@@ -60,7 +60,6 @@ export default function SearchPage({
       <SearchHubView
         onChooseImage={() => onSearchViewChange?.("image")}
         onChooseText={() => onSearchViewChange?.("text")}
-        useSharedSurface
       />
     ),
     image: (
@@ -68,7 +67,6 @@ export default function SearchPage({
         <ImageSearchView
           onBack={() => onSearchViewChange?.("hub")}
           onChromeToneChange={onSearchToneChange}
-          useSharedSurface
         />
       </Suspense>
     ),

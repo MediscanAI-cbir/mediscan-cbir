@@ -38,6 +38,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
     build: {
+      // The export pipeline is already isolated in its own async chunk; keep
+      // Vite from warning on this known, intentional bundle size.
+      chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
           manualChunks,
