@@ -15,7 +15,7 @@ export default function FeaturesShowcase({ embedded = false }) {
   const showcaseCards = content?.showcaseCards ?? [];
 
   const header = (
-    <div className="mb-8 md:mb-10 mt-6 md:mt-8">
+    <div className={embedded ? "mb-7 mt-3 md:mb-9 md:mt-4" : "mb-8 md:mb-10 mt-6 md:mt-8"}>
       <h1 className="text-4xl md:text-5xl font-bold text-title tracking-tight mb-3 leading-tight">
         {content?.showcaseEyebrow}
       </h1>

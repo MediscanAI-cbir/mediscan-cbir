@@ -886,7 +886,7 @@ export const en = {
     demoCards: [
       { type: "image", srcs: ["/Visual_Dark1.png", "/Visual_Dark2.png"], alt: "Demo 1", label: "Visual similarity", desc: "Search for similar exams from a reference image, through visual comparison.", interval: 3500 },
       { type: "image", srcs: ["/Sem_Dark1.png", "/Sem_Dark2.png"], alt: "Demo 2", label: "Semantic similarity", desc: "Search for matching exams from a text description in medical language.", interval: 3500 },
-      { type: "image", src: null, alt: "Demo 3", label: "Demo 3" },
+      { type: "image", src: null, alt: "Text search demo", label: "Text search", desc: "Explore related cases from a clinical query written in free text.", interval: 3500 },
     ],
   },
 };

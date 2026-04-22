@@ -571,7 +571,7 @@ export function ResultDetailsModalView({
               aria-label={content.downloadImage}
               title={content.downloadImage}
             >
-              <ArrowDownToLine className={`h-4.5 w-4.5 ${downloadPending ? "animate-pulse" : ""}`} />
+              <ArrowDownToLine className={`search-detail-download-icon h-4.5 w-4.5 ${downloadPending ? "animate-pulse" : ""}`} />
             </button>
           </div>
         </div>
@@ -633,7 +633,7 @@ export function ResultCompareModalView({
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 pb-10 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8">
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start">
             <div className="search-modal-panel rounded-[1.5rem] p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className={`inline-flex items-center rounded-full px-3 py-1 text-[8px] font-semibold uppercase tracking-[0.18em] lg:text-[10px] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip"}`}>
@@ -654,51 +654,51 @@ export function ResultCompareModalView({
               </div>
             </div>
 
-            <div className="search-modal-panel rounded-[1.5rem] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <span className={`inline-flex items-center rounded-full px-3 py-1 text-[8px] font-semibold uppercase tracking-[0.18em] lg:text-[10px] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip"}`}>
-                  {content.selectedImageLabel}
-                </span>
-                <span className={`search-compare-text-block search-compare-text-block-${tone} max-w-[60%] truncate rounded-[0.95rem] px-3 py-2 text-[11px] font-medium text-muted`}>
-                  {result.image_id}
-                </span>
+            <div className="flex min-h-0 flex-col gap-5">
+              <div className="search-modal-panel rounded-[1.5rem] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className={`inline-flex items-center rounded-full px-3 py-1 text-[8px] font-semibold uppercase tracking-[0.18em] lg:text-[10px] ${tone === "accent" ? "mediscan-accent-chip" : "mediscan-primary-chip"}`}>
+                    {content.selectedImageLabel}
+                  </span>
+                  <span className={`search-compare-text-block search-compare-text-block-${tone} max-w-[60%] truncate rounded-[0.95rem] px-3 py-2 text-[11px] font-medium text-muted`}>
+                    {result.image_id}
+                  </span>
+                </div>
+                <div className={`search-compare-frame search-compare-text-block search-compare-text-block-${tone} search-compare-frame-${tone} relative mt-4 flex min-h-[300px] items-center justify-center overflow-hidden rounded-[1.25rem] p-5`}>
+                  <img
+                    src={imageSrc}
+                    alt={result.caption || result.image_id}
+                    className="search-detail-image relative z-10 w-full max-h-[58vh] rounded-[1.15rem] object-contain"
+                  />
+                </div>
               </div>
-              <div className={`search-compare-frame search-compare-text-block search-compare-text-block-${tone} search-compare-frame-${tone} relative mt-4 flex min-h-[300px] items-center justify-center overflow-hidden rounded-[1.25rem] p-5`}>
-                <img
-                  src={imageSrc}
-                  alt={result.caption || result.image_id}
-                  className="search-detail-image relative z-10 w-full max-h-[58vh] rounded-[1.15rem] object-contain"
+
+              <div className={`search-compare-text-block search-compare-text-block-${tone} inline-flex max-w-full items-center rounded-[1rem] px-4 py-3 text-[11px] font-medium text-text`}>
+                {content.resultMetadataHint}
+              </div>
+
+              <div className="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_repeat(2,minmax(0,0.8fr))]">
+                <div className={`search-modal-panel search-compare-text-block search-compare-text-block-${tone} rounded-[1.35rem] p-5`}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+                    {content.resultCaptionLabel}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-text">
+                    {result.caption || content.noCaption}
+                  </p>
+                </div>
+                <DetailItem
+                  label={content.resultScoreLabel}
+                  value={scorePercent}
+                  className={`search-compare-text-block search-compare-text-block-${tone}`}
+                />
+                <DetailItem
+                  label={content.resultCuiLabel}
+                  value={cuiValue || content.notAvailable}
+                  mono
+                  className={`search-compare-text-block search-compare-text-block-${tone}`}
                 />
               </div>
             </div>
-          </div>
-
-          <div className="mt-5">
-            <div className={`search-compare-text-block search-compare-text-block-${tone} inline-flex max-w-full items-center rounded-[1rem] px-4 py-3 text-[11px] font-medium text-text`}>
-              {content.resultMetadataHint}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1.3fr)_repeat(2,minmax(0,0.7fr))]">
-            <div className={`search-modal-panel search-compare-text-block search-compare-text-block-${tone} rounded-[1.35rem] p-5`}>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-                {content.resultCaptionLabel}
-              </p>
-              <p className="mt-3 text-sm leading-7 text-text">
-                {result.caption || content.noCaption}
-              </p>
-            </div>
-            <DetailItem
-              label={content.resultScoreLabel}
-              value={scorePercent}
-              className={`search-compare-text-block search-compare-text-block-${tone}`}
-            />
-            <DetailItem
-              label={content.resultCuiLabel}
-              value={cuiValue || content.notAvailable}
-              mono
-              className={`search-compare-text-block search-compare-text-block-${tone}`}
-            />
           </div>
         </div>
       </div>

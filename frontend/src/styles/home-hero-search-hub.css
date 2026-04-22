@@ -357,6 +357,7 @@
   --hub-donut-size: 200px;
   --hub-donut-inset: 46px;
   --hub-ring-size: calc(var(--hub-donut-size) + 32px);
+  --search-hub-choice-cta-color: var(--theme-title);
   appearance: none;
   width: 100%;
   max-width: 30rem;
@@ -372,8 +373,23 @@
   text-align: center;
 }
 
+.search-hub-donut-choice-primary {
+  --search-hub-choice-cta-color-light: #244a54;
+  --search-hub-choice-cta-color-dark: #b5e7ef;
+}
+
 .search-hub-donut-choice-accent {
   --hub-seg2-color: var(--hub-seg1-color);
+  --search-hub-choice-cta-color-light: #314a63;
+  --search-hub-choice-cta-color-dark: #c7dbff;
+}
+
+:root:not([data-theme="dark"]) .search-hub-donut-choice {
+  --search-hub-choice-cta-color: var(--search-hub-choice-cta-color-light, var(--theme-title));
+}
+
+[data-theme="dark"] .search-hub-donut-choice {
+  --search-hub-choice-cta-color: var(--search-hub-choice-cta-color-dark, var(--theme-title));
 }
 
 
@@ -553,6 +569,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  color: var(--search-hub-choice-cta-color);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -563,14 +580,6 @@
 .search-hub-donut-choice:hover .search-hub-donut-choice-cta,
 .search-hub-donut-choice:focus-visible .search-hub-donut-choice-cta {
   gap: 0.78rem;
-}
-
-.search-hub-donut-choice-cta-primary {
-  color: var(--home-tree-blue-label);
-}
-
-.search-hub-donut-choice-cta-accent {
-  color: var(--home-tree-accent-label);
 }
 
 .search-hub-card {

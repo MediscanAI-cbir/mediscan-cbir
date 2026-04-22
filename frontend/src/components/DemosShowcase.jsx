@@ -12,6 +12,10 @@ const DEMO_IMAGE_SETS = [
     light: ["/Day_interp_1.png", "/Day_interp_2.png", "/Day_interp_3.png"],
     dark: ["/Dark_Interp_1.png", "/Dark_interp_2.png", "/Dark_interp_3.png"],
   },
+  {
+    light: ["/Day_texte_1.png", "/Day_texte_2.png", "/Day_texte_3.png"],
+    dark: ["/Dark_texte_1.png", "/Dark_texte_2.png", "/Dark_texte_3.png"],
+  },
 ];
 
 export default function DemosShowcase({ embedded = false, onNavigate }) {

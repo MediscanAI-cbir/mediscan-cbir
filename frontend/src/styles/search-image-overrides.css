@@ -24,6 +24,46 @@
   box-shadow: 0 18px 30px rgba(1, 8, 14, 0.24) !important;
 }
 
+[data-theme="dark"] .search-workspace-primary .search-selection-panel-primary .search-selection-relaunch-button-primary,
+[data-theme="dark"] .search-workspace-primary .search-ai-summary-panel .search-ai-summary-button-primary {
+  background: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+  color: #edf6fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-selection-panel-primary .search-selection-relaunch-button-primary:hover,
+[data-theme="dark"] .search-workspace-primary .search-ai-summary-panel .search-ai-summary-button-primary:hover {
+  background: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 64%, black 36%) !important;
+  background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 64%, black 36%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 64%, black 36%) !important;
+  color: #edf6fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.24) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-selection-relaunch-button-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-ai-summary-button-accent {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+  color: #edf9fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-selection-panel-accent .search-selection-relaunch-button-accent:hover,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-ai-summary-button-accent:hover {
+  background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  background-image: none !important;
+  border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 64%, black 36%) !important;
+  color: #edf9fb !important;
+  box-shadow: 0 18px 30px rgba(1, 8, 14, 0.24) !important;
+}
+
 [data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .search-mode-shell,
 [data-theme="dark"] .search-workspace-primary .image-search-controls-stage-panel .image-search-mode-shell-primary {
   background: var(--search-primary-panel-bg, #10283f) !important;
@@ -229,6 +269,20 @@
 [data-theme="dark"] .search-workspace-image.search-workspace-accent .search-ai-summary-panel {
   border: none !important;
   border-color: transparent !important;
+}
+
+[data-theme="dark"] .search-workspace-primary .search-selection-panel-primary,
+[data-theme="dark"] .search-workspace-primary .search-ai-summary-panel {
+  background: var(--search-primary-panel-bg, #10283f) !important;
+  background-color: var(--search-primary-panel-bg, #10283f) !important;
+  background-image: none !important;
+}
+
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-selection-panel-accent,
+[data-theme="dark"] .search-workspace-image.search-workspace-accent .search-ai-summary-panel {
+  background: var(--theme-accent-pale, #102f3a) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  background-image: none !important;
 }
 
 [data-theme="dark"] .search-workspace-primary .search-selection-panel-primary .search-conclusion-header,
@@ -1035,17 +1089,17 @@
 
 [data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-card,
 [data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-card.mediscan-accent-surface {
-  background-color: var(--search-surface-neutral) !important;
-  background: var(--search-surface-neutral) !important;
-  border: 1px solid var(--search-panel-border) !important;
-  border-color: var(--search-panel-border) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  background: var(--theme-accent-pale, #102f3a) !important;
+  border: none !important;
+  border-color: transparent !important;
 }
 
 [data-theme="dark"] .search-workspace-image.search-workspace-accent .search-result-preview {
-  background-color: var(--search-surface-preview) !important;
-  background: var(--search-surface-preview) !important;
-  border: 1px solid color-mix(in srgb, var(--search-panel-border) 72%, transparent) !important;
-  border-color: color-mix(in srgb, var(--search-panel-border) 72%, transparent) !important;
+  background-color: var(--theme-accent-pale, #102f3a) !important;
+  background: var(--theme-accent-pale, #102f3a) !important;
+  border: none !important;
+  border-color: transparent !important;
 }
 
 /* Direct recolor for the first three Image Search interpretive panels. */

@@ -240,6 +240,11 @@
   color: #ffffff;
 }
 
+.search-detail-modal .search-detail-download-icon {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
 .search-detail-modal .search-detail-download:hover {
   transform: translateY(-1px);
   background: #ffffff;
@@ -380,6 +385,11 @@
   box-shadow: none;
 }
 
+[data-theme="dark"] .search-detail-modal .search-detail-download-icon {
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+
 [data-theme="dark"] .search-detail-modal .search-detail-download:hover {
   background: rgba(13, 27, 39, 0.98);
 }
@@ -411,12 +421,12 @@
 }
 
 .search-compare-modal.search-compare-modal-primary {
-  background: color-mix(in srgb, #acd2d9 46%, white 54%);
+  background: #acd2d9;
   border-color: transparent;
 }
 
 .search-compare-modal.search-compare-modal-accent {
-  background: color-mix(in srgb, #cce1e5 54%, white 46%);
+  background: #cce1e5;
   border-color: transparent;
 }
 
@@ -427,11 +437,11 @@
 }
 
 .search-compare-modal .search-compare-banner-primary {
-  background: color-mix(in srgb, #acd2d9 46%, white 54%);
+  background: #acd2d9;
 }
 
 .search-compare-modal .search-compare-banner-accent {
-  background: color-mix(in srgb, #cce1e5 54%, white 46%);
+  background: #cce1e5;
 }
 
 .search-compare-modal .search-modal-close {
@@ -467,13 +477,13 @@
 
 .search-compare-modal.search-compare-modal-primary .search-modal-chip {
   border-color: color-mix(in srgb, #acd2d9 72%, white 28%);
-  background: color-mix(in srgb, #acd2d9 46%, white 54%);
+  background: color-mix(in srgb, #acd2d9 58%, white 42%);
   color: #173b43;
 }
 
 .search-compare-modal.search-compare-modal-accent .search-modal-chip {
   border-color: color-mix(in srgb, #cce1e5 74%, white 26%);
-  background: color-mix(in srgb, #cce1e5 54%, white 46%);
+  background: color-mix(in srgb, #cce1e5 62%, white 38%);
   color: #173941;
 }
 
@@ -489,19 +499,19 @@
 }
 
 .search-compare-modal.search-compare-modal-primary .search-modal-panel {
-  background: color-mix(in srgb, #acd2d9 46%, white 54%);
+  background: color-mix(in srgb, #acd2d9 62%, white 38%);
 }
 
 .search-compare-modal.search-compare-modal-accent .search-modal-panel {
-  background: color-mix(in srgb, #cce1e5 54%, white 46%);
+  background: color-mix(in srgb, #cce1e5 66%, white 34%);
 }
 
 .search-compare-modal.search-compare-modal-primary .search-compare-text-block-primary {
-  background: color-mix(in srgb, #acd2d9 56%, white 44%);
+  background: color-mix(in srgb, #acd2d9 72%, white 28%);
 }
 
 .search-compare-modal.search-compare-modal-accent .search-compare-text-block-accent {
-  background: color-mix(in srgb, #cce1e5 62%, white 38%);
+  background: color-mix(in srgb, #cce1e5 74%, white 26%);
 }
 
 .search-compare-modal .search-compare-frame {
@@ -518,11 +528,11 @@
 }
 
 .search-compare-modal .search-compare-frame-primary {
-  background: color-mix(in srgb, #acd2d9 46%, white 54%);
+  background: color-mix(in srgb, #acd2d9 68%, white 32%);
 }
 
 .search-compare-modal .search-compare-frame-accent {
-  background: color-mix(in srgb, #cce1e5 54%, white 46%);
+  background: color-mix(in srgb, #cce1e5 72%, white 28%);
 }
 
 [data-theme="dark"] .search-compare-modal {

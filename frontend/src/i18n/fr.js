@@ -882,7 +882,7 @@ export const fr = {
     demoCards: [
       { type: "image", srcs: ["/Visual_Dark1.png", "/Visual_Dark2.png"], alt: "Démo 1", label: "Similarité visuelle", desc: "Recherche d'examens similaires à partir d'une image de référence, par comparaison visuelle.", interval: 3500 },
       { type: "image", srcs: ["/Sem_Dark1.png", "/Sem_Dark2.png"], alt: "Démo 2", label: "Similarité sémantique", desc: "Recherche d'examens correspondants à partir d'une description textuelle en langage médical.", interval: 3500 },
-      { type: "image", src: null, alt: "Démo 3", label: "Démo 3" },
+      { type: "image", src: null, alt: "Démo texte", label: "Recherche textuelle", desc: "Exploration de cas proches à partir d'une requête clinique rédigée en texte libre.", interval: 3500 },
     ],
   },
 };
