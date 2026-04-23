@@ -11,6 +11,13 @@ proofs/
 /data
 weights/
 .env
+artifacts/ground_truth/
+notebooks/
+scripts/evaluation/
+tests/test_benchmark.py
+tests/test_evaluate_cui.py
+tests/test_evaluate_strict.py
+tests/test_evaluate_typed.py
 
 # Tracked retrieval artifacts
 artifacts/*

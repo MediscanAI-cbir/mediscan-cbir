@@ -218,11 +218,11 @@ This layer handles:
 - relaunch from one or multiple image IDs
 - centroid-based embedding relaunch
 
-### 4. Artifact and evaluation layer
+### 4. Artifact layer
 
-The project includes stable FAISS artifacts, manifests, indexed metadata, and reproducible evaluation scripts.
+The project includes stable FAISS artifacts, manifests, and indexed metadata used directly by the application runtime.
 
-This is important because the repository is not only concerned with runtime behavior. It also documents how retrieval quality is measured and how artifacts are managed over time.
+This matters because the repository is not only about UI and API code. It also keeps the retrieval assets organized and reproducible for local execution.
 
 ---
 
@@ -256,39 +256,8 @@ This is important because the repository is not only concerned with runtime beha
 
 - one-command startup via `run.sh` and `run.bat`
 - Git LFS support for large FAISS artifacts
-- test and evaluation separation from runtime logic
+- runtime code separated from unit tests
 - repository structure suited for demo, iteration, and review
-
----
-
-## Evaluation and Benchmarking
-
-The repository includes a dedicated evaluation layer with benchmark evidence kept alongside the project.
-
-### Benchmark base
-
-| Item | Value |
-|---|---|
-| Dataset | ROCOv2 |
-| Indexed images | 59,962 |
-| Standard benchmark queries | 1,999 |
-| Strict annotated subset | 12,251 images |
-| Main target metric | `TMO_resultats` |
-
-### Selected results
-
-| Mode | Standard `TMO_resultats` | Strict `TMO_resultats` | Standard `Precision@K (CUI)` |
-|---|---:|---:|---:|
-| Visual | 40.7% | 86.3% | 92.3% |
-| Semantic | 45.7% | 90.4% | 93.9% |
-
-### Why these results matter
-
-- the semantic pipeline outperforms the visual pipeline on the main relevance metric
-- the repository includes measurable evidence, not only qualitative claims
-- the system already has a serious basis for future fine-tuning and benchmarking work
-
-Supporting benchmark evidence is available in [`proofs/`](proofs).
 
 ---
 
@@ -434,9 +403,8 @@ pytest
 ├── frontend/          React product interface
 ├── src/mediscan/      retrieval runtime, embedders, indexing logic
 ├── artifacts/         FAISS indexes, ids, manifests
-├── scripts/           evaluation and benchmark scripts
+├── scripts/           runtime utilities and helper scripts
 ├── tests/             Python test suite
-├── proofs/            benchmark evidence
 ├── run.sh             startup script for macOS / Linux
 ├── run.bat            startup script for Windows
 └── README.md          product-facing overview
@@ -454,7 +422,7 @@ It shows the ability to:
 - choose different model architectures for different search problems
 - build a usable interface around technically dense workflows
 - structure backend and retrieval logic cleanly
-- support claims with evaluation and benchmarks
+- keep the runtime and test surface understandable
 - present the whole system clearly for review, demo, or portfolio use
 
 For a recruiter, professor, collaborator, or technical reviewer, this reads as a serious AI product engineering project rather than a minimal proof of concept.
