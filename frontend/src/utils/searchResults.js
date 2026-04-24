@@ -10,6 +10,11 @@ function getResultRows(payload) {
   return Array.isArray(payload.results) ? payload.results : [];
 }
 
+export function similarityScoreToPercent(score) {
+  const boundedScore = Number.isFinite(score) ? Math.min(1, Math.max(-1, score)) : 0;
+  return Math.round(((boundedScore + 1) / 2) * 100);
+}
+
 export const CURATED_CAPTION_FILTERS = [
   { id: "xray", label: "X-ray", terms: ["xray", "x-ray", "radiograph"] },
   { id: "ct", label: "CT", terms: ["ct", "computed tomography"] },

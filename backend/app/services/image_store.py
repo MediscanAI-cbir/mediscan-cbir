@@ -5,7 +5,7 @@ Ce module fournit des utilitaires pour :
 - Vérifier l'intégrité des fichiers image (format valide, non corrompu)
 - Gérer des fichiers temporaires supprimés automatiquement après usage
 - Télécharger des images depuis HuggingFace pour les recherches par ID
-- Calculer un embedding centroïde à partir d'une sélection d'images (max-pooling)
+- Calculer un embedding centroïde à partir d'une sélection d'images (mean-pooling)
 """
 
 from __future__ import annotations
@@ -122,10 +122,10 @@ def build_centroid_embedding(
     max_download_workers: int = MAX_DOWNLOAD_WORKERS,
 ) -> np.ndarray:
     """
-    Calcule un embedding centroïde à partir d'une sélection d'images (max-pooling).
+    Calcule un embedding centroïde à partir d'une sélection d'images (mean-pooling).
 
     Télécharge et encode toutes les images en parallèle, puis combine les embeddings
-    obtenus en prenant le maximum élément par élément (max-pooling). Cette approche
+    obtenus en prenant la moyenne élément par élément (mean-pooling). Cette approche
     produit un vecteur requête représentatif de l'ensemble de la sélection.
 
     Args:
@@ -140,4 +140,4 @@ def build_centroid_embedding(
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
         embeddings = list(executor.map(partial(encode_remote_image, embedder=embedder), image_ids))
 
-    return np.max(np.stack(embeddings, axis=0), axis=0).reshape(1, -1).astype(np.float32)
+    return np.mean(np.stack(embeddings, axis=0), axis=0).reshape(1, -1).astype(np.float32)

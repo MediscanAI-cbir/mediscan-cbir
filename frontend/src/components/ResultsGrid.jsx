@@ -7,13 +7,13 @@ import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, u
 import { createPortal } from "react-dom";
 import { imageUrl } from "../api";
 import { LangContext } from "../context/LangContextValue";
+import { similarityScoreToPercent } from "../utils/searchResults";
 import {
   ResultCompareModalView,
   ResultDetailsModalView,
   ResultsGridCards,
   ResultsGridHeader,
   ResultsGridToolbar,
-  similarityScoreToPercent,
 } from "./ResultsGridParts";
 
 /** Durée en ms de la transition de fermeture de la modale détail. */

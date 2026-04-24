@@ -253,7 +253,7 @@ class IdsSearchRequest(BaseModel):
 async def search_by_ids(body: IdsSearchRequest, request: Request) -> IdsSearchResponse:
     """
     Recherche par centroïde à partir d'une sélection de plusieurs images.
-    Combine les vecteurs des images sélectionnées via max-pooling des embeddings
+    Combine les vecteurs des images sélectionnées via mean-pooling des embeddings
     pour produire un vecteur requête unique représentatif de la sélection.
     """
     service = _get_service(request)

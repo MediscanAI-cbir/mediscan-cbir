@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -37,7 +37,14 @@ class SearchResources:
     embedder: Embedder | None
     index: faiss.Index
     rows: list[dict[str, str]]
-    row_index_by_image_id: dict[str, int]
+    row_index_by_image_id: dict[str, int] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.row_index_by_image_id:
+            return
+        self.row_index_by_image_id = {
+            str(row.get("image_id", "")): idx for idx, row in enumerate(self.rows)
+        }
 
 
 def _validate_k(k: int) -> None:
