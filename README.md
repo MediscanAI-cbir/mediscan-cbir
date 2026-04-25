@@ -274,70 +274,72 @@ Les résultats peuvent être restitués pour garder une trace de l'exploration, 
 MEDISCAN AI est structuré comme une application complète. Le frontend React gère l'interface, le backend FastAPI valide les requêtes et orchestre les ressources, puis le moteur de retrieval interroge des index FAISS déjà construits.
 
 ```mermaid
-%%{init: {"theme": "base", "flowchart": {"htmlLabels": true, "nodeSpacing": 18, "rankSpacing": 28, "diagramPadding": 8, "curve": "basis"}, "themeVariables": {"fontFamily": "Inter, Arial, sans-serif", "fontSize": "13px", "background": "#fbfaf6", "primaryColor": "#efede8", "primaryTextColor": "#242424", "primaryBorderColor": "#666666", "lineColor": "#555555", "clusterBkg": "#f5f3ee", "clusterBorder": "#777777", "edgeLabelBackground": "#fbfaf6"}}}%%
+%%{init: {"theme": "base", "flowchart": {"htmlLabels": true, "nodeSpacing": 16, "rankSpacing": 24, "diagramPadding": 8, "curve": "basis"}, "themeVariables": {"darkMode": true, "fontFamily": "Inter, Arial, sans-serif", "fontSize": "13px", "background": "#111111", "primaryColor": "#262626", "primaryTextColor": "#f2f2f2", "primaryBorderColor": "#8a8a8a", "lineColor": "#b8b8b8", "clusterBkg": "#191919", "clusterBorder": "#7a7a7a", "edgeLabelBackground": "#111111"}}}%%
 flowchart TB
-  subgraph OFF["PIPELINE OFFLINE ET ARTEFACTS STABLES"]
+  subgraph OFF["PIPELINE OFFLINE"]
     direction LR
-    DATA["Dataset ROCO"]
-    BUILD["Génération embeddings<br/>DINOv2 · BioMedCLIP"]
-    ART["Index FAISS<br/>+ métadonnées JSON"]
-    DATA --> BUILD --> ART
+    SCRIPTS["scripts/<br/>build · rebuild · évaluation"]
+    ART["artifacts/<br/>index FAISS · ids JSON · manifests"]
+    SCRIPTS -->|produit| ART
   end
 
-  subgraph RUN["APPLICATION DE RECHERCHE MEDISCAN AI"]
+  subgraph RUN["ARCHITECTURE CODE RUNTIME"]
     direction LR
 
-    subgraph UI["COUCHE PRESENTATION"]
+    subgraph FE["frontend/src"]
       direction TB
-      REACT["React / Vite"]
-      SCREEN["Recherche<br/>image · texte"]
-      RESULT["Résultats<br/>JSON · export"]
-      REACT --> SCREEN --> RESULT
+      FE_UI["components + views<br/>upload · recherche · résultats"]
+      FE_STATE["api + context<br/>HTTP · langue · thème"]
+      FE_UI --> FE_STATE
     end
 
-    subgraph API["COUCHE API FASTAPI"]
+    subgraph BE["backend/app"]
       direction TB
-      ROUTES["Routes HTTP"]
-      VALID["Validation"]
-      SERVICE["SearchService"]
-      ROUTES --> VALID --> SERVICE
+      BE_API["api + schemas<br/>contrats REST"]
+      BE_SERV["services/<br/>validation · search · enrichissement"]
+      BE_CONF["config<br/>variables d'environnement"]
+      BE_API --> BE_SERV
+      BE_CONF --> BE_SERV
     end
 
-    subgraph CORE["COEUR CBIR - src/mediscan"]
+    subgraph SRC["src/mediscan"]
       direction TB
-      MODES["Modes<br/>Visual · Interpretive · Text"]
-      MODELS["Encodeurs<br/>DINOv2 · BioMedCLIP"]
-      RETRIEVAL["Recherche vectorielle<br/>FAISS + ranking"]
-      MODES --> MODELS --> RETRIEVAL
+      SRC_SEARCH["runtime + search<br/>ressources · requêtes top-k"]
+      SRC_EMB["embedders/<br/>DINOv2 · BioMedCLIP"]
+      SRC_DATA["dataset + process<br/>préparation · normalisation"]
+      SRC_SEARCH --> SRC_EMB
+      SRC_DATA --> SRC_EMB
     end
 
     subgraph EXT["SERVICES OPTIONNELS"]
       direction TB
-      CDN["Hugging Face<br/>images"]
-      OPT["MongoDB · Groq<br/>SMTP"]
+      EXT_APP["MongoDB · Groq LLM · SMTP<br/>metadata · conclusion · contact"]
+      EXT_IMG["Hugging Face<br/>accès aux images"]
     end
 
-    SCREEN <-->|HTTP / JSON| ROUTES
-    SERVICE <-->|requête / résultats| MODES
-    RETRIEVAL -.-> CDN
-    SERVICE -.-> OPT
+    FE_STATE <-->|HTTP / JSON| BE_API
+    BE_SERV -->|appelle| SRC_SEARCH
+    SRC_SEARCH -->|lit| ART
+    BE_SERV -.->|intègre| EXT_APP
+    SRC_SEARCH -.->|résout les URLs| EXT_IMG
   end
 
-  ART -.->|charge les ressources| RETRIEVAL
+  SCRIPTS -.->|utilise| SRC_DATA
+  SCRIPTS -.->|utilise| SRC_EMB
 
-  classDef node fill:#efede8,color:#242424,stroke:#666666,stroke-width:1px;
-  classDef core fill:#e8e5df,color:#202020,stroke:#555555,stroke-width:1.2px;
-  classDef optional fill:#f4f2ee,color:#303030,stroke:#888888,stroke-width:1px,stroke-dasharray:4 3;
-  class DATA,BUILD,ART,REACT,SCREEN,RESULT,ROUTES,VALID,SERVICE node;
-  class MODES,MODELS,RETRIEVAL core;
-  class CDN,OPT optional;
+  classDef node fill:#262626,color:#f2f2f2,stroke:#8a8a8a,stroke-width:1px;
+  classDef core fill:#2f2f2f,color:#ffffff,stroke:#a0a0a0,stroke-width:1.2px;
+  classDef optional fill:#202020,color:#d8d8d8,stroke:#8a8a8a,stroke-width:1px,stroke-dasharray:4 3;
+  class SCRIPTS,ART,FE_UI,FE_STATE,BE_API,BE_SERV,BE_CONF node;
+  class SRC_SEARCH,SRC_EMB,SRC_DATA core;
+  class EXT_APP,EXT_IMG optional;
 
-  style OFF fill:#f5f3ee,stroke:#777777,stroke-width:1px,color:#242424
-  style RUN fill:#fbfaf6,stroke:#777777,stroke-width:1px,color:#242424
-  style UI fill:#f2f0eb,stroke:#777777,stroke-width:1px,color:#242424
-  style API fill:#f2f0eb,stroke:#777777,stroke-width:1px,color:#242424
-  style CORE fill:#efede8,stroke:#666666,stroke-width:1.2px,color:#242424
-  style EXT fill:#f7f5f1,stroke:#8a8a8a,stroke-width:1px,color:#303030
+  style OFF fill:#171717,stroke:#777777,stroke-width:1px,color:#f2f2f2
+  style RUN fill:#111111,stroke:#777777,stroke-width:1px,color:#f2f2f2
+  style FE fill:#1b1b1b,stroke:#777777,stroke-width:1px,color:#f2f2f2
+  style BE fill:#1b1b1b,stroke:#777777,stroke-width:1px,color:#f2f2f2
+  style SRC fill:#202020,stroke:#8a8a8a,stroke-width:1.2px,color:#ffffff
+  style EXT fill:#181818,stroke:#777777,stroke-width:1px,color:#d8d8d8
 ```
 
 Le backend charge les ressources de recherche via une registry partagée. Les index FAISS, les métadonnées d'images et les modèles sont donc utilisés de façon cohérente entre les routes API, les scripts CLI et les évaluations.
