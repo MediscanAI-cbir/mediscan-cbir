@@ -1,10 +1,4 @@
-"""
-Implémentation de l'encodeur d'images BioMedCLIP (version CPU uniquement).
-
-La branche sémantique utilise par défaut la version fine-tunée sur ROCOv2
-hébergée sur Hugging Face, afin d'aligner la recherche texte-image avec les
-artefacts sémantiques embarqués dans le projet.
-"""
+"""BioMedCLIP embedder implementation for MediScan AI (CPU only)."""
 
 from __future__ import annotations
 
@@ -19,7 +13,10 @@ from .utils import configure_torch_cpu_threads, normalize_embedding
 
 class BioMedCLIPEmbedder(Embedder):
     """
-    - Encodeur d'images BioMedCLIP pour la recherche sémantique.
+    BioMedCLIP image and text embedder for semantic medical search.
+
+    The image and text encoders share the same vector space, allowing text prompts
+    and medical images to query the same semantic FAISS index.
     """
     name = "biomedclip"
     dim = 512
@@ -28,6 +25,7 @@ class BioMedCLIPEmbedder(Embedder):
         self,
         model_name: str = "hf-hub:Ozantsk/biomedclip-rocov2-finetuned",
     ) -> None:
+        """Load the OpenCLIP model, preprocessing transform, and tokenizer on CPU."""
         configure_torch_cpu_threads()
         self._device = torch.device("cpu")
         self._model_name = model_name
@@ -39,7 +37,6 @@ class BioMedCLIPEmbedder(Embedder):
         self._model.eval()
         self._tokenizer = open_clip.get_tokenizer(self._model_name)
 
-        # Récupération dynamique de la dimension de sortie du modèle
         output_dim = getattr(getattr(self._model, "visual", None), "output_dim", None)
         if output_dim is None:
             output_dim = getattr(self._model, "embed_dim", None)
@@ -47,21 +44,9 @@ class BioMedCLIPEmbedder(Embedder):
             self.dim = int(output_dim)
 
     def encode_pil(self, image: PILImage.Image) -> np.ndarray:
-        """
-        - Encode une image PIL en un vecteur d'embedding.
-        
-        Paramètres
-        ----------
-        image : PIL.Image.Image
-            L'image d'entrée à encoder.
-            
-        Retours
-        -------
-        np.ndarray
-            Vecteur d'embedding normalisé L2.
-        """
+        """Encode a PIL image into the normalized semantic vector space."""
         if not isinstance(image, PILImage.Image):
-            raise TypeError("encode_pil attend une instance de PIL.Image.Image")
+            raise TypeError("encode_pil expects a PIL.Image.Image instance")
 
         rgb_image = image.convert("RGB")
         input_tensor = self._preprocess(rgb_image).unsqueeze(0).to(self._device)
@@ -72,13 +57,7 @@ class BioMedCLIPEmbedder(Embedder):
         return normalize_embedding(features.squeeze(0).cpu().numpy(), self.dim)
 
     def encode_text(self, text: str) -> np.ndarray:
-        """
-        - Encode une requête textuelle en un vecteur float32 de 512-dim normalisé L2.
-
-        - Utilise l'encodeur de texte de BioMedCLIP (PubMedBERT), aligné avec 
-          l'encodeur d'images dans le même espace latent. Tronque automatiquement 
-          à 77 jetons (tokens). Seul le texte médical en anglais est supporté.
-        """
+        """Encode a text query into the same normalized space as image embeddings."""
         tokens = self._tokenizer([text]).to(self._device)
         with torch.no_grad():
             features = self._model.encode_text(tokens)

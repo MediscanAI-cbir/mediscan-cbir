@@ -6,6 +6,8 @@ readonly PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 readonly FRONTEND_DIR="$PROJECT_DIR/frontend"
 readonly VENV_DIR="$PROJECT_DIR/.venv311"
 readonly PYTHON_BIN="$VENV_DIR/bin/python"
+readonly REQUIREMENTS_LOCK="$PROJECT_DIR/requirements.lock.txt"
+readonly REQUIREMENTS_DEV="$PROJECT_DIR/requirements.txt"
 readonly BACKEND_HOST="127.0.0.1"
 readonly BACKEND_PORT="8000"
 readonly FRONTEND_PORT="5173"
@@ -34,6 +36,17 @@ require_command() {
     if ! command -v "$command_name" >/dev/null 2>&1; then
         fail "$error_message"
     fi
+}
+
+generate_docs() {
+    ensure_python_environment
+    require_command "node" "Node.js introuvable.
+   → https://nodejs.org/  (version 20.19+ ou 22+ requise)"
+    validate_node_version
+    install_frontend_dependencies
+    log_info "Génération de la documentation unifiée..."
+    "$PYTHON_BIN" "$PROJECT_DIR/scripts/generate_docs.py"
+    log_success "Documentation générée → $PROJECT_DIR/docs/index.html"
 }
 
 validate_node_version() {
@@ -76,7 +89,11 @@ ensure_python_environment() {
     log_info "Création de l'environnement Python 3.11..."
     python3.11 -m venv "$VENV_DIR"
     "$PYTHON_BIN" -m pip install -q --upgrade pip
-    "$PYTHON_BIN" -m pip install -q -r requirements.txt
+    if [ -f "$REQUIREMENTS_LOCK" ]; then
+        "$PYTHON_BIN" -m pip install -q -r "$REQUIREMENTS_LOCK"
+    else
+        "$PYTHON_BIN" -m pip install -q -r "$REQUIREMENTS_DEV"
+    fi
     log_success "Environnement Python prêt"
 }
 
@@ -160,6 +177,12 @@ start_frontend() {
 require_command "python3.11" "Python 3.11 introuvable.
    → Mac  : brew install python@3.11  ou  https://python.org/downloads/release/python-31119/
    → Linux: sudo apt install python3.11"
+
+if [ "${1:-}" = "docs" ]; then
+    generate_docs
+    exit 0
+fi
+
 require_command "node" "Node.js introuvable.
    → https://nodejs.org/  (version 20.19+ ou 22+ requise)"
 require_command "curl" "curl introuvable."

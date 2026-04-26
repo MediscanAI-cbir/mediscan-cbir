@@ -1,20 +1,16 @@
 /**
- * @fileoverview Icônes SVG réutilisables représentant les modes de recherche CBIR.
+ * @fileoverview Documentation for components/icons.
  * @module components/icons
  */
 
 
 /**
- * Icône représentant le mode de recherche **Visuel** (similarité par descripteurs visuels).
- * Visuellement : deux cercles concentriques.
+ * Documentation for components/icons.
  *
  * @component
  * @param {object} props
- * @param {string} [props.className="h-4 w-4"] - Classes Tailwind appliquées au SVG.
+ * @param {string} [props.className="h-4 w-4"]
  * @returns {JSX.Element}
- *
- * @example
- * <VisualModeIcon className="h-6 w-6 text-primary" />
  */
 export function VisualModeIcon({ className = "h-4 w-4" }) {
   return (
@@ -26,15 +22,12 @@ export function VisualModeIcon({ className = "h-4 w-4" }) {
 }
 
 /**
- * Icône représentant le mode de recherche **Sémantique / Interprétatif**
+ * Documentation for components/icons.
  *
  * @component
  * @param {object} props
- * @param {string} [props.className="h-4 w-4"] - Classes Tailwind appliquées au SVG.
+ * @param {string} [props.className="h-4 w-4"]
  * @returns {JSX.Element}
- *
- * @example
- * <InterpretiveModeIcon className="h-6 w-6 text-accent" />
  */
 export function InterpretiveModeIcon({ className = "h-4 w-4" }) {
   return (

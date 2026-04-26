@@ -88,7 +88,11 @@ if not exist ".venv311\Scripts\activate.bat" (
         pause & exit /b 1
     )
     .venv311\Scripts\python.exe -m pip install -q --upgrade pip
-    .venv311\Scripts\python.exe -m pip install -q -r requirements.txt
+    if exist "requirements.lock.txt" (
+        .venv311\Scripts\python.exe -m pip install -q -r requirements.lock.txt
+    ) else (
+        .venv311\Scripts\python.exe -m pip install -q -r requirements.txt
+    )
     echo      OK
 ) else (
     echo [1/3] Venv deja present, installation ignoree.
@@ -104,6 +108,17 @@ if %errorlevel% neq 0 (
 )
 cd ..
 echo      OK
+
+if /I "%~1"=="docs" (
+    echo [3/3] Generation de la documentation unifiee...
+    .venv311\Scripts\python.exe scripts\generate_docs.py
+    if !errorlevel! neq 0 (
+        echo [ERREUR] La generation de la documentation a echoue.
+        pause & exit /b 1
+    )
+    echo      OK - ouvre docs\index.html
+    exit /b 0
+)
 
 REM ── Backend ──────────────────────────────────────────────────────────────────
 echo [3/3] Demarrage du backend sur le port !BACKEND_PORT!...

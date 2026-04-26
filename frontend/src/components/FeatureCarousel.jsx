@@ -1,5 +1,23 @@
+/**
+ * @fileoverview Documentation for components/FeatureCarousel.
+ * @module components/FeatureCarousel
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/**
+ * Documentation for components/FeatureCarousel.
+ *
+ * @component
+ * @param {object} props
+ * @param {string[]} props.srcs
+ * @param {string} props.alt
+ * @param {number} [props.interval=2000]
+ * @param {number} [props.activeIndex]
+ * @param {"cover"|"contain"} [props.fit="cover"]
+ * @param {boolean} [props.backdrop=false]
+ * @returns {JSX.Element}
+ */
 function SlideshowImage({
   srcs,
   alt,
@@ -78,6 +96,9 @@ function SlideshowImage({
   );
 }
 
+/**
+ * Documentation for components/FeatureCarousel.
+ */
 const CARD_ICONS = {
   search: function SearchIcon(props) {
     return (
@@ -237,6 +258,11 @@ const CARD_ICONS = {
   },
 };
 
+/**
+ * Trouve la carte la plus proche du bord gauche visible du carousel.
+ * @param {HTMLElement} track
+ * @returns {number}
+ */
 function getClosestCardIndex(track) {
   const cards = Array.from(track.querySelectorAll("[data-carousel-index]"));
   if (cards.length === 0) {
@@ -256,7 +282,21 @@ function getClosestCardIndex(track) {
 
   return closestIndex;
 }
-
+/**
+ * Documentation for components/FeatureCarousel.
+ *
+ * @component
+ * @param {object} props
+ * @param {Array<object>} props.items
+ * @param {string} [props.prevLabel]
+ * @param {string} [props.nextLabel]
+ * @param {string} [props.regionLabel]
+ * @param {string} [props.tryLabel]
+ * @param {function(string): void} [props.onNavigate]
+ * @param {boolean} [props.synchronizedImagePlayback=false]
+ * @param {number} [props.slideshowInterval=3500]
+ * @returns {JSX.Element}
+ */
 export default function FeatureCarousel({
   items = [],
   prevLabel = "Précédent",
@@ -274,6 +314,7 @@ export default function FeatureCarousel({
     scrollLeft: 0,
   });
   const [activeIndex, setActiveIndex] = useState(0);
+  /** Shared slideshow index across all image cards. */
   const [sharedSlideIndex, setSharedSlideIndex] = useState(0);
 
   const synchronizedSlideCount = items.reduce((largestCount, item) => {
@@ -283,6 +324,7 @@ export default function FeatureCarousel({
     return Math.max(largestCount, item.srcs.length);
   }, 0);
 
+  // Slideshow synchronized across all image cards
   useEffect(() => {
     if (!synchronizedImagePlayback || synchronizedSlideCount <= 1) {
       return undefined;
@@ -301,6 +343,9 @@ export default function FeatureCarousel({
       return undefined;
     }
 
+    /**
+     * Documentation for components/FeatureCarousel.
+     */
     const updateActiveIndex = () => {
       setActiveIndex(getClosestCardIndex(track));
     };
@@ -315,6 +360,10 @@ export default function FeatureCarousel({
     };
   }, [items.length]);
 
+    /**
+   * Documentation for components/FeatureCarousel.
+   * @param {number} nextIndex
+   */
   const scrollToIndex = useCallback(
     (index) => {
       const track = trackRef.current;
@@ -338,6 +387,7 @@ export default function FeatureCarousel({
     [items.length]
   );
 
+  /** Gestion du drag souris sur le carousel (desktop) */
   const handlePointerDown = useCallback((event) => {
     if (event.pointerType === "touch") {
       return;
@@ -354,6 +404,10 @@ export default function FeatureCarousel({
       scrollLeft: track.scrollLeft,
     };
 
+    /**
+     * Documentation for components/FeatureCarousel.
+     * @param {PointerEvent} moveEvent
+     */
     const handlePointerMove = (moveEvent) => {
       if (!dragStateRef.current.active) {
         return;
@@ -362,6 +416,9 @@ export default function FeatureCarousel({
       track.scrollLeft = dragStateRef.current.scrollLeft - (moveEvent.clientX - dragStateRef.current.startX);
     };
 
+    /**
+     * Documentation for components/FeatureCarousel.
+     */
     const handlePointerUp = () => {
       dragStateRef.current.active = false;
       window.removeEventListener("pointermove", handlePointerMove);
@@ -372,6 +429,7 @@ export default function FeatureCarousel({
     window.addEventListener("pointerup", handlePointerUp);
   }, []);
 
+  /** Redirige le scroll vertical en scroll horizontal sur le carousel */
   const handleWheel = useCallback(
     (event) => {
       const track = trackRef.current;
@@ -392,6 +450,7 @@ export default function FeatureCarousel({
     []
   );
 
+  /** Left/right keyboard navigation. */
   const handleKeyDown = useCallback(
     (event) => {
       if (event.key === "ArrowRight") {

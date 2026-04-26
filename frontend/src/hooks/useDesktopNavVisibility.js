@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Scroll-aware desktop navigation visibility hook.
+ * @module hooks/useDesktopNavVisibility
+ */
+
 import { useEffect, useRef, useState } from "react";
 
 const DESKTOP_BREAKPOINT = 768;
@@ -5,6 +10,17 @@ const NAV_HIDE_AFTER_Y = 300;
 const NAV_SHOW_THRESHOLD = 60;
 const TOP_RESET_Y = 10;
 
+/**
+ * Hide the desktop navigation while scrolling down and reveal it while scrolling up.
+ *
+ * The hook stays inactive on mobile widths and when forceVisible is enabled, so
+ * page-specific overlays can pin the navigation without duplicating scroll logic.
+ *
+ * @param {object} [options={}]
+ * @param {boolean} [options.enabled]
+ * @param {boolean} [options.forceVisible]
+ * @returns {boolean}
+ */
 export default function useDesktopNavVisibility({
   enabled = true,
   forceVisible = false,
@@ -22,6 +38,9 @@ export default function useDesktopNavVisibility({
 
     let frameId = 0;
 
+    /**
+     * Compute visibility from scroll direction, threshold, and viewport width.
+     */
     const updateVisibility = () => {
       const y = window.scrollY;
       const isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT;
@@ -56,6 +75,9 @@ export default function useDesktopNavVisibility({
       lastY.current = y;
     };
 
+    /**
+     * Batch scroll/resize updates into one animation-frame callback.
+     */
     const scheduleUpdate = () => {
       cancelAnimationFrame(frameId);
       frameId = requestAnimationFrame(updateVisibility);

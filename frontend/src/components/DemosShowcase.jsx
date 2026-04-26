@@ -1,8 +1,16 @@
+/**
+ * @fileoverview Documentation for components/DemosShowcase.
+ * @module components/DemosShowcase
+ */
+
 import { useContext, useEffect, useState } from "react";
 import { LangContext } from "../context/LangContextValue";
 import { useTheme } from "../context/useTheme";
 import FeatureCarousel from "./FeatureCarousel";
 
+/**
+ * Documentation for components/DemosShowcase.
+ */
 const DEMO_IMAGE_SETS = [
   {
     light: ["/Day_visual_1.png", "/Day_visual_2.png", "/Day_visual_3.png"],
@@ -18,10 +26,21 @@ const DEMO_IMAGE_SETS = [
   },
 ];
 
+
+/**
+ * Documentation for components/DemosShowcase.
+ *
+ * @component
+ * @param {object} props
+ * @param {boolean} [props.embedded=false]
+ * @param {function(string): void} [props.onNavigate]
+ * @returns {JSX.Element}
+ */
 export default function DemosShowcase({ embedded = false, onNavigate }) {
   const { t } = useContext(LangContext);
   const { theme } = useTheme();
   const content = t.demos;
+  /** Trigger entry animations after the first frame. */
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -29,6 +48,7 @@ export default function DemosShowcase({ embedded = false, onNavigate }) {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  /** Demo cards enriched with images for the active theme. */
   const demoCards = (content?.demoCards ?? [])
     .slice(0, DEMO_IMAGE_SETS.length)
     .map((card, index) => ({
@@ -40,7 +60,7 @@ export default function DemosShowcase({ embedded = false, onNavigate }) {
     }));
 
   const header = (
-    <div className="mb-8 md:mb-10 mt-6 md:mt-8">
+    <div className="mb-8 md:mb-10 mt-6 md:mt-8 px-2 md:px-0">
       <h1 className="text-4xl md:text-5xl font-bold text-title tracking-tight mb-3 leading-tight">
         {content?.demoEyebrow}
       </h1>

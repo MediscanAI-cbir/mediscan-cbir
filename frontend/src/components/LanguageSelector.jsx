@@ -1,5 +1,5 @@
 /**
- * @fileoverview Sélecteur de langue et de thème (clair/sombre).
+ * @fileoverview Documentation for components/LanguageSelector.
  * @module components/LanguageSelector
  */
 
@@ -9,31 +9,28 @@ import { LangContext } from "../context/LangContextValue";
 import { useTheme } from "../context/useTheme";
 
 /**
- * Composant permettant à l'utilisateur de :
- * - Basculer entre le thème clair et sombre.
- * - Choisir la langue de l'interface entre le français et l'anglais.
- * 
- * Langues supportées :
+ * Documentation for components/LanguageSelector.
+ *
  * - anglais
- * - français
  *
  * @component
  * @returns {JSX.Element}
  *
- * @example
- * // Intégré dans la Navigation
- * <LanguageSelector />
  */
 export default function LanguageSelector() {
   const { lang, setLanguage } = useContext(LangContext);
   const { theme, setTheme } = useTheme();
-  /** @type {[boolean, function]} État d'ouverture du dropdown (Menu déroulant)*/
+  /** Dropdown open state. */
   const [open, setOpen] = useState(false);
-  /** Référence sur le conteneur pour détecter les clics extérieurs */
+  /** Container reference used to detect outside clicks. */
   const ref = useRef(null);
 
-  // Fermeture du dropdown (Menu déroulant) au clic en dehors
+  // Close the dropdown when clicking outside
   useEffect(() => {
+    /**
+     * Documentation for components/LanguageSelector.
+     * @param {MouseEvent} e
+     */
     function handleClickOutside(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     }
@@ -41,18 +38,18 @@ export default function LanguageSelector() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /** Icône affichée selon le thème actif */
+  /** Icon displayed for the active theme. */
   const ThemeIcon = theme === "dark" ? Moon : Sun;
 
-  /** @type {Array<{id: string, label: string}>} */
+  /** Languages available in the selector. */
   const languages = [
     { id: "en", label: "English" },
     { id: "fr", label: "Français" },
   ];
-  
+
   return (
     <div ref={ref} className="relative z-50">
-      {/* Bouton déclencheur */}
+      {/* Trigger button */}
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -68,11 +65,11 @@ export default function LanguageSelector() {
         />
       </button>
 
-      {/* Dropdown (Menu déroulant)*/}
+      {/* Dropdown*/}
       {open && (
-        <div 
+        <div
           className="settings-menu settings-menu-enter absolute bottom-full right-0 mb-2 w-44 rounded-2xl overflow-hidden transition-all duration-200 md:bottom-auto md:top-full md:mt-2 md:mb-0">
-          {/* Section Thème */}
+          {/* Theme section */}
           <div className="px-3 pt-3 pb-1">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-1.5">
               {lang === "fr" ? "Thème" : "Theme"}
@@ -102,16 +99,16 @@ export default function LanguageSelector() {
             </div>
           </div>
 
-          {/* Séparateur */}
+          {/* Separator */}
           <div className="mx-3 my-2 border-t border-border" />
 
-          {/* Section Langue */}
+          {/* Language section */}
           <div className="px-3 pb-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-1.5 flex items-center gap-1">
               <Globe className="w-3 h-3" strokeWidth={2} />
               {lang === "fr" ? "Langue" : "Language"}
             </p>
-            
+
             <div className="flex flex-col gap-0.5 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
               {languages.map(({ id, label }) => (
                 <button

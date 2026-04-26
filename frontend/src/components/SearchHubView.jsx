@@ -1,5 +1,5 @@
 /**
- * @fileoverview Écran de recherche permettant de choisir le mode de recherche CBIR.
+ * @fileoverview Search hub view that lets users choose image or text retrieval.
  * @module components/SearchHubView
  */
 
@@ -14,6 +14,10 @@ const HUB_INTRO_ANIMATION = {
 
 const HUB_INTRO_TOTAL_MS = 2400;
 
+/**
+ * Choose the first hub animation state from feature flags and motion preferences.
+ * @returns {"idle"|"playing"|"done"|"disabled"}
+ */
 function getInitialHubIntroState() {
   if (!HUB_INTRO_ANIMATION.enabled) {
     return "disabled";
@@ -35,17 +39,17 @@ function getInitialHubIntroState() {
 }
 
 /**
- * Choix de mode de recherche via donut interactif.
+ * Render a search-mode choice with an interactive donut control.
  *
  * @component
- * @param {object} props - Propriétés du composant.
- * @param {function(): void} props.onClick - Callback déclenché au clic sur le donut.
- * @param {string} props.title - Titre principal de la carte.
- * @param {string} props.description - Description du mode de recherche.
- * @param {string} props.cta - Texte du bouton d'appel à l'action.
- * @param {"primary"|"accent"} props.tone - Palette de couleur de la carte.
- * @param {JSX.Element} props.centerIcon - Icône affichée au centre du donut.
- * @param {"idle"|"playing"|"done"|"disabled"} props.hubIntroState - Etat d'introduction du donut.
+ * @param {object} props
+ * @param {function(): void} props.onClick
+ * @param {string} props.title
+ * @param {string} props.description
+ * @param {string} props.cta
+ * @param {"primary"|"accent"} props.tone
+ * @param {JSX.Element} props.centerIcon
+ * @param {"idle"|"playing"|"done"|"disabled"} props.hubIntroState
  * @returns {JSX.Element}
  */
 function SearchChoiceDonut({
@@ -95,31 +99,25 @@ function SearchChoiceDonut({
 }
 
 /**
- * Vue d'accueil du hub de recherche CBIR.
- * Présente deux choix de recherche sous forme de donuts interactifs :
- * - La **recherche par image** (mode visuel/sémantique via upload).
- * - La **recherche par texte** (mode sémantique via caption).
+ * Render the CBIR search hub landing view.
  *
- * Une animation d'entrée est déclenchée au montage du composant.
+ * The hub is the neutral entry point before users select either image-driven or
+ * text-driven retrieval.
+ *
  *
  * @component
  * @param {object} props
- * @param {function(): void} props.onChooseImage - Callback pour naviguer vers la recherche par image.
- * @param {function(): void} props.onChooseText - Callback pour naviguer vers la recherche par texte.
+ * @param {function(): void} props.onChooseImage
+ * @param {function(): void} props.onChooseText
  * @returns {JSX.Element}
  *
- * @example
- * <SearchHubView
- *   onChooseImage={() => setView("image")}
- *   onChooseText={() => setView("text")}
- * />
  */
 export default function SearchHubView({ onChooseImage, onChooseText }) {
-  
+
   const { t } = useContext(LangContext);
   const hub = t.search.hub;
   const hubSectionRef = useRef(null);
-  /** @type {[boolean, function]} Déclenche les animations d'entrée après le premier rendu */
+  /** Trigger entry animations after the first render. */
   const [ready, setReady] = useState(false);
   const [hubIntroState, setHubIntroState] = useState(getInitialHubIntroState);
 
@@ -187,7 +185,7 @@ export default function SearchHubView({ onChooseImage, onChooseText }) {
 
   return (
     <div className="relative box-border min-h-[calc(100dvh-4rem)] overflow-x-hidden overflow-y-auto bg-transparent px-6 py-8 pb-16 md:min-h-[calc(100dvh-5rem)] md:py-12">
-      {/* Cercles décoratifs en arrière-plan */}
+      {/* Decorative background circles */}
       <div className="search-hub-bg-orbs pointer-events-none absolute inset-0 overflow-hidden">
         <div className="search-hub-bg-orb search-hub-bg-orb-primary absolute left-[-8%] top-[10%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
         <div className="search-hub-bg-orb search-hub-bg-orb-accent absolute right-[-6%] top-[20%] h-80 w-80 rounded-full bg-accent/12 blur-3xl" />
@@ -195,7 +193,7 @@ export default function SearchHubView({ onChooseImage, onChooseText }) {
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1120px] flex-col items-center justify-start pt-0 md:pt-14 pb-10">
-        {/* En-tête */}
+        {/* Header */}
         <section
           className="mb-10 w-full max-w-[760px] text-center md:mb-12"
           style={{

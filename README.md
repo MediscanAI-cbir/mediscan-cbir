@@ -28,6 +28,16 @@
     <img alt="ROCOv2" src="https://img.shields.io/badge/ROCOv2-Fine_Tuning-2563EB?style=for-the-badge" />
     <img alt="OpenCLIP" src="https://img.shields.io/badge/OpenCLIP-Multimodal_AI-0F766E?style=for-the-badge" />
   </p>
+
+  <p>
+    <strong>Top contributors</strong>
+  </p>
+
+  <p>
+    <a href="https://github.com/MediscanAI-cbir/mediscan-cbir/graphs/contributors">
+      <img src="https://contrib.rocks/image?repo=MediscanAI-cbir/mediscan-cbir" alt="Top contributors MEDISCAN AI" />
+    </a>
+  </p>
 </div>
 
 ## Présentation
@@ -53,6 +63,26 @@ Trois types de recherche sont proposés :
 - recherche sémantique, pour identifier des images médicalement proches ;
 - recherche par texte, pour retrouver des images correspondant à une description ou à une intention clinique.
 
+## Documentation
+
+La documentation du projet peut être générée dans un portail unique :
+
+```bash
+python scripts/generate_docs.py
+```
+
+Ou via le raccourci shell du projet :
+
+```bash
+./run.sh docs
+```
+
+Le portail généré se trouve ici :
+
+```text
+docs/index.html
+```
+
 ## Démo de l'application
 
 > Cette section montre le parcours utilisateur en conditions réelles, depuis le choix du mode de recherche jusqu'à la synthèse assistée.
@@ -72,78 +102,56 @@ La vidéo montre un scénario d'utilisation :
 
 ## 1. Fonctionnalités
 
-> Cette section décrit ce que l'utilisateur peut faire dans l'interface, du choix du mode de recherche jusqu'à l'exploration, la relance et la restitution des résultats.
+> Cette section résume les actions principales disponibles dans l'interface.
 
 ### 1.1 Vue d'ensemble
 
-> Cette sous-section présente les actions principales accessibles depuis l'interface utilisateur.
+> Cette sous-section présente le parcours général côté utilisateur.
 
-MEDISCAN AI propose une interface de recherche d'images médicales pour l'exploration, la comparaison et l'aide à l'interprétation.
+MEDISCAN AI permet de rechercher, comparer et explorer des images médicales sans manipuler directement les modèles ou les index.
 
 **Actions principales :**
 
-- téléverser une image médicale et rechercher des images proches ;
-- écrire une requête textuelle et obtenir des résultats visuels correspondants ;
-- explorer une grille de résultats classés par similarité ;
-- ouvrir une vue détaillée pour inspecter une image ;
-- sélectionner un ou plusieurs résultats pour relancer une recherche ;
-- générer une synthèse assistée par LLM à partir des résultats retrouvés.
+- rechercher par image ou par texte ;
+- parcourir, filtrer et inspecter les résultats ;
+- relancer une recherche depuis un résultat ou une sélection ;
+- générer une synthèse assistée et restituer les résultats.
 
-L'utilisateur ne manipule pas directement les modèles ou les index. L'interface envoie les requêtes au backend, récupère les résultats classés et affiche les métadonnées associées.
+L'interface transmet les requêtes au backend, récupère les résultats classés et affiche les métadonnées utiles.
 
 ### 1.2 Modes de recherche
 
-> Cette sous-section distingue les trois manières d'interroger la base : par similarité visuelle, par proximité sémantique ou par texte.
-
-MEDISCAN AI combine trois modes de recherche complémentaires.
+> Cette sous-section présente les trois manières d'interroger la base.
 
 <table border="1" cellpadding="12" cellspacing="0">
   <tr>
     <td width="33%" valign="top">
       <img alt="Visual Analysis" width="300" height="34" src="docs/assets/readme/badge-visual-analysis.svg" />
       <br /><br />
-      <strong>Retrouver ce qui se ressemble visuellement.</strong>
-      <br /><br />
-      <strong>Entrée :</strong> image médicale
-      <br /><br />
-      <strong>Résultat :</strong> images proches par apparence
-      <br /><br />
-      <strong>Idéal pour :</strong> formes, textures, structures, cadrage et similarité visuelle.
+      <strong>Similarité visuelle</strong><br />
+      Entrée : image médicale<br />
+      Résultat : images proches par apparence.
     </td>
     <td width="33%" valign="top">
       <img alt="Interpretive Analysis" width="300" height="34" src="docs/assets/readme/badge-interpretive-analysis.svg" />
       <br /><br />
-      <strong>Retrouver ce qui a le même sens médical.</strong>
-      <br /><br />
-      <strong>Entrée :</strong> image médicale
-      <br /><br />
-      <strong>Résultat :</strong> images médicalement proches
-      <br /><br />
-      <strong>Idéal pour :</strong> proximité clinique, anatomie, modalité et interprétation sémantique.
+      <strong>Proximité sémantique</strong><br />
+      Entrée : image médicale<br />
+      Résultat : images proches en signification médicale.
     </td>
     <td width="33%" valign="top">
       <img alt="Text Query" width="300" height="34" src="docs/assets/readme/badge-text-query.svg" />
       <br /><br />
-      <strong>Passer d'une description à des images.</strong>
-      <br /><br />
-      <strong>Entrée :</strong> requête textuelle
-      <br /><br />
-      <strong>Résultat :</strong> images alignées avec le texte
-      <br /><br />
-      <strong>Idéal pour :</strong> exploration par intention, recherche guidée et formulation clinique.
+      <strong>Recherche par description</strong><br />
+      Entrée : requête textuelle<br />
+      Résultat : images alignées avec le texte.
     </td>
   </tr>
 </table>
 
-En pratique :
-
-- `Visual Analysis` : à quoi cette image ressemble ?
-- `Interpretive Analysis` : quelles images portent le même sens médical ?
-- `Text Query` : quelles images correspondent à ma description ?
-
 ### 1.3 Fonctionnalités principales
 
-> Cette sous-section résume les grandes familles de fonctionnalités disponibles dans l'application.
+> Cette sous-section regroupe les fonctionnalités par grandes familles.
 
 <table border="1" cellpadding="14" cellspacing="0">
   <tr>
@@ -151,25 +159,25 @@ En pratique :
       <img alt="Recherche et exploration" width="300" height="34" src="docs/assets/readme/badge-recherche-exploration.svg" />
       <br /><br />
       <strong>Upload d'image médicale</strong><br />
-      L'utilisateur importe une image de référence directement depuis l'interface.
+      Import d'une image de référence.
       <br /><br />
       <strong>Recherche visuelle, sémantique et texte-vers-image</strong><br />
-      Le même système couvre trois entrées : image, représentation sémantique ou description textuelle.
+      Trois modes pour explorer la base.
       <br /><br />
       <strong>Filtres et catégories</strong><br />
-      Les résultats peuvent être affinés par score, légende, CUI, présence de CUI, type médical et référence d'image.
+      Affinage par score, caption, CUI, type médical ou référence.
     </td>
     <td width="50%" valign="top">
       <img alt="Analyse" width="300" height="34" src="docs/assets/readme/badge-analyse.svg" />
       <br /><br />
       <strong>Grille de résultats</strong><br />
-      Les images retrouvées sont classées, paginées et présentées dans une grille claire.
+      Résultats classés, paginés et faciles à comparer.
       <br /><br />
       <strong>Vue détaillée</strong><br />
-      Chaque image peut être inspectée individuellement avec ses informations utiles.
+      Inspection d'une image avec ses informations utiles.
       <br /><br />
       <strong>Relance depuis un ou plusieurs résultats</strong><br />
-      L'utilisateur peut transformer un résultat intéressant en nouvelle recherche plus précise.
+      Nouvelle recherche à partir d'un résultat ou d'une sélection.
     </td>
   </tr>
   <tr>
@@ -177,71 +185,50 @@ En pratique :
       <img alt="Synthèse assistée" width="300" height="34" src="docs/assets/readme/badge-synthese-assistee.svg" />
       <br /><br />
       <strong>Conclusion assistée par LLM</strong><br />
-      Une synthèse peut être générée à partir des résultats retrouvés pour aider à résumer les éléments observés.
+      Résumé exploratoire généré à partir des résultats.
       <br /><br />
       <strong>Export et partage</strong><br />
-      Le parcours prévoit la restitution des résultats pour la comparaison, la revue et la présentation.
+      Restitution des résultats pour comparaison, revue ou présentation.
     </td>
     <td width="50%" valign="top">
       <img alt="Interface" width="300" height="34" src="docs/assets/readme/badge-experience-produit.svg" />
       <br /><br />
       <strong>Interface bilingue</strong><br />
-      L'interface peut être consultée en plusieurs langues.
+      Consultation en plusieurs langues.
       <br /><br />
       <strong>Thème clair / sombre</strong><br />
-      L'interface s'adapte visuellement au contexte d'usage.
+      Adaptation visuelle au contexte d'usage.
       <br /><br />
       <strong>Parcours d'utilisation</strong><br />
-      L'utilisateur reste dans la même interface, de l'upload à l'exploration puis à la synthèse.
+      Parcours continu de l'upload à la synthèse.
     </td>
   </tr>
 </table>
 
 ### 1.4 Fonctionnalités mises en avant
 
-> Cette sous-section détaille les fonctionnalités les plus importantes du parcours d'exploration.
-
-Cette partie détaille les fonctionnalités les plus importantes de l'interface. Elles suivent le parcours réel d'utilisation : afficher les résultats, les comprendre, les filtrer, relancer une recherche, puis produire une restitution exploitable.
+> Cette sous-section détaille les étapes clés du parcours d'exploration.
 
 #### 1. Grille de résultats paginée
 
-> Cette partie explique comment les résultats sont affichés, parcourus et inspectés après une recherche.
-
-Après une recherche, les images retrouvées sont affichées dans une grille claire, classées par similarité. La pagination permet de parcourir les résultats progressivement, sans surcharger l'écran ni perdre la lisibilité.
-
-Chaque résultat met en avant les informations utiles : rang, image, score de similarité, caption et identifiant. L'utilisateur peut ainsi comparer rapidement les premiers voisins, repérer les images les plus proches et ouvrir une vue détaillée quand un résultat mérite une inspection plus précise.
+Après une recherche, les images sont affichées dans une grille paginée, classées par similarité. Chaque résultat présente les informations essentielles : rang, image, score, caption et identifiant.
 
 #### 2. Filtres de résultats
 
-> Cette partie montre comment affiner les résultats avec les captions, les CUI et les scores.
+Les filtres affinent la liste déjà retournée par le moteur de recherche. Ils ne recalculent pas les embeddings : ils servent à réduire ou organiser les résultats visibles.
 
-Les filtres agissent sur la liste déjà retournée par le moteur de recherche. Ils ne recalculent pas les embeddings et ne reconstruisent pas l'index FAISS : ils servent à affiner l'affichage après une première recherche large.
+Principaux filtres :
 
-MEDISCAN AI combine deux façons de filtrer :
+- **caption et suggestions** : recherche de termes dans les légendes et propositions de mots utiles ;
+- **CUI et type médical** : filtrage par concepts UMLS, anatomie, modalité ou finding ;
+- **score et tri** : seuil minimum et ordre des résultats ;
+- **référence image** : recherche ciblée d'un identifiant précis, par exemple `ROCO_000123`.
 
-- **langage naturel**, grâce aux captions associées aux images ;
-- **langage médical structuré**, grâce aux codes CUI/UMLS et à leurs catégories médicales.
-
-Les filtres principaux sont :
-
-- **Type CUI** : restreint les résultats par grandes familles médicales structurées, comme la modalité, l'anatomie ou la pathologie / finding. C'est le filtre le plus utile pour isoler un sous-ensemble médicalement cohérent.
-- **Légende / caption** : recherche un mot ou une expression dans les descriptions textuelles des images retrouvées. Il permet d'affiner en langage naturel, par exemple avec `chest`, `fracture`, `contrast`, `tumor` ou `lesion`.
-- **Suggestions intelligentes** : propose des mots utiles issus des captions visibles et des catégories CUI disponibles. Elles aident l'utilisateur à choisir rapidement des termes pertinents sans devoir deviner le vocabulaire exact du dataset.
-- **Code CUI** : filtre à partir d'un identifiant UMLS/CUI précis présent dans les métadonnées. Il est utile quand l'utilisateur connaît déjà le concept médical recherché.
-- **Score minimum** : masque les résultats dont le score de similarité est sous un seuil choisi. Le score aide à classer les voisins, mais ne correspond pas à une probabilité clinique.
-- **Tri par score** : affiche les résultats du plus proche au moins proche, ou l'inverse pour inspecter les résultats les plus faibles encore présents.
-- **Présence CUI** : garde tous les résultats, seulement ceux avec CUI, ou seulement ceux sans CUI. Ce filtre sert surtout à contrôler la disponibilité des annotations structurées.
-- **Référence image** : retrouve une image précise à partir de son identifiant, par exemple `ROCO_000123`. C'est un filtre ciblé pour vérifier ou retrouver un cas connu.
-
-En pratique, l'utilisateur peut commencer par une recherche large, sélectionner une famille CUI d'anatomie ou de modalité, puis affiner avec un terme issu des captions et ajuster le score minimum pour conserver les résultats les plus pertinents.
+En pratique, l'utilisateur peut partir d'une recherche large, choisir une catégorie médicale, puis affiner avec un terme issu des captions et un score minimum.
 
 #### 3. Relance de recherche
 
-> Cette partie décrit comment repartir d'un résultat ou d'une sélection pour lancer une recherche plus ciblée.
-
-La relance permet de transformer un résultat intéressant en nouvelle requête. L'utilisateur peut repartir d'une seule image retrouvée, ou sélectionner plusieurs résultats pour construire une requête combinée.
-
-Dans le cas d'une sélection multiple, les embeddings des images choisies sont moyennés pour produire un centroïde. Ce vecteur représente la tendance commune de la sélection et permet de rechercher d'autres images proches de cet ensemble.
+La relance transforme un résultat intéressant, ou une sélection de plusieurs images, en nouvelle requête. Dans le cas d'une sélection multiple, les embeddings sont moyennés pour représenter la tendance commune du groupe.
 
 Cas d'utilisation :
 
@@ -251,17 +238,11 @@ Cas d'utilisation :
 
 #### 4. Conclusion LLM
 
-> Cette partie explique le rôle de la synthèse assistée et ses limites non diagnostiques.
-
-La conclusion LLM génère une synthèse prudente à partir des résultats retrouvés. Elle s'appuie sur les captions des images similaires et formule un résumé exploratoire, sans poser de diagnostic et sans remplacer l'avis d'un professionnel de santé.
-
-Cette fonctionnalité est utile pour résumer les motifs récurrents observés dans les résultats, préparer une revue rapide ou documenter une exploration. Elle nécessite une clé Groq configurée dans `.env`.
+La conclusion LLM génère une synthèse prudente à partir des captions des images similaires. Elle aide à résumer les motifs récurrents, sans poser de diagnostic ni remplacer un avis médical. Elle nécessite une clé Groq configurée dans `.env`.
 
 #### 5. Export et partage
 
-> Cette partie précise comment les résultats peuvent être conservés ou partagés après l'exploration.
-
-Les résultats peuvent être restitués pour garder une trace de l'exploration, préparer une comparaison ou partager une sélection. Cette partie reste une aide à la revue et à la présentation : elle ne constitue pas un compte rendu médical.
+Les résultats peuvent être conservés ou partagés pour garder une trace de l'exploration, préparer une comparaison ou présenter une sélection. Cette restitution ne constitue pas un compte rendu médical.
 
 ## 2. Architecture technique
 
@@ -274,76 +255,67 @@ Les résultats peuvent être restitués pour garder une trace de l'exploration, 
 MEDISCAN AI est structuré comme une application complète. Le frontend React gère l'interface, le backend FastAPI valide les requêtes et orchestre les ressources, puis le moteur de retrieval interroge des index FAISS déjà construits.
 
 ```mermaid
-%%{init: {"theme": "base", "flowchart": {"htmlLabels": true, "nodeSpacing": 30, "rankSpacing": 48, "diagramPadding": 18, "curve": "basis"}, "themeVariables": {"darkMode": true, "fontFamily": "Inter, Arial, sans-serif", "fontSize": "16px", "background": "#101010", "primaryColor": "#252525", "primaryTextColor": "#f2f2f2", "primaryBorderColor": "#8a8a8a", "lineColor": "#b8b8b8", "clusterBkg": "#171717", "clusterBorder": "#777777", "edgeLabelBackground": "#101010"}}}%%
+%%{init: {"theme": "base", "flowchart": {"htmlLabels": true, "nodeSpacing": 60, "rankSpacing": 78, "diagramPadding": 24, "curve": "linear"}, "themeVariables": {"darkMode": true, "fontFamily": "Inter, Arial, sans-serif", "fontSize": "16px", "background": "#101010", "primaryColor": "#252525", "primaryTextColor": "#f2f2f2", "primaryBorderColor": "#8a8a8a", "lineColor": "#b8b8b8", "clusterBkg": "#171717", "clusterBorder": "#777777", "edgeLabelBackground": "#101010"}}}%%
 flowchart LR
-  subgraph FE["COUCHE PRÉSENTATION"]
-    direction TB
-    FE_COMP["<b>frontend/src/components</b><br/>vues, upload, résultats"]
-    FE_API["<b>frontend/src/api.js</b><br/>client HTTP vers /api"]
-    FE_COMP --> FE_API
+  subgraph OFFLINE["PIPELINE OFFLINE"]
+    direction LR
+    DATA["<b>data/</b><br/>images et métadonnées"]
+    SCRIPTS["<b>scripts/</b><br/>préparation des embeddings"]
+    ARTIFACTS["<b>artifacts/</b><br/>index FAISS et fichiers d'alignement"]
+
+    DATA --> SCRIPTS --> ARTIFACTS
   end
 
-  subgraph BE["COUCHE API FASTAPI"]
-    direction TB
-    BE_ROUTE["<b>backend/app/api</b> + <b>models</b><br/>routes REST et schémas"]
-    BE_SERV["<b>backend/app/services</b><br/>validation, recherche, enrichissement"]
-    BE_ROUTE --> BE_SERV
+  subgraph CORE["COEUR DE RECHERCHE"]
+    direction LR
+    MEDISCAN["<b>src/mediscan/</b><br/>charge les index · encode les requêtes · classe les résultats"]
   end
 
-  subgraph CORE["COEUR CBIR PYTHON"]
-    direction TB
-    CORE_SEARCH["<b>src/mediscan/search.py</b><br/>chargement, query, query_text"]
-    CORE_RUNTIME["<b>src/mediscan/runtime.py</b><br/>modes, chemins, config stable"]
-    CORE_EMB["<b>src/mediscan/embedders</b><br/>DINOv2 visuel · BioMedCLIP sémantique"]
-    CORE_SEARCH --> CORE_RUNTIME --> CORE_EMB
+  subgraph RUNTIME["APPLICATION EN EXÉCUTION"]
+    direction LR
+    USER["<b>Utilisateur</b><br/>image ou texte"]
+
+    subgraph PRESENTATION["COUCHE PRÉSENTATION"]
+      direction TB
+      FRONTEND["<b>frontend/</b><br/>interface React, upload, résultats"]
+    end
+
+    subgraph API_LAYER["COUCHE API"]
+      direction TB
+      BACKEND["<b>backend/app/</b><br/>routes FastAPI, validation, orchestration"]
+    end
+
+    subgraph EXTERNAL["SERVICES EXTERNES"]
+      direction TB
+      SERVICES["<b>services optionnels</b><br/>images publiques, métadonnées, synthèse"]
+    end
   end
 
-  subgraph OFF["PIPELINE OFFLINE"]
-    direction TB
-    OFF_REBUILD["<b>scripts/rebuild_stable_indexes.py</b><br/>reconstruit visual + semantic"]
-    OFF_BUILD["<b>scripts/build_index.py</b><br/>encode le dataset et écrit FAISS/ids"]
-    OFF_EVAL["<b>scripts/evaluation</b><br/>métriques et preuves"]
-    OFF_REBUILD --> OFF_BUILD
-  end
+  USER --> FRONTEND
+  FRONTEND <-->|HTTP JSON| BACKEND
+  BACKEND --> MEDISCAN
+  ARTIFACTS --> MEDISCAN
+  BACKEND -.-> SERVICES
 
-  subgraph DATA["DONNÉES ET ARTEFACTS"]
-    direction TB
-    DATASET["<b>src/mediscan/dataset.py</b><br/>metadata ROCO vers records"]
-    ARTIFACTS["<b>artifacts</b><br/>index.faiss · index_semantic.faiss<br/>ids.json · ids_semantic.json"]
-    DATASET --> ARTIFACTS
-  end
+  classDef input fill:#252525,color:#f2f2f2,stroke:#8a8a8a,stroke-width:1.1px;
+  classDef presentation fill:#101a2d,color:#f5f8ff,stroke:#0467DF,stroke-width:1px;
+  classDef api fill:#0b2522,color:#f3fffb,stroke:#009688,stroke-width:1px;
+  classDef core fill:#2d1a14,color:#fff7ef,stroke:#EE4C2C,stroke-width:1.2px;
+  classDef support fill:#101a2d,color:#f5f8ff,stroke:#0467DF,stroke-width:1px;
+  classDef external fill:#252525,color:#f2f2f2,stroke:#8a8a8a,stroke-width:1px,stroke-dasharray:4 3;
+  class USER input;
+  class FRONTEND presentation;
+  class BACKEND api;
+  class MEDISCAN core;
+  class DATA,SCRIPTS,ARTIFACTS support;
+  class SERVICES external;
 
-  subgraph EXT["SERVICES OPTIONNELS"]
-    direction TB
-    EXT_META["<b>MongoDB</b><br/>captions et CUI"]
-    EXT_GEN["<b>Groq LLM</b> · <b>SMTP</b><br/>conclusion et contact"]
-    EXT_HF["<b>Hugging Face</b><br/>images publiques"]
-  end
-
-  FE_API <-->|HTTP JSON| BE_ROUTE
-  BE_SERV --> CORE_SEARCH
-  CORE_SEARCH --> ARTIFACTS
-  OFF_BUILD --> DATASET
-  OFF_BUILD --> CORE_EMB
-  OFF_BUILD --> ARTIFACTS
-  OFF_EVAL -.-> CORE_SEARCH
-  BE_SERV -.-> EXT_META
-  BE_ROUTE -.-> EXT_GEN
-  BE_SERV -.-> EXT_HF
-
-  classDef module fill:#252525,color:#f2f2f2,stroke:#8a8a8a,stroke-width:1px;
-  classDef core fill:#303030,color:#ffffff,stroke:#a0a0a0,stroke-width:1.1px;
-  classDef optional fill:#202020,color:#d8d8d8,stroke:#8a8a8a,stroke-width:1px,stroke-dasharray:4 3;
-  class FE_COMP,FE_API,BE_ROUTE,BE_SERV,OFF_REBUILD,OFF_BUILD,OFF_EVAL,DATASET,ARTIFACTS module;
-  class CORE_SEARCH,CORE_RUNTIME,CORE_EMB core;
-  class EXT_META,EXT_GEN,EXT_HF optional;
-
-  style FE fill:#171717,stroke:#777777,stroke-width:1px,color:#f2f2f2
-  style BE fill:#171717,stroke:#777777,stroke-width:1px,color:#f2f2f2
-  style CORE fill:#1b1b1b,stroke:#8a8a8a,stroke-width:1.2px,color:#ffffff
-  style OFF fill:#151515,stroke:#777777,stroke-width:1px,color:#f2f2f2
-  style DATA fill:#171717,stroke:#777777,stroke-width:1px,color:#f2f2f2
-  style EXT fill:#151515,stroke:#777777,stroke-width:1px,color:#d8d8d8
+  style OFFLINE fill:#151515,stroke:#0467DF,stroke-width:1px,color:#f2f2f2
+  style CORE fill:#151515,stroke:#EE4C2C,stroke-width:1.2px,color:#f2f2f2
+  style RUNTIME fill:#101010,stroke:#777777,stroke-width:1px,color:#f2f2f2
+  style PRESENTATION fill:#171717,stroke:#0467DF,stroke-width:1px,color:#f2f2f2
+  style API_LAYER fill:#171717,stroke:#009688,stroke-width:1px,color:#f2f2f2
+  style EXTERNAL fill:#171717,stroke:#8a8a8a,stroke-width:1px,color:#f2f2f2
 ```
 
 Le backend charge les ressources de recherche via une registry partagée. Les index FAISS, les métadonnées d'images et les modèles sont donc utilisés de façon cohérente entre les routes API, les scripts CLI et les évaluations.
@@ -352,15 +324,36 @@ Le backend charge les ressources de recherche via une registry partagée. Les in
 
 > Cette sous-section résume les principales briques techniques utilisées dans le projet et leur rôle.
 
-| Couche | Technologies | Rôle |
-|---|---|---|
-| Frontend | React 19, Vite, Tailwind CSS, lucide-react | Interface utilisateur, upload, filtres, résultats, modales et export |
-| Backend | FastAPI, Uvicorn, Pydantic | API REST, validation, orchestration des recherches |
-| Retrieval | FAISS, NumPy, PyTorch | Recherche vectorielle top-k sur embeddings normalisés |
-| Vision | `facebook/dinov2-base` | Embeddings visuels pour la similarité image-to-image |
-| Multimodal médical | `hf-hub:Ozantsk/biomedclip-rocov2-finetuned` | Embeddings image et texte dans un espace médical commun |
-| Données | ROCOv2, captions, CUI, métadonnées JSON | Base indexée et enrichissement des résultats |
-| Évaluation | Scripts Python dédiés, CSV de preuves | Mesure stricte par modalité, anatomie et texte-vers-image |
+<table border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="50%" valign="top">
+      <ul>
+        <li style="margin-bottom: 12px;">
+          <img alt="Python" height="28" align="middle" src="https://cdn.simpleicons.org/python/3776AB" />&nbsp;&nbsp;&nbsp;&nbsp;Python
+        </li>
+        <li style="margin-bottom: 12px;">
+          <img alt="React" height="28" align="middle" src="https://cdn.simpleicons.org/react/61DAFB" />&nbsp;&nbsp;&nbsp;&nbsp;React
+        </li>
+        <li style="margin-bottom: 12px;">
+          <img alt="FastAPI" height="28" align="middle" src="https://cdn.simpleicons.org/fastapi/009688" />&nbsp;&nbsp;&nbsp;&nbsp;API FastAPI
+        </li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <ul>
+        <li style="margin-bottom: 12px;">
+          <img alt="PyTorch" height="28" align="middle" src="https://cdn.simpleicons.org/pytorch/EE4C2C" />&nbsp;&nbsp;&nbsp;&nbsp;PyTorch
+        </li>
+        <li style="margin-bottom: 12px;">
+          <img alt="Hugging Face" height="28" align="middle" src="https://cdn.simpleicons.org/huggingface/FFD21E" />&nbsp;&nbsp;&nbsp;&nbsp;BioMedCLIP / Hugging Face ROCOv2
+        </li>
+        <li style="margin-bottom: 12px;">
+          <img alt="Meta" height="28" align="middle" src="https://cdn.simpleicons.org/meta/0467DF" />&nbsp;&nbsp;&nbsp;&nbsp;Meta FAISS / DINOv2
+        </li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
 ### 2.3 Trois chemins de retrieval
 
@@ -727,6 +720,10 @@ cp .env.example .env
 
 Variables backend principales :
 
+Un exemple complet pour l'environnement de production est disponible dans
+`production.env.example`. Les vraies valeurs secrètes doivent être injectées par
+la plateforme de déploiement, pas commitées dans le dépôt.
+
 | Variable | Obligatoire | Rôle |
 |---|---|---|
 | `BACKEND_PORT` | Non | Port FastAPI utilisé par les scripts de lancement. Valeur par défaut : `8000`. |
@@ -734,7 +731,20 @@ Variables backend principales :
 | `MEDISCAN_MAX_UPLOAD_BYTES` | Non | Taille maximale d'une image uploadée. Valeur par défaut : `10485760` octets, soit 10 Mo. |
 | `MEDISCAN_REMOTE_IMAGE_TIMEOUT_SECONDS` | Non | Timeout pour télécharger une image ROCOv2 distante lors des recherches par ID. |
 | `MEDISCAN_TORCH_THREADS` | Non | Nombre de threads CPU utilisés par PyTorch. |
+| `MEDISCAN_RATE_LIMIT_WINDOW_SECONDS` | Non | Fenêtre de quota par IP. Valeur par défaut : `60`. |
+| `MEDISCAN_RATE_LIMIT_SEARCH` | Non | Nombre de recherches image autorisées par IP et par fenêtre. Valeur par défaut : `12`. |
+| `MEDISCAN_RATE_LIMIT_SEARCH_TEXT` | Non | Nombre de recherches texte autorisées par IP et par fenêtre. Valeur par défaut : `20`. |
+| `MEDISCAN_RATE_LIMIT_SEARCH_BY_ID` | Non | Nombre de relances par image autorisées par IP et par fenêtre. Valeur par défaut : `30`. |
+| `MEDISCAN_RATE_LIMIT_SEARCH_BY_IDS` | Non | Nombre de recherches multi-images autorisées par IP et par fenêtre. Valeur par défaut : `10`. |
+| `MEDISCAN_RATE_LIMIT_CONCLUSION` | Non | Nombre de synthèses IA autorisées par IP et par fenêtre. Valeur par défaut : `5`. |
+| `MEDISCAN_RATE_LIMIT_CONTACT` | Non | Nombre de messages de contact autorisés par IP et par fenêtre. Valeur par défaut : `3`. |
+| `MEDISCAN_SEARCH_CONCURRENCY_LIMIT` | Non | Nombre maximum de traitements de recherche simultanés par instance. Valeur par défaut : `2`. |
+| `MEDISCAN_CONCLUSION_CONCURRENCY_LIMIT` | Non | Nombre maximum d'appels de synthèse IA simultanés par instance. Valeur par défaut : `2`. |
+| `MEDISCAN_CONTACT_CONCURRENCY_LIMIT` | Non | Nombre maximum d'envois SMTP simultanés par instance. Valeur par défaut : `5`. |
+| `MEDISCAN_TRUST_PROXY_HEADERS` | Non | Utilise `X-Forwarded-For` pour identifier les clients uniquement derrière un proxy de confiance. Valeur par défaut : `false`. |
 | `MONGO_URI` | Non | Active l'enrichissement optionnel des résultats depuis MongoDB. |
+| `MEDISCAN_MONGO_SERVER_SELECTION_TIMEOUT_MS` | Non | Timeout court pour sélectionner un serveur MongoDB. Valeur par défaut : `2000`. |
+| `MEDISCAN_MONGO_CONNECT_TIMEOUT_MS` | Non | Timeout court pour ouvrir la connexion MongoDB. Valeur par défaut : `2000`. |
 | `GROQ_KEY_API` | Non | Active la synthèse assistée par LLM. Sans clé, la recherche reste fonctionnelle. |
 | `MEDISCAN_GROQ_MODEL` | Non | Modèle Groq utilisé pour la synthèse. |
 | `MEDISCAN_MAX_CONCLUSION_RESULTS` | Non | Nombre maximum de résultats injectés dans la synthèse LLM. |
@@ -784,9 +794,23 @@ Backend :
 ```bash
 python3.11 -m venv .venv311
 source .venv311/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.lock.txt
 PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
+
+`requirements.txt` garde les plages de dépendances lisibles pour le développement.
+`requirements.lock.txt` fige les versions exactes à installer en production.
+
+Checks production :
+
+```bash
+curl http://127.0.0.1:8000/api/health
+curl http://127.0.0.1:8000/api/ready
+```
+
+`/api/health` vérifie seulement que le processus répond. `/api/ready` vérifie les
+artifacts FAISS/IDs, MongoDB si `MONGO_URI` est configuré, et expose aussi l'état
+de configuration LLM/SMTP sans révéler les secrets.
 
 Tests :
 

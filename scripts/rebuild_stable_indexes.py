@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""
-Reconstruit les index stables DINOv2 et BioMedCLIP en parallèle.
-Ce script lance deux processus séparés pour optimiser l'utilisation des ressources.
-"""
+"""Rebuild stable DINOv2 and BioMedCLIP indexes in parallel."""
 
 from __future__ import annotations
 
@@ -20,14 +17,12 @@ import faiss
 
 from mediscan.runtime import get_mode_config, stable_manifest_path_for_mode
 
-# Définition de la racine du projet
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
 
 @dataclass(frozen=True)
 class BuildSpec:
-    """
-    Spécification de la construction d'un index stable pour un mode donné (visual ou semantic).
-    """
+    """Build specification for one stable index mode."""
     mode: str
     embedder: str
     metadata: Path
@@ -37,28 +32,21 @@ class BuildSpec:
 
 
 def parse_args() -> argparse.Namespace:
-    """
-    - Gestion des arguments en ligne de commande (chemin du metadata, logs, threads).
-    - Permet de configurer le nombre de threads utilisés par chaque processus de construction.
-    """
-    parser = argparse.ArgumentParser(description="Rebuild stable MEDISCAN indexes in parallel")
+    """Parse and return command-line arguments."""
+    parser = argparse.ArgumentParser(description="Rebuild stable MediScan indexes in parallel")
     parser.add_argument("--metadata", default="data/roco_train_full/metadata.csv")
     parser.add_argument("--logs-dir", default="artifacts/logs")
     parser.add_argument(
         "--threads-per-process",
         type=int,
         default=1,
-        help="Torch thread count used by each parallel process",
+        help="Number of PyTorch threads used by each parallel process",
     )
     return parser.parse_args()
 
 
 def build_specs(metadata: Path, logs_dir: Path) -> list[BuildSpec]:
-    """
-    - Construit les spécifications de construction pour les deux modes (visual et semantic).
-    - Récupère les configurations spécifiques à chaque mode (embedder, chemins d'index et d'IDs) à partir du runtime.
-    - Prépare les chemins de log pour chaque processus.
-    """
+    """Build index specifications for visual and semantic modes."""
     specs: list[BuildSpec] = []
     for mode in ("visual", "semantic"):
         config = get_mode_config(mode)
@@ -76,29 +64,20 @@ def build_specs(metadata: Path, logs_dir: Path) -> list[BuildSpec]:
 
 
 def build_command(spec: BuildSpec) -> list[str]:
-    """
-    - Construit la commande de ligne de commande pour lancer le script de construction d'index.
-    - Utilise les chemins et paramètres définis dans la BuildSpec pour chaque mode.
-    """
+    """Build the shell command that launches build_index.py."""
     return [
         sys.executable,
         "-u",
         str(PROJECT_ROOT / "scripts" / "build_index.py"),
-        "--embedder",
-        spec.embedder,
-        "--metadata",
-        str(spec.metadata),
-        "--index-path",
-        str(spec.index_path),
-        "--ids-path",
-        str(spec.ids_path),
+        "--embedder", spec.embedder,
+        "--metadata", str(spec.metadata),
+        "--index-path", str(spec.index_path),
+        "--ids-path", str(spec.ids_path),
     ]
 
 
 def _stream_output(mode: str, stream, log_handle) -> None:
-    """
-    - Lit la sortie d'un processus en temps réel, l'affiche dans la console avec un préfixe de mode.
-    """
+    """Read process output in real time and redirect it to the console and log."""
     for line in stream:
         sys.stdout.write(f"[{mode}] {line}")
         sys.stdout.flush()
@@ -109,10 +88,8 @@ def _stream_output(mode: str, stream, log_handle) -> None:
 def launch_build(
     spec: BuildSpec,
     threads_per_process: int,
-) -> tuple[subprocess.Popen[str], object, threading.Thread]:
-    """
-    Lance un processus de construction d'index avec un environnement isolé.
-    """
+) -> tuple[subprocess.Popen, object, threading.Thread]:
+    """Launch an index-building process in an isolated environment."""
     env = os.environ.copy()
     env["OMP_NUM_THREADS"] = "1"
     env["MKL_NUM_THREADS"] = "1"
@@ -145,9 +122,7 @@ def launch_build(
 
 
 def write_manifest(spec: BuildSpec) -> Path:
-    """
-    - Génère un fichier JSON de manifeste pour confirmer la réussite et l'état de l'index.
-    """
+    """Generate a JSON manifest confirming a successful build."""
     manifest_path = stable_manifest_path_for_mode(spec.mode)
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -155,7 +130,8 @@ def write_manifest(spec: BuildSpec) -> Path:
     rows = json.loads(spec.ids_path.read_text(encoding="utf-8"))
     if len(rows) != index.ntotal:
         raise RuntimeError(
-            f"Index/IDs mismatch for {spec.mode}: index.ntotal={index.ntotal}, ids={len(rows)}"
+            f"Index/IDs mismatch for {spec.mode}: "
+            f"index.ntotal={index.ntotal}, ids={len(rows)}"
         )
     manifest = {
         "mode": spec.mode,
@@ -169,14 +145,15 @@ def write_manifest(spec: BuildSpec) -> Path:
         "ids_rows": len(rows),
         "rebuilt_at_utc": datetime.now(timezone.utc).isoformat(),
     }
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     return manifest_path
 
 
 def main() -> None:
-    """
-    - Point d'entrée: Coordonne le lancement et le suivi des processus de reconstruction.
-    """
+    """Main entrypoint for the index rebuild script."""
     args = parse_args()
     metadata = Path(args.metadata)
     if not metadata.is_absolute():
@@ -185,12 +162,12 @@ def main() -> None:
     if not logs_dir.is_absolute():
         logs_dir = (PROJECT_ROOT / logs_dir).resolve()
     if not metadata.exists():
-        raise FileNotFoundError(f"Metadata CSV not found: {metadata}")
+        raise FileNotFoundError(f"Metadata CSV file not found: {metadata}")
     if args.threads_per_process <= 0:
         raise ValueError("--threads-per-process must be strictly positive")
 
     specs = build_specs(metadata, logs_dir)
-    running: list[tuple[BuildSpec, subprocess.Popen[str], object, threading.Thread]] = []
+    running: list[tuple[BuildSpec, subprocess.Popen, object, threading.Thread]] = []
 
     for spec in specs:
         spec.index_path.parent.mkdir(parents=True, exist_ok=True)
@@ -215,7 +192,10 @@ def main() -> None:
 
     if failures:
         for spec, return_code in failures:
-            print(f"[FAILED] {spec.mode}: code={return_code} log={spec.log_path}", file=sys.stderr)
+            print(
+                f"[FAILED] {spec.mode}: code={return_code} log={spec.log_path}",
+                file=sys.stderr,
+            )
         raise SystemExit(1)
 
     print("Stable rebuild completed successfully.")

@@ -1,4 +1,4 @@
-"""Core retrieval helpers shared by CLI scripts and the backend API."""
+"""Core CBIR search engine: resource loading, FAISS querying, and ranking."""
 
 from __future__ import annotations
 
@@ -32,14 +32,20 @@ MAX_K = 50
 
 @dataclass
 class SearchResources:
-    """Pre-loaded resources for running multiple queries without reloading."""
+    """
+    Bundle all heavy resources required to query one search mode.
 
+    Keeping the embedder, FAISS index, metadata rows, and image-id lookup together
+    prevents accidental mismatches between vectors and metadata across repeated
+    API calls or CLI queries.
+    """
     embedder: Embedder | None
     index: faiss.Index
     rows: list[dict[str, str]]
     row_index_by_image_id: dict[str, int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        """Build the image_id-to-position lookup used by index-backed relaunches."""
         if self.row_index_by_image_id:
             return
         self.row_index_by_image_id = {
@@ -48,11 +54,13 @@ class SearchResources:
 
 
 def _validate_k(k: int) -> None:
+    """Validate the requested result count before any expensive work starts."""
     if not 0 < k <= MAX_K:
         raise ValueError(f"k must be between 1 and {MAX_K}")
 
 
 def _build_result(row: dict[str, Any], *, rank: int, score: float) -> dict[str, Any]:
+    """Normalize one metadata row into the API/CLI result shape."""
     return {
         "rank": rank,
         "score": float(score),
@@ -72,7 +80,13 @@ def collect_ranked_results(
     excluded_image_ids: set[str] | None = None,
     excluded_paths: set[str] | None = None,
 ) -> list[dict[str, Any]]:
-    """Build top-k response rows from FAISS scores and ids."""
+    """
+    Convert raw FAISS scores and row indices into displayable ranked results.
+
+    This function centralizes post-processing so image search, relaunch search,
+    text search, and centroid search all skip excluded records the same way and
+    expose the same payload fields.
+    """
     excluded_ids = excluded_image_ids or set()
     resolved_excluded_paths = {str(Path(path).resolve()) for path in (excluded_paths or set())}
     should_check_paths = bool(resolved_excluded_paths)
@@ -111,14 +125,22 @@ def load_resources(
     ids_path: str | Path | None = None,
     load_embedder: bool = True,
 ) -> SearchResources:
-    """Load embedder, FAISS index, and metadata once for repeated queries."""
+    """
+    Load the FAISS index, aligned metadata rows, and optionally the embedder.
+
+    Integration tests can set load_embedder=False to validate real artifacts
+    without downloading model weights. Runtime callers leave it enabled so query
+    vectors can be computed from uploaded images or text.
+    """
     set_faiss_threads(faiss)
 
     default_embedder, default_index_path, default_ids_path = default_config_for_mode(mode)
     embedder_name = embedder or default_embedder
     resolved_index = index_path if index_path is not None else default_index_path
     resolved_ids = ids_path if ids_path is not None else default_ids_path
-    resolved_model_name = model_name if model_name is not None else default_model_name_for_mode(mode)
+    resolved_model_name = (
+        model_name if model_name is not None else default_model_name_for_mode(mode)
+    )
     index_path_obj, ids_path_obj = ensure_artifacts_exist(resolved_index, resolved_ids)
 
     rows = load_indexed_rows(ids_path_obj)
@@ -156,7 +178,12 @@ def query(
     k: int,
     exclude_self: bool = False,
 ) -> list[dict[str, Any]]:
-    """Run one top-k retrieval query on pre-loaded resources."""
+    """
+    Encode a query image and search the matching FAISS index.
+
+    The produced embedding is L2-normalized before search so score interpretation
+    remains compatible with indexes built from normalized vectors.
+    """
     _validate_k(k)
 
     query_image = resolve_path(image)
@@ -195,7 +222,13 @@ def query_from_index(
     k: int,
     exclude_self: bool = False,
 ) -> list[dict[str, Any]]:
-    """Run one top-k retrieval query from a vector already stored in the FAISS index."""
+    """
+    Relaunch search from a vector already stored in the index.
+
+    This powers "search from result" without downloading and re-encoding the
+    original image. The stored FAISS vector is reconstructed by row position, then
+    queried against the same index.
+    """
     _validate_k(k)
 
     row_index = resources.row_index_by_image_id.get(image_id.strip())
@@ -204,7 +237,9 @@ def query_from_index(
 
     index = resources.index
     rows = resources.rows
-    query_vector = np.asarray(index.reconstruct(int(row_index)), dtype=np.float32).reshape(1, -1)
+    query_vector = np.asarray(
+        index.reconstruct(int(row_index)), dtype=np.float32
+    ).reshape(1, -1)
 
     search_k = compute_search_k(k, index.ntotal, exclude_self=exclude_self)
     scores, indices = index.search(query_vector, search_k)
@@ -212,7 +247,11 @@ def query_from_index(
     row = rows[row_index]
     relative_path = str(row.get("path", ""))
     excluded_image_ids = {image_id} if exclude_self else set()
-    excluded_paths = {str(resolve_path(relative_path).resolve())} if exclude_self and relative_path else set()
+    excluded_paths = (
+        {str(resolve_path(relative_path).resolve())}
+        if exclude_self and relative_path
+        else set()
+    )
     return collect_ranked_results(
         rows=rows,
         scores=scores[0],
@@ -229,10 +268,11 @@ def query_text(
     text: str,
     k: int,
 ) -> list[dict[str, Any]]:
-    """Run a text-to-image top-k retrieval on pre-loaded resources.
+    """
+    Encode a text prompt and search the semantic FAISS index.
 
-    Requires an embedder that implements encode_text() (i.e. BioMedCLIPEmbedder).
-    Uses the same FAISS index as image queries — no rebuild needed.
+    Only embedders exposing encode_text are accepted, which intentionally limits
+    text queries to semantic models such as BioMedCLIP.
     """
     _validate_k(k)
     if not hasattr(resources.embedder, "encode_text"):
@@ -270,7 +310,7 @@ def search_image(
     ids_path: str | Path | None = None,
     exclude_self: bool = False,
 ) -> tuple[str, str, list[dict[str, Any]]]:
-    """Convenience wrapper: load resources and run one query."""
+    """Convenience CLI wrapper that loads resources, searches, and returns metadata."""
     resources = load_resources(
         mode=mode,
         embedder=embedder,

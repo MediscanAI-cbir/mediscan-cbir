@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Text-search workflow for semantic CBIR queries and result exploration.
+ * @module components/TextSearchView
+ */
+
 import { BadgePercent, Info, Search, Sparkles, Tags } from "lucide-react";
 import { useState, useContext, useEffect, useMemo, useRef, useCallback } from "react";
 import { LangContext } from "../context/LangContextValue";
@@ -34,17 +39,35 @@ import {
 } from "../utils/searchViewHelpers";
 import { CUI_TYPES } from "../data/cuiCategories";
 
-// Ajuste cette valeur selon le rendu souhaite: negatif = moins bas, positif = plus bas.
+// Positive values scroll slightly lower; negative values keep the result block higher.
 const TEXT_SEARCH_SCROLL_OFFSET = 60;
 const TEXT_SEARCH_SCROLL_MAX_RETRIES = 4;
 const TEXT_SEARCH_SCROLL_RETRY_DELAY_MS = 160;
 const TEXT_SEARCH_SCROLL_TOLERANCE = 6;
 
+/**
+ * Return CSS classes for active and inactive filter toggles.
+ * @param {boolean} isActive
+ * @returns {string}
+ */
 function getFilterToggleStateClasses(isActive) {
   if (isActive) return "mediscan-accent-chip font-semibold shadow-sm";
   return "text-muted hover:bg-accent/8 hover:text-accent";
 }
 
+/**
+ * Render the text-driven CBIR search view.
+ *
+ * Text search always uses the semantic index. The component mirrors the image
+ * result exploration tools so users can filter, export, inspect details, and ask
+ * for a cautious conclusion from the returned neighbors.
+ *
+ * @component
+ * @param {object} props
+ * @param {function(): void} props.onBack
+ * @param {function(string): void} props.onChromeToneChange
+ * @returns {JSX.Element}
+ */
 export default function TextSearchView({ onBack, onChromeToneChange }) {
   const { t, lang } = useContext(LangContext);
   const content = t.search.text;
@@ -56,7 +79,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // filtres
+  // Client-side filters applied to the current text-search result set.
   const [minScore, setMinScore] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -67,7 +90,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const [referenceFilter, setReferenceFilter] = useState("");
   const [activeCaptionFilterIds, setActiveCaptionFilterIds] = useState([]);
 
-  // UI
+  // UI timers and refs for guided notes and automatic result scrolling.
   const [quickNoteHighlighted, setQuickNoteHighlighted] = useState(false);
   const [filterNoteHighlighted, setFilterNoteHighlighted] = useState(false);
   const [entryAnimationsActive, setEntryAnimationsActive] = useState(true);
@@ -83,6 +106,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const hasSearchResults = Boolean(results);
   const resultCount = results?.results?.length ?? 0;
 
+  /** Cancel the pending automatic result scroll. */
   const cancelSearchAutoScroll = useCallback(() => {
     window.clearTimeout(scrollRetryTimerRef.current);
     scrollRetryTimerRef.current = 0;
@@ -90,6 +114,10 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     scrollCancelRef.current = null;
   }, []);
 
+	  /**
+	 * Scroll to the result section after search, retrying while layout settles.
+	 * @param {number} [attempt=0]
+	 */
   const runSearchAutoScrollAttempt = useCallback((attempt = 0) => {
     const targetNode = resultsStageRef.current || resultsAnchorRef.current;
     if (!targetNode || typeof window === "undefined") {
@@ -99,6 +127,9 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
 
     const targetY = getResultsGridScrollTargetY(targetNode, TEXT_SEARCH_SCROLL_OFFSET);
 
+    /**
+     * Finalize one scroll attempt and retry if the layout shifted after render.
+     */
     const finalizeAttempt = () => {
       scrollCancelRef.current = null;
 
@@ -189,6 +220,9 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     };
   }, [cancelSearchAutoScroll, hasSearchResults, loading, resultCount, runSearchAutoScrollAttempt]);
 
+  /**
+  * Run semantic text search and prepare the result panel for automatic scrolling.
+  */
   async function handleSearch() {
     const trimmed = query.trim();
     if (!trimmed) return;
@@ -216,6 +250,9 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     }
   }
 
+  /**
+  * Reset all filters to their default values.
+  */
   function resetFilters() {
     setMinScore(0);
     setSearchText("");
@@ -228,18 +265,30 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     setActiveCaptionFilterIds([]);
   }
 
+  /**
+  * Export the current filtered text-search payload as JSON.
+  */
   function exportJSON() {
     exportResultsAsJson(filteredResults ?? results, "results_text.json");
   }
 
+  /**
+  * Export the current filtered text-search payload as CSV.
+  */
   function exportCSV() {
     exportResultsAsCsv(filteredResults ?? results, "results_text.csv");
   }
 
+  /**
+  * Export the current filtered text-search payload as PDF.
+  */
   async function exportPDF() {
     await exportResultsAsPdf(filteredResults ?? results, "results_text.pdf");
   }
 
+  /**
+  * Scroll to the filter explanation and pulse the related guide note.
+  */
   function handleFilterInfoClick() {
     scrollToInfoSection({
       sectionId: "text-search-filters-note",
@@ -254,6 +303,9 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     setFilterNoteHighlighted(false);
   }
 
+  /**
+  * Scroll to the text-search mode explanation and pulse the related guide note.
+  */
   function handleModeInfoClick() {
     scrollToInfoSection({
       sectionId: "text-search-quick-note",
@@ -263,6 +315,10 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     });
   }
 
+  /**
+  * Toggle one curated caption filter chip.
+  * @param {string} filterId
+  */
   function handleCaptionFilterToggle(filterId) {
     setActiveCaptionFilterIds((ids) =>
       ids.includes(filterId) ? ids.filter((id) => id !== filterId) : [...ids, filterId],
@@ -357,8 +413,19 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const filterScoreValueClassName = "search-filter-score-value-accent min-w-[2.8rem] text-right text-sm font-bold mediscan-accent-text";
   const filterScoreScaleClassName = "mt-2 flex items-center justify-between text-[11px] text-muted";
   const filterSortShellClassName = "image-search-mode-shell image-search-mode-shell-accent mt-1.5 flex gap-1 rounded-xl border p-1";
+  /**
+   * Compose classes for a caption-filter chip.
+   * @param {boolean} isActive
+   * @returns {string}
+   */
   const getCaptionFilterButtonClassName = (isActive) =>
     `search-mode-option inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-xs font-medium transition-all ${getFilterToggleStateClasses(isActive)}`;
+  /**
+   * Compose classes for one sort option.
+   * @param {string} _value
+   * @param {boolean} isActive
+   * @returns {string}
+   */
   const getSortOptionClassName = (_value, isActive) =>
     `search-mode-option flex-1 rounded-[0.8rem] border border-transparent px-3 py-2 text-xs font-medium transition-all ${getFilterToggleStateClasses(isActive)}`;
   const quickGuideHighlightClasses = getGuideHighlightClasses(quickNoteHighlighted, "accent");

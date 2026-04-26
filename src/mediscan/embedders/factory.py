@@ -1,10 +1,4 @@
-"""
-Outils de type 'Factory' pour les encodeurs (embedders) pris en charge.
-
-Le module définit une fonction `get_embedder(name: str, **kwargs)` qui instancie un encodeur
-en fonction de son nom (ex: "dinov2_base", "biomedclip",
-etc.) et de ses paramètres spécifiques (ex: `model_name` pour les modèles Hugging Face).
-"""
+"""Factory for instantiating MediScan AI embedders."""
 
 from __future__ import annotations
 
@@ -12,22 +6,22 @@ from .base import Embedder
 from .biomedclip import BioMedCLIPEmbedder
 from .dinov2_base import DINOv2BaseEmbedder
 
-EMBEDDER_REGISTRY = {
+EMBEDDER_REGISTRY: dict[str, type[Embedder]] = {
     DINOv2BaseEmbedder.name: DINOv2BaseEmbedder,
     BioMedCLIPEmbedder.name: BioMedCLIPEmbedder,
 }
 
 
 def get_embedder(name: str, **kwargs: object) -> Embedder:
-    """
-    - Instancie un encodeur en fonction de son nom et de ses paramètres spécifiques.
-    """
+    """Instantiate an embedder from its name and parameters."""
     normalized = name.strip().lower()
     embedder_cls = EMBEDDER_REGISTRY.get(normalized)
     if embedder_cls is None:
         supported = sorted(EMBEDDER_REGISTRY)
-        raise ValueError(f"Unknown embedder '{name}'. Supported embedders: {supported}")
+        raise ValueError(
+            f"Unknown embedder '{name}'. Supported embedders: {supported}"
+        )
     return embedder_cls(**kwargs)
 
 
-__all__ = ["get_embedder"]
+__all__ = ["get_embedder", "EMBEDDER_REGISTRY"]

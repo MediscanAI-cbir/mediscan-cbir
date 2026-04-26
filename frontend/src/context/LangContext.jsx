@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Documentation for context/LangContext.
+ * @module context/LangContext
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { en } from "../i18n/en";
@@ -6,10 +11,19 @@ import { LangContext } from "./LangContextValue";
 
 const translations = { en, fr };
 
+/**
+ * Documentation for context/LangContext.
+ * @param {string|null} value
+ * @returns {"fr"|"en"}
+ */
 function normalizeLanguage(value) {
   return value === "fr" ? "fr" : "en";
 }
 
+/**
+ * Documentation for context/LangContext.
+ * @returns {boolean}
+ */
 function canUseAnimatedViewTransitions() {
   if (typeof document === "undefined" || typeof window === "undefined") return false;
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -18,6 +32,11 @@ function canUseAnimatedViewTransitions() {
   return !prefersReduced && !isSafari && typeof document.startViewTransition === "function";
 }
 
+/**
+ * Documentation for context/LangContext.
+ * @param {{children: React.ReactNode}} props
+ * @returns {JSX.Element}
+ */
 export function LangProvider({ children }) {
   const [lang, setLang] = useState(() => normalizeLanguage(localStorage.getItem("lang")));
   const [langVisible, setLangVisible] = useState(true);
@@ -36,6 +55,10 @@ export function LangProvider({ children }) {
     };
   }, [lang]);
 
+  /**
+   * Documentation for context/LangContext.
+   * @param {string} newLang
+   */
   const setLanguage = (newLang) => {
     const nextLang = normalizeLanguage(newLang);
     if (nextLang === lang) return;

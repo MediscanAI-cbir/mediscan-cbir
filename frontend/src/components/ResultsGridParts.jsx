@@ -1,8 +1,16 @@
+/**
+ * @fileoverview Presentational building blocks for the search results grid.
+ * @module components/ResultsGridParts
+ */
+
 import { useRef, useState } from "react";
 import { ArrowDownToLine, ArrowLeftRight, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { imageUrl } from "../api";
 import { similarityScoreToPercent } from "../utils/searchResults";
 
+/**
+ * Render one labeled detail value inside result modals.
+ */
 function DetailItem({ label, value, mono = false, className = "" }) {
   if (!value) return null;
 
@@ -18,6 +26,12 @@ function DetailItem({ label, value, mono = false, className = "" }) {
   );
 }
 
+/**
+ * Return tone-aware class names shared by all result cards.
+ * @param {"primary"|"accent"} tone
+ * @param {boolean} useHomeVisualTone
+ * @returns {{shell: string, selected: string, rank: string, checkbox: string, checkboxHover: string}
+ */
 function getCardClasses(tone, useHomeVisualTone) {
   if (tone === "accent") {
     return {
@@ -38,6 +52,10 @@ function getCardClasses(tone, useHomeVisualTone) {
   };
 }
 
+/**
+ * Render the visual score bar with percentage and adaptive color.
+ * @param {{score: number, tone: "primary"|"accent"}} props
+ */
 function ScoreBar({ score, tone }) {
   const pct = similarityScoreToPercent(score);
   const color = tone === "accent"
@@ -68,6 +86,22 @@ function ScoreBar({ score, tone }) {
   );
 }
 
+/**
+ * Render one interactive result card with selection and modal entry anchors.
+ *
+ * @param {object} props
+ * @param {object} props.result
+ * @param {boolean} props.selected
+ * @param {function|null} props.onToggleSelect
+ * @param {function} props.onOpenDetails
+ * @param {function|null} props.onOpenCompare
+ * @param {object} props.content
+ * @param {"primary"|"accent"} props.tone
+ * @param {number} [props.entryIndex=0]
+ * @param {boolean} [props.animateOnMount=false]
+ * @param {boolean} [props.useHomeVisualTone=false]
+ * @param {object|null} [props.comparisonSource=null]
+ */
 function ResultCard({
   result,
   selected,
@@ -88,6 +122,7 @@ function ResultCard({
   const [imageFailed, setImageFailed] = useState(false);
   const cardClasses = getCardClasses(tone, useHomeVisualTone);
 
+  /** Switch to the proxied URL, then show the fallback if the image remains unavailable. */
   function handleImageError() {
     if (!imageFailed && directImageSrc && currentImageSrc !== proxiedImageSrc) {
       setCurrentImageSrc(proxiedImageSrc);
@@ -97,6 +132,7 @@ function ResultCard({
     setImageFailed(true);
   }
 
+  /** Open the detail modal with the animation start position. */
   function handleOpenDetails() {
     const rect = previewRef.current?.getBoundingClientRect();
     if (rect) {
@@ -112,6 +148,7 @@ function ResultCard({
     onOpenDetails(result, null);
   }
 
+  /** Open the compare modal when compare mode is available. */
   function handleOpenCompare() {
     if (!onOpenCompare) return;
 
@@ -129,6 +166,10 @@ function ResultCard({
     onOpenCompare(result, null);
   }
 
+  /**
+   * Open the card details from keyboard activation.
+   * @param {KeyboardEvent} event
+   */
   function handleCardKeyDown(event) {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
@@ -238,6 +279,19 @@ function ResultCard({
   );
 }
 
+/**
+ * Render pagination controls with compact page tokens.
+ *
+ * @component
+ * @param {object} props
+ * @param {number} props.currentPage
+ * @param {number} props.totalPages
+ * @param {function(number): void} props.onPageChange
+ * @param {object} props.content
+ * @param {"primary"|"accent"} props.tone
+ * @param {boolean} [props.useHomeVisualTone=false]
+ * @param {boolean} [props.showPageSummary=true]
+ */
 export function PaginationControls({
   currentPage,
   totalPages,
@@ -345,6 +399,10 @@ export function PaginationControls({
   );
 }
 
+/**
+ * Render one export button and expose a loading label while it runs.
+ * @param {{label: string, isLoading: boolean, disabled: boolean, onClick: function, className: string}} props
+ */
 function ExportButton({ label, isLoading, disabled, onClick, className }) {
   return (
     <button
@@ -358,6 +416,17 @@ function ExportButton({ label, isLoading, disabled, onClick, className }) {
   );
 }
 
+/**
+ * Render the result-count header and active search-mode badge.
+ *
+ * @component
+ * @param {object} props
+ * @param {number} props.resultCount
+ * @param {object} props.content
+ * @param {string} props.modeLabel
+ * @param {string} props.modeColor
+ * @param {boolean} [props.headerHiddenOnDesktop=false]
+ */
 export function ResultsGridHeader({
   resultCount,
   content,
@@ -377,6 +446,25 @@ export function ResultsGridHeader({
   );
 }
 
+/**
+ * Render the grid toolbar with pagination and export buttons.
+ *
+ * @component
+ * @param {object} props
+ * @param {number} props.currentPage
+ * @param {number} props.totalPages
+ * @param {function(number): void} props.onPageChange
+ * @param {object} props.content - Localized copy.
+ * @param {"primary"|"accent"} props.tone
+ * @param {boolean} [props.useHomeVisualTone=false]
+ * @param {string} props.exportLabel
+ * @param {boolean} props.exportDisabled
+ * @param {string} props.exportButtonClass
+ * @param {"json"|"csv"|"pdf"|null} props.activeExport - Export format currently running.
+ * @param {function} props.onExportJson
+ * @param {function} props.onExportCsv
+ * @param {function} props.onExportPdf
+ */
 export function ResultsGridToolbar({
   currentPage,
   totalPages,
@@ -433,6 +521,26 @@ export function ResultsGridToolbar({
   );
 }
 
+/**
+ * Render the paginated result-card collection and desktop placeholders.
+ *
+ * @component
+ * @param {object} props
+ * @param {object[]} props.results
+ * @param {string[]} props.selectedIds
+ * @param {function|null} props.onToggleSelect
+ * @param {function} props.onOpenDetails
+ * @param {function|null} props.onOpenCompare
+ * @param {object} props.content
+ * @param {"primary"|"accent"} props.tone
+ * @param {boolean} [props.animateOnMount=false]
+ * @param {boolean} [props.useHomeVisualTone=false]
+ * @param {{src: string}|null} [props.comparisonSource=null]
+ * @param {number} [props.desktopPlaceholderCount=0]
+ * @param {string} [props.desktopLockedHeightClass=""]
+ * @param {boolean} [props.desktopThreeColumns=false]
+ * @param {function} props.onGridRef
+ */
 export function ResultsGridCards({
   results,
   selectedIds,
@@ -484,6 +592,25 @@ export function ResultsGridCards({
   );
 }
 
+/**
+ * Render the full detail-modal presentation layer.
+ *
+ * @component
+ * @param {object} props
+ * @param {React.Ref} props.modalRef
+ * @param {object} props.backdropStyle
+ * @param {object} props.panelStyle
+ * @param {"primary"|"accent"} props.tone
+ * @param {string} props.modeLabel
+ * @param {object} props.content
+ * @param {object} props.result
+ * @param {string} props.imageSrc
+ * @param {string} props.cuiValue
+ * @param {string} props.scorePercent
+ * @param {boolean} props.downloadPending
+ * @param {function} props.onRequestClose
+ * @param {function} props.onDownloadImage
+ */
 export function ResultDetailsModalView({
   modalRef,
   backdropStyle,
@@ -581,6 +708,23 @@ export function ResultDetailsModalView({
   );
 }
 
+/**
+ * Render the full comparison-modal presentation layer.
+ *
+ * @component
+ * @param {object} props
+ * @param {React.Ref} props.modalRef
+ * @param {object} props.backdropStyle
+ * @param {object} props.panelStyle
+ * @param {"primary"|"accent"} props.tone
+ * @param {object} props.content
+ * @param {object} props.result
+ * @param {object} props.comparisonSource
+ * @param {string} props.imageSrc
+ * @param {string} props.cuiValue
+ * @param {string} props.scorePercent
+ * @param {function} props.onRequestClose
+ */
 export function ResultCompareModalView({
   modalRef,
   backdropStyle,

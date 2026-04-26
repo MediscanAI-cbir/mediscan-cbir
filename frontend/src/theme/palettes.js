@@ -1,6 +1,14 @@
+/**
+ * @fileoverview Palettes de couleurs et utilitaires d'application des variables CSS.
+ * @module data/palettes
+ */
+
+/** Storage key for the selected palette in localStorage. */
 export const PALETTE_STORAGE_KEY = "mediscan-palette";
+/** Default palette identifier. */
 export const DEFAULT_PALETTE_ID = "classic";
 
+/** Palettes disponibles avec leurs tokens light/dark */
 export const COLOR_PALETTES = {
   classic: {
     label: "Classic",
@@ -189,16 +197,33 @@ export const COLOR_PALETTES = {
   },
 };
 
+/**
+ * Documentation for theme/palettes.
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isPaletteId(value) {
   return typeof value === "string" && Object.hasOwn(COLOR_PALETTES, value);
 }
 
+/**
+ * Documentation for theme/palettes.
+ * @param {"light"|"dark"} theme
+ * @param {string} [paletteId=DEFAULT_PALETTE_ID]
+ * @returns {object}
+ */
 export function getPalette(theme, paletteId = DEFAULT_PALETTE_ID) {
   const resolvedId = isPaletteId(paletteId) ? paletteId : DEFAULT_PALETTE_ID;
   const palette = COLOR_PALETTES[resolvedId];
   return palette[theme] ?? palette.light;
 }
 
+/**
+ * Documentation for theme/palettes.
+ * @param {HTMLElement} root
+ * @param {"light"|"dark"} theme
+ * @param {string} paletteId
+ */
 export function applyPaletteVariables(root, theme, paletteId) {
   const palette = getPalette(theme, paletteId);
 

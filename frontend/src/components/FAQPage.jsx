@@ -1,5 +1,5 @@
 /**
- * @fileoverview Page FAQ avec accordéon filtrable par catégorie.
+ * @fileoverview Documentation for components/FAQPage.
  * @module components/FAQPage
  */
 
@@ -11,23 +11,21 @@ import Spinner from "./Spinner";
 /**
  * Page FAQ
  *
- * Les questions/réponses sont chargées depuis les traductions ("t.faq").
+ * Documentation for components/FAQPage.
  *
  * @component
  * @param {object} props
- * @param {function(string): void} props.onPageChange - Callback de navigation vers une autre page
+ * @param {function(string): void} props.onPageChange
  * @returns {JSX.Element}
  *
- * @example
- * <FAQPage onPageChange={(page) => setCurrentPage(page)} />
  */
 export default function FAQPage({ onPageChange }) {
   const { t } = useContext(LangContext);
   const content = t.faq;
 
-  /** @type {[string, function]} Catégorie d'onglet active */
+  /** Active tab category. */
   const [activeTab, setActiveTab] = useState("general");
-  /** @type {[number|null, function]} Index de la question ouverte dans l'accordéon */
+  /** Index of the open accordion question. */
   const [openIndex, setOpenIndex] = useState(null);
 
   if (!content || !content.items) {
@@ -37,8 +35,8 @@ export default function FAQPage({ onPageChange }) {
       </div>
     );
   }
-  
-  /** Questions filtrées selon la catégorie sélectionnée */
+
+  /** Questions filtered by the selected category. */
   const filteredItems = content.items.filter(item => item.category === activeTab);
 
   return (
@@ -73,7 +71,7 @@ export default function FAQPage({ onPageChange }) {
           ))}
         </div>
 
-        {/* Accordéon */}
+        {/* Accordion */}
         <div className="flex flex-col gap-2">
           {filteredItems.map((item, index) => {
             const isOpen = openIndex === index;

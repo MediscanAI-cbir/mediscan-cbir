@@ -1,6 +1,4 @@
-"""
-Outils de gestion pour les métadonnées du dataset ROCO.
-"""
+"""Management utilities for ROCOv2 dataset metadata."""
 
 from __future__ import annotations
 
@@ -13,7 +11,10 @@ from typing import Iterator
 @dataclass(frozen=True)
 class MetadataRecord:
     """
-    - Représente une ligne unique de métadonnées médicales.
+    Normalized metadata row for one ROCOv2 medical image.
+
+    The fields mirror the IDs JSON consumed by FAISS search, so the dataset loader
+    can be used directly by index-building scripts without extra shape adapters.
     """
     image_id: str
     path: str
@@ -21,6 +22,7 @@ class MetadataRecord:
     cui: str
 
     def to_dict(self) -> dict[str, str]:
+        """Convert the record to a serializable dictionary."""
         return {
             "image_id": self.image_id,
             "path": self.path,
@@ -31,22 +33,26 @@ class MetadataRecord:
 
 class RocoDataset:
     """
-    - Chargeur en mémoire pour les métadonnées.csv avec un ordre d'itération déterministe.
+    In-memory loader for ROCOv2 metadata.
+
+    Loading everything eagerly keeps index construction deterministic: validation
+    errors are raised before any model inference starts, and iteration order stays
+    identical to the CSV order used for FAISS row alignment.
     """
     REQUIRED_COLUMNS = ("image_id", "path", "caption", "cui")
 
-    def __init__(self, metadata_csv: str | Path = "data/roco_train_full/metadata.csv") -> None:
+    def __init__(
+        self,
+        metadata_csv: str | Path = "data/roco_train_full/metadata.csv",
+    ) -> None:
+        """Initialize the dataset by loading and validating the CSV file."""
         self.metadata_csv = Path(metadata_csv)
         if not self.metadata_csv.exists():
             raise FileNotFoundError(f"Metadata CSV not found: {self.metadata_csv}")
-
         self._records = self._load_records()
 
     def _load_records(self) -> list[MetadataRecord]:
-        """
-        - Charge les métadonnées depuis le fichier CSV et les valide.
-        - Assure que les colonnes requises sont présentes et que les données sont cohérentes.
-        """
+        """Read the CSV and enforce the minimum fields required by the pipeline."""
         records: list[MetadataRecord] = []
 
         with self.metadata_csv.open("r", newline="", encoding="utf-8") as csv_file:
@@ -55,12 +61,12 @@ class RocoDataset:
                 raise ValueError(f"CSV file has no header: {self.metadata_csv}")
 
             missing_columns = [
-                column for column in self.REQUIRED_COLUMNS if column not in reader.fieldnames
+                column for column in self.REQUIRED_COLUMNS
+                if column not in reader.fieldnames
             ]
             if missing_columns:
                 raise ValueError(
-                    "CSV missing required columns "
-                    f"{missing_columns} in {self.metadata_csv}"
+                    f"CSV missing required columns {missing_columns} in {self.metadata_csv}"
                 )
 
             for row_number, row in enumerate(reader, start=2):
@@ -87,13 +93,16 @@ class RocoDataset:
         return records
 
     def __len__(self) -> int:
+        """Return the total number of records in the dataset."""
         return len(self._records)
 
     def __iter__(self) -> Iterator[MetadataRecord]:
+        """Iterate over dataset records in CSV order."""
         return iter(self._records)
 
     @property
     def records(self) -> list[MetadataRecord]:
+        """Return a copy of all records."""
         return list(self._records)
 
 

@@ -1,3 +1,16 @@
+/**
+ * @fileoverview Filter card components for the CBIR search page.
+ * @module components/SearchFilterSections
+ */
+
+/**
+ * Render the base card wrapper used around search filters.
+ * @component
+ * @param {object} props
+ * @param {React.ReactNode} props.children
+ * @param {string} [props.className=""]
+ * @returns {JSX.Element}
+ */
 function SearchFilterCard({ children, className = "" }) {
   return (
     <div className={`search-filter-card rounded-[1.2rem] border border-border/70 bg-bg/60 p-3.5 ${className}`}>
@@ -6,10 +19,35 @@ function SearchFilterCard({ children, className = "" }) {
   );
 }
 
+/**
+ * Join CSS class names after filtering empty values.
+ * @param {...string} classNames
+ * @returns {string}
+ */
 function joinClassNames(...classNames) {
   return classNames.filter(Boolean).join(" ");
 }
 
+/**
+ * Render the filter panel header with title, active count, and reset action.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.title
+ * @param {string} [props.titleClassName=""]
+ * @param {string} props.infoLabel
+ * @param {function(): void} props.onInfoClick
+ * @param {string} [props.infoButtonClassName=""]
+ * @param {number} [props.activeFilterCount=0]
+ * @param {string} [props.activeCountClassName=""]
+ * @param {string} props.hint
+ * @param {string} [props.hintClassName=""]
+ * @param {function(): void} props.onReset
+ * @param {boolean} [props.resetDisabled=false]
+ * @param {string} props.resetLabel
+ * @param {string} [props.resetButtonClassName=""]
+ * @returns {JSX.Element}
+ */
 export function SearchFilterPanelHeader({
   title,
   titleClassName = "",
@@ -54,6 +92,31 @@ export function SearchFilterPanelHeader({
   );
 }
 
+
+/**
+ * Render the caption text filter and curated quick-term chips.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.label
+ * @param {string} [props.labelClassName=""]
+ * @param {string} props.value
+ * @param {function(string): void} props.onChange
+ * @param {string} props.placeholder
+ * @param {string} [props.inputWrapperClassName="mt-1.5"]
+ * @param {string} [props.inputClassName=""]
+ * @param {React.ReactNode} [props.leadingIcon=null]
+ * @param {Array<{id: string, label: string, count: number}>} [props.suggestedFilters=[]]
+ * @param {string[]} [props.activeFilterIds=[]]
+ * @param {function(string): void} props.onToggleFilter
+ * @param {function(boolean): string} props.getToggleClassName
+ * @param {string} props.quickTermsLabel
+ * @param {string} [props.quickTermsLabelClassName=""]
+ * @param {string} props.quickTermsHint
+ * @param {string} [props.quickTermsHintClassName=""]
+ * @param {string} [props.quickTermsListClassName="mt-1.5 flex flex-wrap gap-2"]
+ * @returns {JSX.Element}
+ */
 export function SearchCaptionFilterCard({
   label,
   labelClassName = "",
@@ -126,6 +189,23 @@ export function SearchCaptionFilterCard({
   );
 }
 
+/**
+ * Render free-text CUI search plus type-specific CUI select controls.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.label
+ * @param {string} [props.labelClassName=""]
+ * @param {string} props.value
+ * @param {function(string): void} props.onChange
+ * @param {string} props.placeholder
+ * @param {string} [props.inputClassName=""]
+ * @param {Array<{label: string, value: string, onChange: function, options: Array<{cui: string, label_fr: string, label_en: string}>}>} props.selectGroups
+ * @param {string} [props.selectLabelClassName=""]
+ * @param {string} [props.selectClassName=""]
+ * @param {string} props.lang
+ * @returns {JSX.Element}
+ */
 export function SearchCuiFilterCard({
   label,
   labelClassName = "",
@@ -190,6 +270,21 @@ export function SearchCuiFilterCard({
   );
 }
 
+/**
+ * Render the minimum-score filter as a percentage slider.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.label
+ * @param {string} [props.labelClassName=""]
+ * @param {number} props.value
+ * @param {function(number): void} props.onChange
+ * @param {string} [props.sliderClassName=""]
+ * @param {string} [props.scoreClassName=""]
+ * @param {object} [props.scoreStyle]
+ * @param {string} [props.scaleClassName=""]
+ * @returns {JSX.Element}
+ */
 export function SearchScoreFilterCard({
   label,
   labelClassName = "",
@@ -227,6 +322,19 @@ export function SearchScoreFilterCard({
   );
 }
 
+/**
+ * Render the image/reference identifier text filter.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.label
+ * @param {string} [props.labelClassName=""]
+ * @param {string} props.value
+ * @param {function(string): void} props.onChange
+ * @param {string} props.placeholder
+ * @param {string} [props.inputClassName=""]
+ * @returns {JSX.Element}
+ */
 export function SearchReferenceFilterCard({
   label,
   labelClassName = "",
@@ -251,6 +359,20 @@ export function SearchReferenceFilterCard({
   );
 }
 
+/**
+ * Render the result sort control as a segmented option group.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.label
+ * @param {string} [props.labelClassName=""]
+ * @param {string} [props.shellClassName=""]
+ * @param {Array<{value: string, label: string}>} props.options
+ * @param {string} props.currentValue
+ * @param {function(string): void} props.onChange
+ * @param {function(string, boolean): string} props.getOptionClassName
+ * @returns {JSX.Element}
+ */
 export function SearchSortFilterCard({
   label,
   labelClassName = "",

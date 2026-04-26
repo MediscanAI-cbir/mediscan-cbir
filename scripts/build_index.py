@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Permet de construire un index FAISS à partir d'un fichier CSV de métadonnées et d'un outil d'intégration.
-"""
+"""Build a FAISS index from a medical image dataset."""
 
 from __future__ import annotations
 
@@ -22,24 +20,27 @@ configure_cpu_environment()
 
 
 def parse_args() -> argparse.Namespace:
-    """
-    - Gestion des arguments en ligne de commande pour la construction de l'index.
-    """
+    """Parse and return command-line arguments."""
     parser = argparse.ArgumentParser(description="Build a FAISS index from metadata.csv")
-    parser.add_argument("--embedder", default="dinov2_base")
-    parser.add_argument("--model-name", default=None)
-    parser.add_argument("--metadata", default="data/roco_train_full/metadata.csv")
-    parser.add_argument("--index-path", default="artifacts/index.faiss")
-    parser.add_argument("--ids-path", default="artifacts/ids.json")
-    parser.add_argument("--checkpoint-prefix", default=None)
-    parser.add_argument("--checkpoint-every", type=int, default=0)
+    parser.add_argument("--embedder", default="dinov2_base",
+                        help="Embedder name (for example: dinov2_base, biomedclip)")
+    parser.add_argument("--model-name", default=None,
+                        help="Optional pretrained model override")
+    parser.add_argument("--metadata", default="data/roco_train_full/metadata.csv",
+                        help="Path to the dataset metadata.csv file")
+    parser.add_argument("--index-path", default="artifacts/index.faiss",
+                        help="Destination path for the FAISS index")
+    parser.add_argument("--ids-path", default="artifacts/ids.json",
+                        help="Destination path for the IDs JSON file")
+    parser.add_argument("--checkpoint-prefix", default=None,
+                        help="Checkpoint file prefix used for resume support")
+    parser.add_argument("--checkpoint-every", type=int, default=0,
+                        help="Save a checkpoint every N images (0 disables checkpoints)")
     return parser.parse_args()
 
 
 def _checkpoint_paths(prefix: str | Path | None) -> dict[str, Path] | None:
-    """
-    - Génère les chemins de fichiers pour les checkpoints (métadonnées, vecteurs, ids) à partir d'un préfixe.
-    """
+    """Generate checkpoint file paths from a prefix."""
     if prefix is None:
         return None
 
@@ -53,18 +54,14 @@ def _checkpoint_paths(prefix: str | Path | None) -> dict[str, Path] | None:
 
 
 def _atomic_write_text(path: Path, content: str) -> None:
-    """
-    - Écrit du texte dans un fichier de manière atomique pour éviter les corruptions.
-    """
+    """Write text to a file atomically."""
     tmp_path = path.with_name(f"{path.name}.tmp")
     tmp_path.write_text(content, encoding="utf-8")
     tmp_path.replace(path)
 
 
 def _atomic_save_npy(path: Path, matrix: np.ndarray) -> None:
-    """
-    - Sauvegarde une matrice NumPy dans un fichier de manière atomique.
-    """ 
+    """Save a NumPy matrix to a file atomically."""
     tmp_path = path.with_name(f"{path.name}.tmp")
     with tmp_path.open("wb") as handle:
         np.save(handle, matrix)
@@ -78,10 +75,7 @@ def _load_checkpoint(
     embedder_dim: int,
     metadata_path: Path,
 ) -> tuple[list[np.ndarray], list[dict[str, Any]], int, int]:
-    """
-    - Tente de charger un checkpoint existant et valide pour reprendre l'indexation.
-    - Vérifie la cohérence du checkpoint avec les paramètres actuels.
-    """
+    """Try to load an existing checkpoint to resume indexing."""
     checkpoint_paths = _checkpoint_paths(checkpoint_prefix)
     if checkpoint_paths is None:
         return [], [], 0, 0
@@ -97,28 +91,28 @@ def _load_checkpoint(
         matrix = np.load(vectors_path)
         indexed_rows = json.loads(ids_path.read_text(encoding="utf-8"))
     except Exception as exc:
-        print(f"[CHECKPOINT] Ignoring unreadable checkpoint at {meta_path}: {exc}")
+        print(f"[CHECKPOINT] Ignored unreadable checkpoint at {meta_path}: {exc}")
         return [], [], 0, 0
 
     if meta.get("embedder") != embedder_name:
-        print(f"[CHECKPOINT] Ignoring checkpoint with different embedder: {meta_path}")
+        print(f"[CHECKPOINT] Ignored checkpoint with different embedder: {meta_path}")
         return [], [], 0, 0
 
     if int(meta.get("dim", -1)) != embedder_dim:
-        print(f"[CHECKPOINT] Ignoring checkpoint with different embedding dim: {meta_path}")
+        print(f"[CHECKPOINT] Ignored checkpoint with different dimension: {meta_path}")
         return [], [], 0, 0
 
     if str(meta.get("metadata_path")) != str(metadata_path):
-        print(f"[CHECKPOINT] Ignoring checkpoint for different metadata: {meta_path}")
+        print(f"[CHECKPOINT] Ignored checkpoint with different metadata: {meta_path}")
         return [], [], 0, 0
 
     if matrix.ndim != 2 or matrix.shape[1] != embedder_dim:
-        print(f"[CHECKPOINT] Ignoring invalid checkpoint matrix shape: {matrix.shape}")
+        print(f"[CHECKPOINT] Ignored checkpoint with invalid matrix shape: {matrix.shape}")
         return [], [], 0, 0
 
     if matrix.shape[0] != len(indexed_rows):
         print(
-            "[CHECKPOINT] Ignoring checkpoint with inconsistent vector/row count: "
+            f"[CHECKPOINT] Ignored checkpoint with vector/row mismatch: "
             f"{matrix.shape[0]} != {len(indexed_rows)}"
         )
         return [], [], 0, 0
@@ -140,10 +134,7 @@ def _save_checkpoint(
     processed_records: int,
     skipped: int,
 ) -> None:
-    """
-    - Sauvegarde un checkpoint avec les vecteurs, les métadonnées et les stats d'indexation.
-    - Utilise des écritures atomiques pour garantir l'intégrité du checkpoint.
-    """
+    """Save a checkpoint for the current indexing state."""
     checkpoint_paths = _checkpoint_paths(checkpoint_prefix)
     if checkpoint_paths is None:
         return
@@ -172,7 +163,7 @@ def _save_checkpoint(
         json.dumps(meta, ensure_ascii=False, indent=2),
     )
     print(
-        f"[CHECKPOINT] saved processed={processed_records} "
+        f"[CHECKPOINT] saved: processed={processed_records} "
         f"indexed={len(indexed_rows)} skipped={skipped}"
     )
 
@@ -189,10 +180,7 @@ def _maybe_save_checkpoint(
     indexed_rows: list[dict[str, Any]],
     skipped: int,
 ) -> None:
-    """
-    - Vérifie si un checkpoint doit être sauvegardé à ce stade de 
-      l'indexation en fonction du paramètre checkpoint_every.
-    """
+    """Save a checkpoint when the configured frequency is reached."""
     if checkpoint_every <= 0 or current_record % checkpoint_every != 0:
         return
 
@@ -209,10 +197,7 @@ def _maybe_save_checkpoint(
 
 
 def main() -> None:
-    """
-    - Point d'entrée principal : initialise l'embedder, gère la reprise par checkpoint,
-      encode les images du dataset et sauvegarde l'index FAISS et les identifiants.
-    """
+    """Main entrypoint for the index-building script."""
     args = parse_args()
     set_faiss_threads(faiss)
 
@@ -233,6 +218,7 @@ def main() -> None:
         )
 
     def save_progress(current_record: int) -> None:
+        """Save a checkpoint when the configured frequency is reached."""
         _maybe_save_checkpoint(
             checkpoint_every=args.checkpoint_every,
             current_record=current_record,
@@ -251,7 +237,7 @@ def main() -> None:
 
         image_path = resolve_path(record.path)
         if not image_path.exists():
-            print(f"[WARN] Missing image file, skipping: {image_path}")
+            print(f"[WARN] Missing image skipped: {image_path}")
             skipped += 1
             save_progress(idx)
             continue
@@ -260,7 +246,7 @@ def main() -> None:
             with Image.open(image_path) as image:
                 vector = embedder.encode_pil(image)
         except Exception as exc:
-            print(f"[WARN] Failed to embed {image_path}: {exc}")
+            print(f"[WARN] Encoding failed for {image_path}: {exc}")
             skipped += 1
             save_progress(idx)
             continue
@@ -278,7 +264,7 @@ def main() -> None:
         indexed_rows.append(record.to_dict())
 
         if idx % 100 == 0:
-            print(f"Processed {idx}/{len(dataset)} images")
+            print(f"Processing: {idx}/{len(dataset)} images")
         save_progress(idx)
 
     if args.checkpoint_every > 0:
@@ -294,13 +280,13 @@ def main() -> None:
         )
 
     if not vectors:
-        raise RuntimeError("No embeddings generated. Index build aborted.")
+        raise RuntimeError("No embedding generated. Index build cancelled.")
 
     matrix = np.vstack(vectors).astype(np.float32, copy=False)
     if matrix.shape[1] != embedder.dim:
         raise RuntimeError(
-            f"Embedding dimension mismatch: matrix dim={matrix.shape[1]} "
-            f"embedder dim={embedder.dim}"
+            f"Dimension mismatch: matrix={matrix.shape[1]}, "
+            f"embedder={embedder.dim}"
         )
 
     faiss.normalize_L2(matrix)
@@ -317,8 +303,9 @@ def main() -> None:
         json.dump(indexed_rows, output, ensure_ascii=False, indent=2)
 
     print(
-        f"Index built successfully: indexed={len(indexed_rows)}, skipped={skipped}, "
-        f"dim={embedder.dim}, index_path={index_path}, ids_path={ids_path}"
+        f"Index built successfully: indexed={len(indexed_rows)}, "
+        f"skipped={skipped}, dim={embedder.dim}, "
+        f"index={index_path}, ids={ids_path}"
     )
 
 

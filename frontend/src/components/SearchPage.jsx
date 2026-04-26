@@ -1,5 +1,5 @@
 /**
- * @fileoverview Page de recherche principale avec gestion des vues (hub, image, texte).
+ * @fileoverview Search page router for hub, image search, and text search views.
  * @module components/SearchPage
  */
 
@@ -7,14 +7,14 @@ import { lazy, Suspense } from "react";
 import SearchHubView from "./SearchHubView";
 import Spinner from "./Spinner";
 
-/** @see {@link module:components/ImageSearchView} Chargement paresseux des vues de recherche pour réduire le bundle initial. */
+// Lazy-load to reduce the initial bundle
 const ImageSearchView = lazy(() => import("./ImageSearchView"));
-/** @see {@link module:components/TextSearchView} */
 const TextSearchView = lazy(() => import("./TextSearchView"));
 
 
 /**
- * Fallback affiché pendant le chargement paresseux des vues de recherche.
+ * Render the fallback shown while lazy search views are loading.
+ *
  * @component
  * @returns {JSX.Element}
  */
@@ -29,22 +29,17 @@ function SearchViewLoader() {
 }
 
 /**
- * Conteneur principal de la page de recherche CBIR.
- * Gère le routage entre trois vues 
- * 
+ * Render the main CBIR search page container.
+ *
+ * Heavy image/text workflows are lazy-loaded after the hub so the first search
+ * screen stays responsive while preserving one shared chrome/tone contract.
+ *
  * @component
  * @param {object} props
- * @param {"hub"|"image"|"text"} [props.view="hub"] - Vue active.
- * @param {function(string): void} [props.onSearchViewChange] - Callback de changement de vue.
- * @param {function(string): void} [props.onSearchToneChange] - Callback de changement de ton
+ * @param {"hub"|"image"|"text"} [props.view="hub"]
+ * @param {function(string): void} [props.onSearchViewChange]
+ * @param {function(string): void} [props.onSearchToneChange]
  * @returns {JSX.Element}
- *
- * @example
- * <SearchPage
- *   view={searchView}
- *   onSearchViewChange={(v) => setSearchView(v)}
- *   onSearchToneChange={(tone) => setNavTone(tone)}
- * />
  */
 export default function SearchPage({
   view = "hub",

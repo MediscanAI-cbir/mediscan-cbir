@@ -1,6 +1,6 @@
 /**
- * CUI categories grouped by semantic type.
- * Derived from artifacts/cui_categories.json
+ * @fileoverview CUI category definitions grouped by semantic type.
+ * @module data/cuiCategories
  */
 
 export const CUI_TYPES = {

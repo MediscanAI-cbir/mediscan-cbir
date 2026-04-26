@@ -1,15 +1,39 @@
+/**
+ * @fileoverview Shared UI helpers for image and text search workflows.
+ * @module utils/searchViewHelpers
+ */
+
 import { getResultCuiSet } from "./searchResults";
 
+/**
+ * Clear a timer stored in a React ref.
+ * @param {{ current: number }} timeoutRef
+ */
 export function clearTimeoutRef(timeoutRef) {
   window.clearTimeout(timeoutRef.current);
 }
 
+/**
+ * Resolve the active caption filter ids into full filter definitions.
+ * @param {string[]} activeFilterIds
+ * @param {Array<{id: string, terms: string[]}>} availableFilters
+ * @returns {Array}
+ */
 export function getSelectedCaptionFilters(activeFilterIds, availableFilters) {
   return activeFilterIds
     .map((filterId) => availableFilters.find((entry) => entry.id === filterId))
     .filter(Boolean);
 }
 
+/**
+ * Build the available CUI filter groups from the current result rows.
+ *
+ * Only CUIs present in the results are returned, keeping the filter UI focused
+ * on options that can change the visible result set.
+ * @param {object[]} rows
+ * @param {object} cuiTypes
+ * @returns {{ modalite: object[], anatomie: object[], finding: object[] }}
+ */
 export function buildAvailableCuiByType(rows, cuiTypes) {
   const found = { modalite: new Set(), anatomie: new Set(), finding: new Set() };
 
@@ -35,6 +59,11 @@ export function buildAvailableCuiByType(rows, cuiTypes) {
   };
 }
 
+/**
+ * Restart a temporary highlight animation for a guide note.
+ * @param {function(boolean): void} setter
+ * @param {{ current: number }} timerRef
+ */
 export function restartNoteHighlight(setter, timerRef) {
   window.clearTimeout(timerRef.current);
   setter(false);
@@ -47,6 +76,12 @@ export function restartNoteHighlight(setter, timerRef) {
   });
 }
 
+/**
+ * Return the CSS classes used to highlight guide-note elements by tone.
+ * @param {boolean} isHighlighted
+ * @param {"primary"|"accent"} [tone="accent"]
+ * @returns {{ icon: string, heading: string, chip: string, title: string, copy: string }
+ */
 export function getGuideHighlightClasses(isHighlighted, tone = "accent") {
   if (!isHighlighted) {
     return {
@@ -69,6 +104,17 @@ export function getGuideHighlightClasses(isHighlighted, tone = "accent") {
   };
 }
 
+/**
+ * Scroll to an explanatory section and optionally run a completion callback.
+ *
+ * Respects prefers-reduced-motion by skipping smooth scrolling when users ask
+ * the browser to reduce animation.
+ * @param {object} params
+ * @param {string} params.sectionId
+ * @param {string} [params.eyebrowId]
+ * @param {object} params.scrollTimerRef
+ * @param {function} [params.onComplete]
+ */
 export function scrollToInfoSection({
   sectionId,
   eyebrowId,

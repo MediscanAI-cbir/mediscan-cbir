@@ -1,10 +1,24 @@
+/**
+ * @fileoverview Documentation for components/FeaturesShowcase.
+ * @module components/FeaturesShowcase
+ */
+
 import { useContext, useEffect, useState } from "react";
 import { LangContext } from "../context/LangContextValue";
 import FeatureCarousel from "./FeatureCarousel";
 
+/**
+ * Documentation for components/FeaturesShowcase.
+ *
+ * @component
+ * @param {object} props
+ * @param {boolean} [props.embedded=false]
+ * @returns {JSX.Element}
+ */
 export default function FeaturesShowcase({ embedded = false }) {
   const { t } = useContext(LangContext);
   const content = t.features;
+  /** Trigger entry animations after the first frame. */
   const [ready, setReady] = useState(false);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Page explicative du fonctionnement du système CBIR MediScan.
+ * @fileoverview Documentation for components/HowItWorks.
  * @module components/HowItWorks
  */
 
@@ -7,10 +7,8 @@ import { useContext } from "react";
 import { LangContext } from "../context/LangContextValue";
 
 /**
- * Page décrivant les deux modes de recherche du système CBIR :
- * - **Visuel** : similarité par descripteurs d'image.
- * - **Sémantique** : similarité par embeddings de captions textuelles.
- * 
+ * Documentation for components/HowItWorks.
+ *
  * @component
  * @returns {JSX.Element}
  */
@@ -24,7 +22,7 @@ export default function HowItWorks() {
         <h1 className="text-5xl font-bold text-title text-center mb-4">{content.headline}</h1>
         <p className="text-lg text-muted text-center mb-16 max-w-2xl mx-auto">{content.description}</p>
 
-        {/* Two Modes */}
+        {/* Deux modes */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-title mb-2 text-center">{content.modes.title}</h2>
           <p className="text-muted text-center mb-8 max-w-2xl mx-auto">{content.modes.description}</p>
@@ -53,7 +51,7 @@ export default function HowItWorks() {
           </div>
         </div>
 
-        {/* When to Use */}
+        {/* Comment l'utiliser ? */}
         <div className="bg-bg-soft rounded-2xl p-8 transition-colors duration-300">
           <h2 className="text-2xl font-bold text-title mb-2 text-center">{content.when.title}</h2>
           <p className="text-muted text-center mb-8 max-w-xl mx-auto text-sm">{content.when.description}</p>

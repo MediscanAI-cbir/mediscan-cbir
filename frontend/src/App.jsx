@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Documentation for App.
+ * @module App
+ */
+
 import { lazy, Suspense, useState, useEffect, useRef, useContext } from "react";
 import { LangProvider } from "./context/LangContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -8,12 +13,14 @@ import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
 import Spinner from "./components/Spinner";
 
+// Chargement paresseux des pages secondaires
 const SearchPage = lazy(() => import("./components/SearchPage"));
 const ContactPage = lazy(() => import("./components/ContactPage"));
 const HowItWorks = lazy(() => import("./components/HowItWorks"));
 const FAQPage = lazy(() => import("./components/FAQPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
 
+// Preload chunks while idle to speed up navigation
 const lazyPagePreloaders = [
   () => import("./components/SearchPage"),
   () => import("./components/ImageSearchView"),
@@ -26,6 +33,7 @@ const lazyPagePreloaders = [
 
 const MOTION_ENTER_DURATION_MS = 620;
 const MOTION_ENTER_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+// CSS surfaces applied to the page background for the active route
 const HOME_SURFACE = "home-page";
 const SEARCH_HUB_SURFACE = "search-hub-surface";
 const SEARCH_PRIMARY_SURFACE = "search-primary-surface";
@@ -36,6 +44,7 @@ const SURFACE_FADE_DURATION_MS = 620;
 const SEARCH_PAGE = "search";
 const DEFAULT_ROUTE = { page: "home", searchView: "hub" };
 const VALID_SEARCH_VIEWS = new Set(["hub", "image", "text"]);
+// Default navigation tone for each search view
 const SEARCH_VIEW_TONES = {
   hub: "default",
   image: "primary",
@@ -62,6 +71,12 @@ const STATIC_ROUTE_SURFACES = {
   faq: HOME_SURFACE,
 };
 
+/**
+ * Documentation for App.
+ * Return the default route when the page is unknown.
+ * @param {string|object} nextRoute
+ * @returns {{page: string, searchView: string}
+ */
 function normalizeRoute(nextRoute) {
   let page = DEFAULT_ROUTE.page;
   let searchView = DEFAULT_ROUTE.searchView;
@@ -89,20 +104,42 @@ function normalizeRoute(nextRoute) {
   };
 }
 
+/**
+ * Compare two normalized routes.
+ * @param {{page: string, searchView: string}} left
+ * @param {{page: string, searchView: string}} right
+ * @returns {boolean}
+ */
 function areRoutesEqual(left, right) {
   return left.page === right.page && left.searchView === right.searchView;
 }
 
+/**
+ * Return the initial chrome tone for a route.
+ * @param {{page: string, searchView: string}} route
+ * @returns {string}
+ */
 function getInitialSearchTone(route) {
   return route.page === SEARCH_PAGE
     ? SEARCH_VIEW_TONES[route.searchView] ?? "default"
     : "default";
 }
 
+/**
+ * Indicate whether the footer should be visible for the current route.
+ * @param {{page: string, searchView: string}} route
+ * @returns {boolean}
+ */
 function shouldShowFooter(route) {
   return route.page !== SEARCH_PAGE || route.searchView !== "hub";
 }
 
+/**
+ * Return the surface CSS class for the route and active search tone.
+ * @param {{page: string, searchView: string}} route
+ * @param {string} [searchTone="default"]
+ * @returns {string}
+ */
 function getRouteSurface(route, searchTone = "default") {
   if (route.page !== SEARCH_PAGE) {
     return STATIC_ROUTE_SURFACES[route.page] ?? DEFAULT_SURFACE;
@@ -114,6 +151,10 @@ function getRouteSurface(route, searchTone = "default") {
   return DEFAULT_SURFACE;
 }
 
+/**
+ * Fallback displayed while a page is lazy-loading.
+ * @returns {JSX.Element}
+ */
 function PageLoader() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center px-6 py-20">
@@ -122,6 +163,12 @@ function PageLoader() {
   );
 }
 
+/**
+ * Application core that handles routing, page transitions,
+ * background surfaces, and chunk preloading.
+ *
+ * @component
+ */
 function AppInner() {
   const { langVisible } = useContext(LangContext);
   const { theme } = useTheme();
@@ -140,6 +187,7 @@ function AppInner() {
   const bodyLockedRef = useRef(false);
   const surfaceRevealFrameRef = useRef(0);
 
+  /** Verrouille le scroll du body pendant la transition de page */
   function lockBodyScroll() {
     if (bodyLockedRef.current) return;
     const y = window.scrollY;
@@ -152,6 +200,7 @@ function AppInner() {
     bodyLockedRef.current = true;
   }
 
+  /** Unlock scroll and reset the position to 0 when resetScroll is true */
   function clearBodyScrollLock(resetScroll = true) {
     document.body.style.position = "";
     document.body.style.top = "";
@@ -164,11 +213,16 @@ function AppInner() {
     }
   }
 
+  /** Cancel pending surface reveal frames. */
   function clearSurfaceRevealFrames() {
     cancelAnimationFrame(surfaceRevealFrameRef.current);
     surfaceRevealFrameRef.current = 0;
   }
 
+  /**
+  * Navigate to a route with a page transition and surface fade.
+  * @param {string|object} nextRouteLike
+  */
   function navigateToRoute(nextRouteLike) {
     const nextRoute = normalizeRoute(nextRouteLike);
     const nextSearchTone = getInitialSearchTone(nextRoute);
@@ -204,14 +258,23 @@ function AppInner() {
     }, PAGE_EXIT_DURATION_MS);
   }
 
+  /**
+   * Navigate to a static page.
+   * @param {string} page
+   */
   function handlePageChange(page) {
     navigateToRoute(page);
   }
 
+  /**
+   * Navigate to a search subview.
+   * @param {"hub"|"image"|"text"} searchView
+   */
   function handleSearchViewChange(searchView) {
     navigateToRoute({ page: "search", searchView });
   }
 
+  /** Update the tone without causing a re-render when unchanged */
   function handleSearchToneChange(nextTone) {
     setSearchTone((currentTone) =>
       currentTone === nextTone ? currentTone : nextTone
@@ -220,6 +283,9 @@ function AppInner() {
 
   useEffect(() => {
     const navIntroTimer = window.setTimeout(() => setNavVisible(true), 180);
+    /**
+     * Preload secondary pages when the browser becomes available.
+     */
     const preloadChunks = () => {
       lazyPagePreloaders.forEach((preload) => { preload(); });
     };
@@ -341,6 +407,10 @@ function AppInner() {
   );
 }
 
+/**
+ * Root application with theme and language providers.
+ * @returns {JSX.Element}
+ */
 export default function App() {
   return (
     <ThemeProvider>

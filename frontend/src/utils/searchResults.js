@@ -1,3 +1,14 @@
+/**
+ * @fileoverview Search-result filtering, score formatting, and export helpers.
+ * @module utils/searchResults
+ */
+
+
+/**
+ * Return the result rows from either a raw array or the standard API payload.
+ * @param {object|Array|null} payload
+ * @returns {Array}
+ */
 function getResultRows(payload) {
   if (!payload) {
     return [];
@@ -10,11 +21,23 @@ function getResultRows(payload) {
   return Array.isArray(payload.results) ? payload.results : [];
 }
 
+/**
+ * Convert a cosine-like similarity score in [-1, 1] to a display percentage.
+ * @param {number} score
+ * @returns {number}
+ */
 export function similarityScoreToPercent(score) {
   const boundedScore = Number.isFinite(score) ? Math.min(1, Math.max(-1, score)) : 0;
   return Math.round(((boundedScore + 1) / 2) * 100);
 }
 
+/**
+ * Curated caption filters used to suggest common radiology terms.
+ *
+ * The labels stay short for filter chips while terms include common spelling
+ * variants used in ROCO captions.
+ * @type {Array<{id: string, label: string, terms: string[]}>}
+ */
 export const CURATED_CAPTION_FILTERS = [
   { id: "xray", label: "X-ray", terms: ["xray", "x-ray", "radiograph"] },
   { id: "ct", label: "CT", terms: ["ct", "computed tomography"] },
@@ -33,6 +56,11 @@ export const CURATED_CAPTION_FILTERS = [
   { id: "nodule", label: "Nodule", terms: ["nodule", "nodules"] },
 ];
 
+/**
+ * Normalize free-text filter values for case-insensitive and accent-insensitive matching.
+ * @param {*} value
+ * @returns {string}
+ */
 function normalizeFilterValue(value) {
   return String(value ?? "")
     .normalize("NFKD")
@@ -42,10 +70,24 @@ function normalizeFilterValue(value) {
     .trim();
 }
 
+/**
+ * Escape user-entered text before embedding it in a regular expression.
+ * @param {string} value
+ * @returns {string}
+ */
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Match a normalized term against word boundaries inside a normalized source.
+ *
+ * Boundary matching prevents short terms from accidentally matching unrelated
+ * substrings while still allowing flexible whitespace in multi-word terms.
+ * @param {string} source
+ * @param {string} term
+ * @returns {boolean}
+ */
 function matchesNormalizedTerm(source, term) {
   const normalizedSource = normalizeFilterValue(source);
   const normalizedTerm = normalizeFilterValue(term);
@@ -61,6 +103,12 @@ function matchesNormalizedTerm(source, term) {
   return boundaryPattern.test(normalizedSource);
 }
 
+/**
+ * Check whether a caption matches at least one term from a curated term group.
+ * @param {string} caption
+ * @param {string[]} termGroup
+ * @returns {boolean}
+ */
 function matchesCaptionTermGroup(caption, termGroup) {
   if (!Array.isArray(termGroup) || !termGroup.length) {
     return true;
@@ -69,6 +117,11 @@ function matchesCaptionTermGroup(caption, termGroup) {
   return termGroup.some((term) => matchesNormalizedTerm(caption, term));
 }
 
+/**
+ * Normalize the CUI field regardless of whether it arrived as a string or array.
+ * @param {object} result
+ * @returns {string}
+ */
 function getNormalizedResultCui(result) {
   if (!result) {
     return "";
@@ -81,6 +134,15 @@ function getNormalizedResultCui(result) {
   return normalizeFilterValue(result.cui);
 }
 
+/**
+ * Extract a stable uppercase CUI set from a result row.
+ *
+ * Backend rows can expose CUIs as arrays, JSON-encoded arrays, or raw strings
+ * depending on the source artifact. This helper gives filters one consistent
+ * representation.
+ * @param {object} result
+ * @returns {Set<string>}
+ */
 export function getResultCuiSet(result) {
   if (!result?.cui) return new Set();
   const cui = result.cui;
@@ -99,6 +161,12 @@ export function getResultCuiSet(result) {
   return raw ? new Set([raw]) : new Set();
 }
 
+/**
+ * Suggest caption filters that actually match the current result set.
+ * @param {object[]} rows
+ * @param {number} [limit=8]
+ * @returns {Array<{id: string, label: string, terms: string[], count: number}>}
+ */
 export function getSuggestedCaptionFilters(rows, limit = 8) {
   if (!Array.isArray(rows) || rows.length === 0) {
     return [];
@@ -117,6 +185,11 @@ export function getSuggestedCaptionFilters(rows, limit = 8) {
     .slice(0, limit);
 }
 
+/**
+ * Trigger a browser download and revoke the generated object URL afterward.
+ * @param {Blob} blob
+ * @param {string} filename
+ */
 function downloadBlob(blob, filename) {
   const link = document.createElement("a");
   const objectUrl = URL.createObjectURL(blob);
@@ -126,6 +199,11 @@ function downloadBlob(blob, filename) {
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 }
 
+/**
+ * Fetch an image and convert it to a data URL for PDF embedding.
+ * @param {string} url
+ * @returns {Promise<string>}
+ */
 async function loadImageAsBase64(url) {
   const response = await fetch(url);
   const blob = await response.blob();
@@ -137,6 +215,26 @@ async function loadImageAsBase64(url) {
   });
 }
 
+/**
+ * Apply all client-side result filters and sorting without mutating the source payload.
+ *
+ * The returned object keeps the original payload metadata, replacing only the
+ * results array so downstream export and grid components can consume the same shape.
+ *
+ * @param {object|null} payload
+ * @param {object} [options={}]
+ * @param {number} [options.minScore=0]
+ * @param {string} [options.captionFilter=""]
+ * @param {"asc"|"desc"} [options.sortOrder="desc"]
+ * @param {string} [options.cuiFilter=""]
+ * @param {"all"|"with"|"without"} [options.cuiPresence="all"]
+ * @param {string} [options.cuiModalite=""]
+ * @param {string} [options.cuiAnatomie=""]
+ * @param {string} [options.cuiFinding=""]
+ * @param {string} [options.referenceFilter=""]
+ * @param {string[][]} [options.captionTermGroups=[]]
+ * @returns {object|null}
+ */
 export function filterResultsPayload(
   payload,
   {
@@ -206,6 +304,11 @@ export function filterResultsPayload(
   return { ...payload, results: filteredResults };
 }
 
+/**
+ * Export the current result payload as formatted JSON.
+ * @param {object|null} payload
+ * @param {string} filename
+ */
 export function exportResultsAsJson(payload, filename) {
   if (!payload) {
     return;
@@ -217,6 +320,11 @@ export function exportResultsAsJson(payload, filename) {
   );
 }
 
+/**
+ * Export visible result rows as a compact CSV file.
+ * @param {object|Array|null} payload
+ * @param {string} filename
+ */
 export function exportResultsAsCsv(payload, filename) {
   const rows = getResultRows(payload);
   if (!rows.length) {
@@ -240,6 +348,14 @@ export function exportResultsAsCsv(payload, filename) {
   );
 }
 
+/**
+ * Export visible result rows as a PDF report with thumbnails when available.
+ * @param {object} payload
+ * @param {string} filename
+ * @param {object} [options]
+ * @param {string} [options.title]
+ * @returns {Promise<void>}
+ */
 export async function exportResultsAsPdf(
   payload,
   filename,

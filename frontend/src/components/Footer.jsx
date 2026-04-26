@@ -6,6 +6,13 @@
 import { useContext } from "react";
 import { LangContext } from "../context/LangContextValue";
 
+/**
+ * Documentation for components/Footer.
+ * @component
+ * @param {object} props
+ * @param {string} [props.className=""]
+ * @returns {JSX.Element}
+ */
 function GitHubMark({ className = "" }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" className={className}>
@@ -14,6 +21,14 @@ function GitHubMark({ className = "" }) {
   );
 }
 
+/**
+ * Documentation for components/Footer.
+ *
+ * @component
+ * @param {object} props
+ * @param {function(string): void} props.onPageChange
+ * @returns {JSX.Element}
+ */
 export default function Footer({ onPageChange }) {
   const { t } = useContext(LangContext);
   const content = t.home;
@@ -93,7 +108,7 @@ export default function Footer({ onPageChange }) {
               </ul>
             </div>
 
-            {/* Mentions légales */}
+            {/* Legal notices */}
             <div>
               <h4 className="text-xs font-semibold text-on-strong uppercase tracking-widest mb-4">
                 {f.legalTitle || "Mentions légales"}

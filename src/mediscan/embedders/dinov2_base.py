@@ -1,11 +1,4 @@
-"""
-Implémentation de l'encodeur d'images DINOv2 base (version CPU uniquement).
-
-Cet encodeur utilise le modèle public 'facebook/dinov2-base' (Vision Transformer) 
-comme extracteur de caractéristiques visuelles performant. Il est idéal pour la 
-branche visuelle : le modèle est optimisé pour des représentations d'images 
-généralistes plutôt que pour l'alignement image-texte.
-"""
+"""DINOv2 base embedder implementation for MediScan AI (CPU only)."""
 
 from __future__ import annotations
 
@@ -19,13 +12,16 @@ from .utils import configure_torch_cpu_threads, normalize_embedding
 
 class DINOv2BaseEmbedder(Embedder):
     """
-    - Encodeur d'images DINOv2 base pour la branche visuelle.
-    """
+    DINOv2 base image embedder for visual similarity search.
 
+    This model is used for appearance-driven retrieval. It compares image content
+    directly and does not require text supervision at query time.
+    """
     name = "dinov2_base"
     dim = 768
 
     def __init__(self, model_name: str = "facebook/dinov2-base") -> None:
+        """Load the processor/model pair on CPU and infer the runtime vector size."""
         configure_torch_cpu_threads()
         self._device = torch.device("cpu")
         self._model_name = model_name
@@ -41,17 +37,10 @@ class DINOv2BaseEmbedder(Embedder):
 
     def encode_pil(self, image: PILImage.Image) -> np.ndarray:
         """
-        Encode une image PIL en un vecteur d'embedding.
+        Encode a PIL image into a normalized visual embedding vector.
 
-        Paramètres
-        ----------
-        image : PIL.Image.Image
-            L'image d'entrée à traiter.
-
-        Retours
-        -------
-        np.ndarray
-            Vecteur d'embedding 1D normalisé L2 de forme (768,).
+        Pooler output is preferred when available. Some DINOv2 checkpoints expose
+        only hidden states, so the CLS token is used as a stable fallback.
         """
         if not isinstance(image, PILImage.Image):
             raise TypeError("encode_pil expects a PIL.Image.Image instance")
