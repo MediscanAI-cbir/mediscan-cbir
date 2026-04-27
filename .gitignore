@@ -59,6 +59,7 @@ coverage/
 frontend/node_modules/
 frontend/dist/
 frontend/coverage/
+frontend/.mediscan_fe_deps_stamp
 node_modules/
 
 # docs
