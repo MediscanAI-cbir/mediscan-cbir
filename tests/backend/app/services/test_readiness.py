@@ -9,7 +9,7 @@ from backend.app.services import readiness
 
 
 def test_readiness_reports_ready_when_required_components_are_available(monkeypatch) -> None:
-    """Artifacts are required; optional Mongo/LLM/SMTP can be disabled."""
+    """Artifacts are required; optional Mongo/LLM/email can be disabled."""
     monkeypatch.setattr(readiness, "MONGO_URI", "")
     monkeypatch.setattr(readiness, "GROQ_API_KEY", "")
     monkeypatch.setattr(
@@ -20,7 +20,7 @@ def test_readiness_reports_ready_when_required_components_are_available(monkeypa
     monkeypatch.setattr(readiness, "ensure_artifacts_exist", MagicMock(return_value=("index.faiss", "ids.json")))
     monkeypatch.setattr(readiness, "load_indexed_rows", MagicMock(return_value=[{"image_id": "img1"}]))
     email_service = MagicMock()
-    email_service.validate.side_effect = RuntimeError("smtp missing")
+    email_service.validate.side_effect = RuntimeError("email missing")
 
     report = readiness.build_readiness_report(email_service)
 
@@ -29,7 +29,7 @@ def test_readiness_reports_ready_when_required_components_are_available(monkeypa
     assert report.payload["components"]["artifacts"]["status"] == "ok"
     assert report.payload["components"]["mongo"]["status"] == "disabled"
     assert report.payload["components"]["llm"]["status"] == "disabled"
-    assert report.payload["components"]["smtp"]["status"] == "disabled"
+    assert report.payload["components"]["email"]["status"] == "disabled"
 
 
 def test_readiness_fails_when_artifacts_are_missing(monkeypatch) -> None:
@@ -72,7 +72,7 @@ def test_readiness_fails_when_configured_mongo_cannot_ping(monkeypatch) -> None:
 
 
 def test_readiness_reports_configured_optional_services(monkeypatch) -> None:
-    """Configured LLM and SMTP appear in the readiness payload without exposing secrets."""
+    """Configured LLM and email appear in the readiness payload without exposing secrets."""
     monkeypatch.setattr(readiness, "MONGO_URI", "")
     monkeypatch.setattr(readiness, "GROQ_API_KEY", "secret")
     monkeypatch.setattr(readiness, "GROQ_MODEL", "llama-test")
@@ -83,7 +83,7 @@ def test_readiness_reports_configured_optional_services(monkeypatch) -> None:
     )
     monkeypatch.setattr(readiness, "ensure_artifacts_exist", MagicMock(return_value=("index.faiss", "ids.json")))
     monkeypatch.setattr(readiness, "load_indexed_rows", MagicMock(return_value=[{"image_id": "img1"}]))
-    email_service = MagicMock(host="smtp.example.com", port=587)
+    email_service = MagicMock(from_email="from@example.com", to_email="to@example.com")
     email_service.validate.return_value = None
 
     report = readiness.build_readiness_report(email_service)
@@ -93,8 +93,9 @@ def test_readiness_reports_configured_optional_services(monkeypatch) -> None:
         "provider": "groq",
         "model": "llama-test",
     }
-    assert report.payload["components"]["smtp"] == {
+    assert report.payload["components"]["email"] == {
         "status": "configured",
-        "host": "smtp.example.com",
-        "port": 587,
+        "provider": "resend",
+        "from_email": "from@example.com",
+        "to_email": "to@example.com",
     }

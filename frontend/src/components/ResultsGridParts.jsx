@@ -332,7 +332,7 @@ export function PaginationControls({
   })();
 
   return (
-    <nav className="inline-flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center" aria-label={content.paginationLabel}>
+    <nav className="search-results-toolbar-pagination inline-flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center" aria-label={content.paginationLabel}>
       {showPageSummary ? (
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
           {content.pageLabel} {currentPage} / {totalPages}
@@ -417,6 +417,60 @@ function ExportButton({ label, isLoading, disabled, onClick, className }) {
 }
 
 /**
+ * Render the export controls as a reusable block so mobile layouts can place it
+ * below the result cards without changing the desktop toolbar.
+ *
+ * @param {object} props
+ * @param {string} props.exportLabel
+ * @param {boolean} props.exportDisabled
+ * @param {string} props.exportButtonClass
+ * @param {"json"|"csv"|"pdf"|null} props.activeExport
+ * @param {function} props.onExportJson
+ * @param {function} props.onExportCsv
+ * @param {function} props.onExportPdf
+ * @param {string} [props.className=""]
+ */
+export function ResultsGridExportControls({
+  exportLabel,
+  exportDisabled,
+  exportButtonClass,
+  activeExport,
+  onExportJson,
+  onExportCsv,
+  onExportPdf,
+  className = "",
+}) {
+  return (
+    <div className={`search-results-toolbar-export flex max-w-full flex-wrap items-center gap-2 md:justify-end md:pl-3 ${className}`}>
+      <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+        {exportLabel}
+      </span>
+      <ExportButton
+        label="JSON"
+        isLoading={false}
+        disabled={exportDisabled || !onExportJson}
+        onClick={onExportJson}
+        className={exportButtonClass}
+      />
+      <ExportButton
+        label="CSV"
+        isLoading={false}
+        disabled={exportDisabled || !onExportCsv}
+        onClick={onExportCsv}
+        className={exportButtonClass}
+      />
+      <ExportButton
+        label="PDF"
+        isLoading={activeExport === "pdf"}
+        disabled={exportDisabled || !onExportPdf}
+        onClick={onExportPdf}
+        className={exportButtonClass}
+      />
+    </div>
+  );
+}
+
+/**
  * Render the result-count header and active search-mode badge.
  *
  * @component
@@ -439,7 +493,7 @@ export function ResultsGridHeader({
       <h2 className="text-lg font-bold text-title">
         {resultCount} {resultCount > 1 ? content.resultsFoundPlural : content.resultsFoundSingular}
       </h2>
-      <span className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${modeColor}`}>
+      <span className={`hidden rounded-full border px-3 py-1.5 text-xs font-semibold md:inline-flex ${modeColor}`}>
         {modeLabel}
       </span>
     </div>
@@ -481,7 +535,7 @@ export function ResultsGridToolbar({
   onExportPdf,
 }) {
   return (
-    <div className="mb-4 flex flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-4">
+    <div className="search-results-toolbar mb-4 flex flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-4">
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
@@ -491,32 +545,16 @@ export function ResultsGridToolbar({
         useHomeVisualTone={useHomeVisualTone}
       />
 
-      <div className="flex max-w-full flex-wrap items-center gap-2 md:justify-end md:pl-3">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-          {exportLabel}
-        </span>
-        <ExportButton
-          label="JSON"
-          isLoading={false}
-          disabled={exportDisabled || !onExportJson}
-          onClick={onExportJson}
-          className={exportButtonClass}
-        />
-        <ExportButton
-          label="CSV"
-          isLoading={false}
-          disabled={exportDisabled || !onExportCsv}
-          onClick={onExportCsv}
-          className={exportButtonClass}
-        />
-        <ExportButton
-          label="PDF"
-          isLoading={activeExport === "pdf"}
-          disabled={exportDisabled || !onExportPdf}
-          onClick={onExportPdf}
-          className={exportButtonClass}
-        />
-      </div>
+      <ResultsGridExportControls
+        exportLabel={exportLabel}
+        exportDisabled={exportDisabled}
+        exportButtonClass={exportButtonClass}
+        activeExport={activeExport}
+        onExportJson={onExportJson}
+        onExportCsv={onExportCsv}
+        onExportPdf={onExportPdf}
+        className="search-results-toolbar-export-top"
+      />
     </div>
   );
 }

@@ -123,6 +123,9 @@ describe("React contexts", () => {
     expect(screen.getByTestId("theme")).toHaveTextContent("dark");
     expect(screen.getByTestId("palette")).toHaveTextContent("mineral");
     expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute("content", COLOR_PALETTES.mineral.dark.bg);
+    expect(document.querySelector('meta[name="color-scheme"]')).toHaveAttribute("content", "dark light");
+    expect(document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute("content", "black-translucent");
     expect(Object.keys(COLOR_PALETTES)).toContain("mineral");
   });
 
@@ -152,6 +155,9 @@ describe("React contexts", () => {
     });
     expect(document.startViewTransition).toHaveBeenCalled();
     expect(document.documentElement.animate).toHaveBeenCalled();
+    expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute("content", COLOR_PALETTES.mineral.light.bg);
+    expect(document.querySelector('meta[name="color-scheme"]')).toHaveAttribute("content", "light dark");
+    expect(document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute("content", "default");
 
     fireEvent.click(screen.getByText("dark-auto"));
     await act(async () => {

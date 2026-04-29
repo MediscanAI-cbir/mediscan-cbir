@@ -312,7 +312,7 @@ async def get_conclusion(body: ConclusionRequest, request: Request) -> Conclusio
 
 @router.post("/contact", response_model=ContactResponse)
 async def contact(body: ContactRequest, request: Request) -> ContactResponse:
-    """Send a contact message by email through the configured SMTP service."""
+    """Send a contact message by email through the configured email service."""
     _enforce_rate_limit(request, "contact")
     if body.website:
         raise HTTPException(status_code=400, detail="Invalid contact submission.")

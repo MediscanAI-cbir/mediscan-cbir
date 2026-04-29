@@ -307,16 +307,21 @@
 
 .search-hub-page {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: visible;
   color: var(--theme-text);
   background: transparent;
 }
 
 .search-hub-shell {
-  min-height: calc(100dvh - 4rem);
+  min-height: auto;
   justify-content: center;
-  padding-top: clamp(0.6rem, 1.8vh, 1.4rem);
-  padding-bottom: clamp(3rem, 8vh, 5.5rem);
-  transform: translateY(clamp(-1rem, -2vh, -2rem));
+  padding-top: clamp(1.25rem, 3.5vh, 2.75rem);
+  padding-bottom: clamp(1.25rem, 3.5vh, 2.75rem);
+  transform: none;
 }
 
 .search-hub-intro {

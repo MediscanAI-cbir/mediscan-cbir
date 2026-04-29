@@ -68,7 +68,7 @@ export default function LanguageSelector() {
       {/* Dropdown*/}
       {open && (
         <div
-          className="settings-menu settings-menu-enter absolute bottom-full right-0 mb-2 w-44 rounded-2xl overflow-hidden transition-all duration-200 md:bottom-auto md:top-full md:mt-2 md:mb-0">
+          className="settings-menu settings-menu-enter absolute bottom-full left-0 right-auto mb-2 w-44 rounded-2xl overflow-hidden transition-all duration-200 md:bottom-auto md:left-auto md:right-0 md:top-full md:mt-2 md:mb-0">
           {/* Theme section */}
           <div className="px-3 pt-3 pb-1">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-1.5">

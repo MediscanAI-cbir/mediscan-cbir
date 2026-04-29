@@ -142,9 +142,9 @@
 
 @media (max-width: 960px) {
   .search-hub-shell {
-    padding-top: 0.5rem;
-    padding-bottom: 2.8rem;
-    transform: translateY(-0.95rem);
+    padding-top: 1.4rem;
+    padding-bottom: 1.4rem;
+    transform: none;
   }
 
   .search-hub-grid {
@@ -254,14 +254,14 @@
 @media (max-width: 820px) {
   .search-hub-page {
     max-width: 100%;
-    padding-block: 1.2rem 0;
+    padding-block: 1.2rem;
   }
 
   .search-hub-shell {
-    min-height: calc(100dvh - 4rem);
-    justify-content: flex-start;
-    padding-top: 0.3rem;
-    padding-bottom: 0.9rem;
+    min-height: auto;
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 0;
     transform: translateY(0);
   }
 

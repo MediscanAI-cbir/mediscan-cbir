@@ -384,7 +384,6 @@ export const en = {
       disclaimer: "Research summary only. It does not replace medical judgment or diagnosis.",
       generate: "Generate summary",
       loading: "Generating summary...",
-      regenerate: "Generate again",
       error: "Unable to generate the summary right now.",
       noResults: "Run a search before requesting a summary.",
     },

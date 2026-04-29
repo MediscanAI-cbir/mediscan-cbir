@@ -557,10 +557,6 @@
   color: #315761 !important;
 }
 
-:root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .search-ai-summary-regenerate {
-  color: #315761 !important;
-}
-
 :root:not([data-theme="dark"]) .search-workspace-text.search-workspace-accent .text-search-guide-stage .border-t {
   border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
 }

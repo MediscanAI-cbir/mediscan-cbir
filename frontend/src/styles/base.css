@@ -381,11 +381,16 @@ html {
      the "smooth" value is inherited by window.scrollTo({ behavior:"auto" }),
      which animates scrolling during React navigation and creates visual jumps.
      Navigation is fully handled by the App component's JS transitions. */
+  min-height: 100%;
+  background-color: var(--theme-bg);
+  color-scheme: light;
   scroll-behavior: auto;
+  transition: background-color 200ms ease;
 }
 
 html,
 body {
+  min-height: 100%;
   font-family: var(--font-body);
   background-color: var(--theme-bg);
   color: var(--theme-text);
@@ -393,6 +398,13 @@ body {
     background-color 200ms ease,
     color 200ms ease,
     border-color 200ms ease;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--theme-bg);
+  transition: background-color 200ms ease;
 }
 
 body.search-modal-open nav.sticky {
@@ -837,6 +849,7 @@ body.search-modal-open nav.sticky {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Curseur pointer sur tous les boutons */

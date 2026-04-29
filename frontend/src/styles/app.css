@@ -16,5 +16,6 @@
 @import "./search-modals.css";
 @import "./search-image-overrides.css";
 @import "./search-text-overrides.css";
+@import "./mobile-page-spacing.css";
 /* Loaded last so mobile hub fixes can override legacy home responsive rules. */
 @import "./search-mobile.css";

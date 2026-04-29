@@ -3,7 +3,7 @@
  * @module components/ImageSearchView
  */
 
-import { BadgePercent, Search, Sparkles, Tags, X } from "lucide-react";
+import { BadgePercent, Search, SlidersHorizontal, Sparkles, Tags, X } from "lucide-react";
 import { useState, useContext, useEffect, useMemo, useRef } from "react";
 import { LangContext } from "../context/LangContextValue";
 import UploadZone from "./UploadZone";
@@ -13,6 +13,7 @@ import ResultsGrid from "./ResultsGrid";
 import {
   SearchCaptionFilterCard,
   SearchCuiFilterCard,
+  SearchFilterPopover,
   SearchFilterPanelHeader,
   SearchReferenceFilterCard,
   SearchScoreFilterCard,
@@ -141,11 +142,14 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
   const [filterNoteHighlighted, setFilterNoteHighlighted] = useState(false);
   const [filterOrderOnlyHighlighted, setFilterOrderOnlyHighlighted] = useState(false);
   const [selectionCardOpen, setSelectionCardOpen] = useState(false);
+  const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState(false);
   const queryPreviewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
   const quickNoteHighlightTimerRef = useRef(null);
   const filterNoteHighlightTimerRef = useRef(null);
   const quickNoteScrollTimerRef = useRef(0);
   const scrollCancelRef = useRef(null);
+  const resultsStageRef = useRef(null);
+  const mobileResultsCountRef = useRef(null);
   const resultsCardsGridRef = useRef(null);
   const pendingSearchScrollRef = useRef(false);
   const [referenceFilter, setReferenceFilter] = useState("");
@@ -519,6 +523,30 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
   const showConclusion = Boolean(
     (!compareMode && results) || (compareMode && visualResults && semanticResults)
   );
+  useEffect(() => {
+    if (!hasSearchResults) {
+      setIsFilterPopoverOpen(false);
+    }
+  }, [hasSearchResults]);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) {
+      return undefined;
+    }
+
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    function closePopoverOnDesktop(event = desktopQuery) {
+      if (event.matches) {
+        setIsFilterPopoverOpen(false);
+      }
+    }
+
+    closePopoverOnDesktop();
+    desktopQuery.addEventListener?.("change", closePopoverOnDesktop);
+    return () => {
+      desktopQuery.removeEventListener?.("change", closePopoverOnDesktop);
+    };
+  }, []);
+
   const conclusionSearchResult = compareMode ? visualResults : results;
   const conclusionIsAccent = compareMode ? false : isAccent;
   const selectionCardToneClass = isAccent
@@ -776,15 +804,18 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
     firstFrame = requestAnimationFrame(() => {
       secondFrame = requestAnimationFrame(() => {
         settleTimer = window.setTimeout(() => {
-          const gridNode = resultsCardsGridRef.current;
-          if (!gridNode || typeof window === "undefined") {
+          const isMobileViewport = window.matchMedia?.("(max-width: 767px)")?.matches ?? window.innerWidth < 768;
+          const targetNode = isMobileViewport
+            ? mobileResultsCountRef.current || resultsStageRef.current || resultsCardsGridRef.current
+            : resultsStageRef.current || resultsCardsGridRef.current;
+          if (!targetNode || typeof window === "undefined") {
             pendingSearchScrollRef.current = false;
             return;
           }
 
           // Positive values scroll slightly lower; negative values keep the result block higher.
-          const IMAGE_SEARCH_SCROLL_OFFSET = 20;
-          const boundedTargetY = getResultsGridScrollTargetY(gridNode, IMAGE_SEARCH_SCROLL_OFFSET);
+          const IMAGE_SEARCH_SCROLL_OFFSET = isMobileViewport ? 12 : 54;
+          const boundedTargetY = getResultsGridScrollTargetY(targetNode, IMAGE_SEARCH_SCROLL_OFFSET);
           scrollCancelRef.current?.();
 
           if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
@@ -825,9 +856,20 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
 
   /** Scroll to the filter guide and trigger its highlight. */
   function handleFilterInfoClick() {
+    const isMobileViewport = window.matchMedia?.("(max-width: 767px)")?.matches ?? window.innerWidth < 768;
+    const filterGuideTarget = isMobileViewport
+      ? {
+          sectionId: "image-search-filters-note",
+          eyebrowId: "image-search-filters-note-eyebrow",
+        }
+      : {
+          sectionId: "image-search-quick-note",
+          eyebrowId: "image-search-quick-note-eyebrow",
+        };
+
+    setIsFilterPopoverOpen(false);
     scrollToInfoSection({
-      sectionId: "image-search-quick-note",
-      eyebrowId: "image-search-quick-note-eyebrow",
+      ...filterGuideTarget,
       scrollTimerRef: quickNoteScrollTimerRef,
       onComplete: () => restartNoteHighlight(setFilterNoteHighlighted, filterNoteHighlightTimerRef),
     });
@@ -877,6 +919,8 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
   const filterPanelInfoButtonClassName = `${toneTransitionClass} info-trigger ${isAccent ? "info-trigger-accent" : "info-trigger-primary"} inline-flex h-5.5 w-5.5 items-center justify-center ${(filterNoteHighlighted || filterOrderOnlyHighlighted) ? isAccent ? "info-trigger-glow-accent" : "info-trigger-glow-primary" : ""} focus:outline-none focus:ring-2 ${isAccent ? "focus:ring-accent/25" : "focus:ring-primary/25"}`;
   const filterPanelHintClassName = `${toneSyncClass} mt-1 text-xs leading-5 text-muted`;
   const filterPanelResetButtonClassName = `search-toolbar-button rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all ${activeFilterCount > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-45"} ${isAccent ? "mediscan-accent-outline-button" : useHomeVisualTone ? "mediscan-primary-outline-button" : "border-border bg-bg text-muted hover:text-text hover:border-primary"}`;
+  const filterTriggerClassName = `image-search-filter-trigger-button search-action-button inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all ${isAccent ? "mediscan-accent-action text-on-strong" : useHomeVisualTone ? "mediscan-primary-action text-on-strong" : "button-solid-primary text-white"}`;
+  const filterTriggerCountClassName = "border-white/20 bg-white/14 text-current";
   const filterLabelClassName = `${toneSyncClass} text-[10px] text-muted font-semibold uppercase tracking-wider`;
   const filterInputClassName = `search-workspace-field w-full rounded-xl border border-border bg-bg py-2.5 px-3 text-sm text-text placeholder:text-muted focus:outline-none ${isAccent ? "focus:border-accent" : "focus:border-primary"}`;
   const filterInputWithIconClassName = `search-workspace-field w-full rounded-xl border border-border bg-bg py-2.5 pl-9 pr-3 text-sm text-text placeholder:text-muted focus:outline-none ${isAccent ? "focus:border-accent" : "focus:border-primary"}`;
@@ -888,6 +932,103 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
   const filterScoreValueClassName = `${toneSyncClass} min-w-[2.8rem] text-right text-sm font-bold ${isAccent ? "mediscan-accent-text search-filter-score-value-accent" : useHomeVisualTone ? "search-filter-score-value-primary" : "text-primary"}`;
   const filterScoreScaleClassName = `${toneSyncClass} mt-2 flex items-center justify-between text-[11px] text-muted`;
   const filterSortShellClassName = `search-mode-shell mt-1.5 flex gap-1 rounded-xl border p-1 ${filterPanelShellClass} ${useHomeVisualTone ? "search-sort-shell-primary" : ""}`;
+  const filterPopoverCloseLabel = lang === "fr" ? "Fermer les filtres" : "Close filters";
+  const visibleResultCount = !compareMode ? (filteredResults?.results?.length ?? 0) : 0;
+  function renderFilterPopoverContent() {
+    return (
+      <>
+        <SearchFilterPanelHeader
+          title={filters.title}
+          titleClassName={filterPanelTitleClassName}
+          infoLabel={filters.infoLabel}
+          onInfoClick={handleFilterInfoClick}
+          infoButtonClassName={filterPanelInfoButtonClassName}
+          hint={filters.refineHint}
+          hintClassName={filterPanelHintClassName}
+          onReset={resetFilters}
+          resetDisabled={activeFilterCount === 0}
+          resetLabel={filters.reset}
+          resetButtonClassName={filterPanelResetButtonClassName}
+        />
+
+        <div className="mt-5 space-y-3.5">
+          <SearchCaptionFilterCard
+            label={filters.caption}
+            labelClassName={filterLabelClassName}
+            value={searchText}
+            onChange={setSearchText}
+            placeholder={filters.captionPlaceholder}
+            inputWrapperClassName="mt-1.5"
+            inputClassName={filterInputWithIconClassName}
+            leadingIcon={(
+              <svg className={`${toneSyncClass} absolute left-3 top-1/2 -translate-y-1/2 text-muted`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            )}
+            suggestedFilters={hasSuggestedCaptionFilters ? suggestedCaptionFilters : []}
+            activeFilterIds={activeCaptionFilterIds}
+            onToggleFilter={handleCaptionFilterToggle}
+            getToggleClassName={getCaptionFilterButtonClassName}
+            quickTermsLabel={filters.quickTerms}
+            quickTermsLabelClassName={filterQuickTermsLabelClassName}
+            quickTermsHint={filters.quickTermsHint}
+            quickTermsHintClassName={filterQuickTermsHintClassName}
+          />
+
+          <SearchCuiFilterCard
+            label={filters.cui}
+            labelClassName={filterLabelClassName}
+            value={cuiFilter}
+            onChange={setCuiFilter}
+            placeholder={filters.cuiPlaceholder}
+            inputClassName={`${filterInputClassName} mt-1.5`}
+            selectGroups={cuiSelectGroups}
+            selectLabelClassName={filterSelectLabelClassName}
+            selectClassName={filterSelectClassName}
+            lang={lang}
+          />
+
+          <SearchScoreFilterCard
+            label={filters.minScore}
+            labelClassName={filterLabelClassName}
+            value={minScore}
+            onChange={setMinScore}
+            sliderClassName={filterScoreSliderClassName}
+            scoreClassName={filterScoreValueClassName}
+            scoreStyle={useHomeVisualTone && !isAccent ? { color: "#173b43", WebkitTextFillColor: "#173b43" } : undefined}
+            scaleClassName={filterScoreScaleClassName}
+          />
+
+          <SearchReferenceFilterCard
+            label={filters.reference}
+            labelClassName={filterLabelClassName}
+            value={referenceFilter}
+            onChange={setReferenceFilter}
+            placeholder={filters.referencePlaceholder}
+            inputClassName={`${filterInputClassName} mt-1.5`}
+          />
+
+          <SearchSortFilterCard
+            label={filters.sort}
+            labelClassName={`${filterLabelClassName} ${useHomeVisualTone ? "search-sort-label-primary" : ""}`}
+            shellClassName={filterSortShellClassName}
+            options={sortOptions}
+            currentValue={sortOrder}
+            onChange={setSortOrder}
+            getOptionClassName={getSortOptionClassName}
+          />
+        </div>
+      </>
+    );
+  }
+  function renderDesktopFilterSidebar() {
+    return (
+      <div className={`${toneTransitionClass} image-search-panel image-search-filter-stage-panel mediscan-results-stage-enter rounded-2xl border p-5 shadow-sm backdrop-blur-sm lg:flex lg:flex-col ${lockedResultsStageHeightClass} ${isAccent ? "mediscan-accent-surface" : useHomeVisualTone ? "mediscan-primary-surface" : "bg-surface border-border"}`}>
+        {renderFilterPopoverContent()}
+      </div>
+    );
+  }
   /**
    * Compose classes for a caption-filter chip.
    * @param {boolean} isActive
@@ -908,7 +1049,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
     <div className={pageClass}>
 
       {/* Header with back button */}
-      <section className="max-w-[1400px] mx-auto px-4 py-10 sm:px-6">
+      <section className="search-view-header max-w-[1400px] mx-auto px-4 py-10 sm:px-6">
         <button
           type="button"
           onClick={onBack}
@@ -919,11 +1060,11 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
           </svg>
           {content.image.back}
         </button>
-        <div className="text-center">
-          <h1 className={`${toneSyncClass} text-4xl md:text-5xl font-bold text-title mb-3`}>
+        <div className="search-view-header-copy text-center">
+          <h1 className={`${toneSyncClass} search-view-header-title text-4xl md:text-5xl font-bold text-title mb-3`}>
             {content.image.headline}
           </h1>
-          <p className={`${toneSyncClass} text-lg text-muted max-w-2xl mx-auto`}>
+          <p className={`${toneSyncClass} search-view-header-description text-lg text-muted max-w-2xl mx-auto`}>
             {content.description}
           </p>
         </div>
@@ -936,7 +1077,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
           {/* Upload - Left Sticky */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-24">
-              <div className={`${toneTransitionClass} image-search-panel ${visualStagePanelClass} ${isPreSearchState ? uploadEntryClass : ""} flex flex-col rounded-2xl border shadow-sm backdrop-blur-sm ${uploadPanelPaddingClass} ${uploadPanelHeightClass} ${isAccent ? "mediscan-accent-surface" : useHomeVisualTone ? "mediscan-primary-surface" : "bg-surface border-primary/30"}`}>
+              <div className={`${toneTransitionClass} image-search-panel image-search-upload-panel ${visualStagePanelClass} ${isPreSearchState ? uploadEntryClass : ""} flex flex-col rounded-2xl border shadow-sm backdrop-blur-sm ${uploadPanelPaddingClass} ${uploadPanelHeightClass} ${isAccent ? "mediscan-accent-surface" : useHomeVisualTone ? "mediscan-primary-surface" : "bg-surface border-primary/30"}`}>
                 <div className="mb-3">
                   <StepBadge
                     label={content.step1}
@@ -1003,7 +1144,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
               enableToneTransition={toneTransitionReady}
             />
 
-            <div className={`${toneTransitionClass} image-search-panel ${visualStagePanelClass} mediscan-stage-panel-enter ${launchEntryClass} rounded-2xl p-6 md:p-7 border shadow-sm ${detailStagePanelHeightClass} ${isAccent || useHomeVisualTone ? (isAccent ? "mediscan-accent-surface" : "mediscan-primary-surface") : "ui-surface"} flex flex-col justify-between text-left`}>
+            <div className={`${toneTransitionClass} image-search-panel search-mobile-detail-panel ${visualStagePanelClass} mediscan-stage-panel-enter ${launchEntryClass} rounded-2xl p-6 md:p-7 border shadow-sm ${detailStagePanelHeightClass} ${isAccent || useHomeVisualTone ? (isAccent ? "mediscan-accent-surface" : "mediscan-primary-surface") : "ui-surface"} flex flex-col justify-between text-left`}>
                 <div>
                   <StepBadge
                     label={content.image.detailStep}
@@ -1058,150 +1199,103 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
 
           {hasSearchResults && (
             <div className="lg:col-span-3">
-              <div className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(300px,0.88fr)_minmax(0,2.12fr)] lg:items-start lg:gap-6">
-                <div className="lg:self-start">
-                  <div className={`${toneTransitionClass} image-search-panel image-search-filter-stage-panel mediscan-results-stage-enter rounded-2xl border p-5 shadow-sm backdrop-blur-sm lg:flex lg:flex-col ${lockedResultsStageHeightClass} ${isAccent ? "mediscan-accent-surface" : useHomeVisualTone ? "mediscan-primary-surface" : "bg-surface border-border"}`}>
-                  <SearchFilterPanelHeader
+              <div
+                ref={resultsStageRef}
+                className="mt-4 space-y-4 lg:grid lg:grid-cols-[minmax(300px,0.88fr)_minmax(0,2.12fr)] lg:items-start lg:gap-6 lg:space-y-0"
+                style={{ overflowAnchor: "none" }}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
+                  <h2 ref={mobileResultsCountRef} className={`${toneSyncClass} text-lg font-bold text-title`}>
+                    {visibleResultCount} {visibleResultCount === 1 ? resultsContent.resultsFoundSingular : resultsContent.resultsFoundPlural}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setIsFilterPopoverOpen(true)}
+                    className={filterTriggerClassName}
+                    aria-label={filters.title}
                     title={filters.title}
-                    titleClassName={filterPanelTitleClassName}
-                    infoLabel={filters.infoLabel}
-                    onInfoClick={handleFilterInfoClick}
-                    infoButtonClassName={filterPanelInfoButtonClassName}
-                    hint={filters.refineHint}
-                    hintClassName={filterPanelHintClassName}
-                    onReset={resetFilters}
-                    resetDisabled={activeFilterCount === 0}
-                    resetLabel={filters.reset}
-                    resetButtonClassName={filterPanelResetButtonClassName}
-                  />
-
-                  <div className="mt-5 space-y-3.5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
-                    <SearchCaptionFilterCard
-                      label={filters.caption}
-                      labelClassName={filterLabelClassName}
-                      value={searchText}
-                      onChange={setSearchText}
-                      placeholder={filters.captionPlaceholder}
-                      inputWrapperClassName="mt-1.5"
-                      inputClassName={filterInputWithIconClassName}
-                      leadingIcon={(
-                        <svg className={`${toneSyncClass} absolute left-3 top-1/2 -translate-y-1/2 text-muted`} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="11" cy="11" r="8" />
-                          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                        </svg>
-                      )}
-                      suggestedFilters={hasSuggestedCaptionFilters ? suggestedCaptionFilters : []}
-                      activeFilterIds={activeCaptionFilterIds}
-                      onToggleFilter={handleCaptionFilterToggle}
-                      getToggleClassName={getCaptionFilterButtonClassName}
-                      quickTermsLabel={filters.quickTerms}
-                      quickTermsLabelClassName={filterQuickTermsLabelClassName}
-                      quickTermsHint={filters.quickTermsHint}
-                      quickTermsHintClassName={filterQuickTermsHintClassName}
-                    />
-
-                    <SearchCuiFilterCard
-                      label={filters.cui}
-                      labelClassName={filterLabelClassName}
-                      value={cuiFilter}
-                      onChange={setCuiFilter}
-                      placeholder={filters.cuiPlaceholder}
-                      inputClassName={`${filterInputClassName} mt-1.5`}
-                      selectGroups={cuiSelectGroups}
-                      selectLabelClassName={filterSelectLabelClassName}
-                      selectClassName={filterSelectClassName}
-                      lang={lang}
-                    />
-
-                    <SearchScoreFilterCard
-                      label={filters.minScore}
-                      labelClassName={filterLabelClassName}
-                      value={minScore}
-                      onChange={setMinScore}
-                      sliderClassName={filterScoreSliderClassName}
-                      scoreClassName={filterScoreValueClassName}
-                      scoreStyle={useHomeVisualTone && !isAccent ? { color: "#173b43", WebkitTextFillColor: "#173b43" } : undefined}
-                      scaleClassName={filterScoreScaleClassName}
-                    />
-
-                    <SearchReferenceFilterCard
-                      label={filters.reference}
-                      labelClassName={filterLabelClassName}
-                      value={referenceFilter}
-                      onChange={setReferenceFilter}
-                      placeholder={filters.referencePlaceholder}
-                      inputClassName={`${filterInputClassName} mt-1.5`}
-                    />
-
-                    <SearchSortFilterCard
-                      label={filters.sort}
-                      labelClassName={`${filterLabelClassName} ${useHomeVisualTone ? "search-sort-label-primary" : ""}`}
-                      shellClassName={filterSortShellClassName}
-                      options={sortOptions}
-                      currentValue={sortOrder}
-                      onChange={setSortOrder}
-                      getOptionClassName={getSortOptionClassName}
-                    />
-                  </div>
+                  >
+                    <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.9} />
+                    <span>{filters.title}</span>
+                    {activeFilterCount > 0 && (
+                      <span className={`inline-flex min-w-5 items-center justify-center rounded-full border px-1.5 py-0.5 text-[10px] font-semibold ${filterTriggerCountClassName}`}>
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
                 </div>
-              </div>
-              <div className="min-w-0">
-              {!compareMode && results && (
-                <>
-                  <ResultsGrid
-                    data={filteredResults}
-                    useHomeVisualTone={useHomeVisualTone}
-                    className="mt-0"
-                    headerHiddenOnDesktop
-                    animateOnMount
-                    onExportJson={exportJSON}
-                    onExportCsv={exportCSV}
-                    onExportPdf={exportPDF}
-                    selectedIds={selectedIds}
-                    onSelectedIdsChange={setSelectedIds}
-                    comparisonSource={comparisonSource}
-                    cardsGridExternalRef={resultsCardsGridRef}
-                    desktopLockedHeightClass={lockedResultsStageHeightClass}
-                    desktopThreeColumns
-                  />
-                </>
-              )}
 
-              {compareMode && visualResults && semanticResults && (
-                <>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className={`${toneSyncClass} text-sm font-bold text-primary mb-3 uppercase tracking-wider`}>{t.search.results.visualMode}</h3>
-                      <ResultsGrid
-                        data={filteredVisualResults}
-                        useHomeVisualTone
-                        className="mt-4"
-                        animateOnMount
-                        selectedIds={selectedIds}
-                        onSelectedIdsChange={setSelectedIds}
-                        comparisonSource={comparisonSource}
-                        cardsGridExternalRef={resultsCardsGridRef}
-                        desktopLockedHeightClass={lockedResultsStageHeightClass}
-                      />
+                <div className="hidden lg:block lg:self-start">
+                  {renderDesktopFilterSidebar()}
+                </div>
+
+                <div className="min-w-0">
+                  {!compareMode && results && (
+                    <ResultsGrid
+                      data={filteredResults}
+                      useHomeVisualTone={useHomeVisualTone}
+                      className="mt-0"
+                      hideHeader
+                      headerHiddenOnDesktop
+                      animateOnMount
+                      onExportJson={exportJSON}
+                      onExportCsv={exportCSV}
+                      onExportPdf={exportPDF}
+                      selectedIds={selectedIds}
+                      onSelectedIdsChange={setSelectedIds}
+                      comparisonSource={comparisonSource}
+                      cardsGridExternalRef={resultsCardsGridRef}
+                      desktopLockedHeightClass={lockedResultsStageHeightClass}
+                      desktopThreeColumns
+                    />
+                  )}
+
+                  {compareMode && visualResults && semanticResults && (
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div>
+                        <h3 className={`${toneSyncClass} mb-3 text-sm font-bold uppercase tracking-wider text-primary`}>{t.search.results.visualMode}</h3>
+                        <ResultsGrid
+                          data={filteredVisualResults}
+                          useHomeVisualTone
+                          className="mt-4"
+                          animateOnMount
+                          selectedIds={selectedIds}
+                          onSelectedIdsChange={setSelectedIds}
+                          comparisonSource={comparisonSource}
+                          cardsGridExternalRef={resultsCardsGridRef}
+                          desktopLockedHeightClass={lockedResultsStageHeightClass}
+                        />
+                      </div>
+                      <div>
+                        <h3 className={`${toneSyncClass} mb-3 text-sm font-bold uppercase tracking-wider text-accent`}>{t.search.results.semanticMode}</h3>
+                        <ResultsGrid
+                          data={filteredSemanticResults}
+                          className="mt-4"
+                          animateOnMount
+                          selectedIds={selectedIds}
+                          onSelectedIdsChange={setSelectedIds}
+                          comparisonSource={comparisonSource}
+                          desktopLockedHeightClass={lockedResultsStageHeightClass}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <h3 className={`${toneSyncClass} text-sm font-bold text-accent mb-3 uppercase tracking-wider`}>{t.search.results.semanticMode}</h3>
-                      <ResultsGrid
-                        data={filteredSemanticResults}
-                        className="mt-4"
-                        animateOnMount
-                        selectedIds={selectedIds}
-                        onSelectedIdsChange={setSelectedIds}
-                        comparisonSource={comparisonSource}
-                        desktopLockedHeightClass={lockedResultsStageHeightClass}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                  )}
+
                   {selectionRelaunchNode}
                   {conclusionNode}
                 </div>
+
+                <SearchFilterPopover
+                  open={isFilterPopoverOpen}
+                  onClose={() => setIsFilterPopoverOpen(false)}
+                  title={filters.title}
+                  closeLabel={filterPopoverCloseLabel}
+                  tone={isAccent ? "accent" : "primary"}
+                  scopeClassName={pageClass}
+                  panelClassName={`${toneTransitionClass} image-search-panel image-search-filter-stage-panel backdrop-blur-sm ${isAccent ? "mediscan-accent-surface" : useHomeVisualTone ? "mediscan-primary-surface" : "bg-surface border-border"}`}
+                >
+                  {renderFilterPopoverContent()}
+                </SearchFilterPopover>
               </div>
             </div>
           )}

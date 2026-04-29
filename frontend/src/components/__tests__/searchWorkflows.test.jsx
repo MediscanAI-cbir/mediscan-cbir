@@ -99,8 +99,10 @@ describe("search workflow components", () => {
     fireEvent.click(screen.getByRole("button", { name: fr.search.search }));
 
     await waitFor(() => expect(searchText).toHaveBeenCalledWith("lung opacity", 5));
-    expect(await screen.findByText(fr.search.filters.title)).toBeInTheDocument();
-
+    expect(await screen.findByRole("button", { name: fr.search.filters.title })).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(fr.search.filters.captionPlaceholder)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: fr.search.filters.title }));
+    expect(await screen.findByPlaceholderText(fr.search.filters.captionPlaceholder)).toBeInTheDocument();
     fireEvent.change(screen.getByPlaceholderText(fr.search.filters.captionPlaceholder), {
       target: { value: "lung" },
     });
@@ -130,7 +132,7 @@ describe("search workflow components", () => {
     await flushFakeTimers(0);
     await flushFakeTimers(100);
 
-    expect(screen.getByText(fr.search.filters.title)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: fr.search.filters.title })).toBeInTheDocument();
     restoreMatchMedia();
   });
 
@@ -166,8 +168,10 @@ describe("search workflow components", () => {
     fireEvent.click(screen.getByRole("button", { name: fr.search.search }));
 
     await waitFor(() => expect(searchImage).toHaveBeenCalledWith(file, "visual", 5));
-    expect(await screen.findByText(fr.search.filters.title)).toBeInTheDocument();
-
+    expect(await screen.findByRole("button", { name: fr.search.filters.title })).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(fr.search.filters.captionPlaceholder)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: fr.search.filters.title }));
+    expect(await screen.findByPlaceholderText(fr.search.filters.captionPlaceholder)).toBeInTheDocument();
     fireEvent.click(screen.getAllByLabelText(fr.search.results.openDetails)[0]);
     expect(screen.getByRole("dialog", { name: fr.search.results.detailsTitle })).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText(fr.search.results.closeDetails));
@@ -208,7 +212,7 @@ describe("search workflow components", () => {
     await flushFakeTimers(0);
     await flushFakeTimers(100);
 
-    expect(screen.getByText(fr.search.filters.title)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: fr.search.filters.title })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: fr.search.modeSemantic }));
     expect(screen.getByText(fr.search.image.modeChangeConfirm)).toBeInTheDocument();
@@ -305,6 +309,9 @@ describe("search workflow components", () => {
     const { rerender } = renderWithProviders(
       <SearchPage view="hub" onSearchViewChange={onSearchViewChange} onSearchToneChange={onSearchToneChange} />,
     );
+
+    expect(document.querySelector(".search-hub-route")).toBeInTheDocument();
+    expect(document.querySelector(".search-hub-route-inner")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Analyser une image").closest("button"));
     fireEvent.click(screen.getByText("Décrire un cas").closest("button"));

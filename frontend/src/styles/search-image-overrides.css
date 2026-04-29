@@ -889,10 +889,6 @@
   color: #315761 !important;
 }
 
-:root:not([data-theme="dark"]) .search-workspace-primary .search-ai-summary-regenerate {
-  color: #315761 !important;
-}
-
 :root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .text-muted,
 :root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .mediscan-primary-text,
 :root:not([data-theme="dark"]) .search-workspace-primary .image-search-controls-stage-panel .text-primary {
@@ -1505,6 +1501,46 @@
   box-shadow: none !important;
 }
 
+@media (min-width: 768px) {
+  :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-primary .search-results-pagination-button-active-primary,
+  :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-primary .search-results-pagination-button-active-primary:hover {
+    background-color: #acd2d9 !important;
+    background: #acd2d9 !important;
+    border-color: #acd2d9 !important;
+    color: #173b43 !important;
+    box-shadow: none !important;
+  }
+
+  :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent,
+  :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent:hover {
+    background-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+    background: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+    border-color: color-mix(in srgb, #cce1e5 78%, #1d4047 22%) !important;
+    color: #173941 !important;
+    box-shadow: none !important;
+  }
+
+  [data-theme="dark"] .search-workspace-image.search-workspace-primary .search-results-pagination-button-active-primary,
+  [data-theme="dark"] .search-workspace-image.search-workspace-primary .search-results-pagination-button-active-primary:hover {
+    background: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+    background-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+    background-image: none !important;
+    border-color: color-mix(in srgb, var(--search-primary-panel-bg, #10283f) 52%, black 48%) !important;
+    color: #edf6fb !important;
+    box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+  }
+
+  [data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent,
+  [data-theme="dark"] .search-workspace-image.search-workspace-accent .search-results-pagination-button-active-accent:hover {
+    background: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+    background-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+    background-image: none !important;
+    border-color: color-mix(in srgb, var(--theme-accent-pale, #102f3a) 52%, black 48%) !important;
+    color: #edf9fb !important;
+    box-shadow: 0 18px 30px rgba(1, 8, 14, 0.28) !important;
+  }
+}
+
 :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-selection-panel-accent,
 :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel {
   background-color: #cce1e5 !important;
@@ -1561,13 +1597,20 @@
   color: rgba(226, 232, 240, 0.9) !important;
 }
 
+@media (min-width: 1024px) {
+  .search-workspace-image {
+    padding-top: 2.1rem;
+  }
+
+  .search-workspace-image .search-view-header {
+    padding-top: 0.9rem !important;
+    padding-bottom: 1.35rem !important;
+  }
+}
+
 :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-note,
 :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-chip {
   background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
   border-color: color-mix(in srgb, #cce1e5 74%, white 26%) !important;
-  color: #315761 !important;
-}
-
-:root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-regenerate {
   color: #315761 !important;
 }

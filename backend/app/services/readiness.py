@@ -102,15 +102,15 @@ def _check_llm() -> dict[str, Any]:
     return _component("configured", provider="groq", model=GROQ_MODEL)
 
 
-def _check_smtp(email_service: EmailService | None = None) -> dict[str, Any]:
-    """Validate SMTP settings without opening a network connection."""
+def _check_email(email_service: EmailService | None = None) -> dict[str, Any]:
+    """Validate email settings without opening a network connection."""
     service = email_service or EmailService()
     try:
         service.validate()
     except Exception as exc:
         return _component("disabled", reason=str(exc))
 
-    return _component("configured", host=service.host, port=service.port)
+    return _component("configured", provider="resend", from_email=service.from_email, to_email=service.to_email)
 
 
 def build_readiness_report(email_service: EmailService | None = None) -> ReadinessResult:
@@ -118,14 +118,14 @@ def build_readiness_report(email_service: EmailService | None = None) -> Readine
     Build a production readiness report.
 
     Required for readiness: local FAISS/IDs artifacts must be present and any configured
-    MongoDB URI must answer quickly. LLM and SMTP are optional features, so missing
+    MongoDB URI must answer quickly. LLM and email delivery are optional features, so missing
     secrets are reported as disabled without failing the whole backend.
     """
     components = {
         "artifacts": _check_artifacts(),
         "mongo": _check_mongo(),
         "llm": _check_llm(),
-        "smtp": _check_smtp(email_service),
+        "email": _check_email(email_service),
     }
 
     blocking_errors = [

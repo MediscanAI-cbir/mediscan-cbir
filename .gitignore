@@ -64,3 +64,5 @@ node_modules/
 
 # docs
 docs/
+/readmePROD.md
+tests/README.md

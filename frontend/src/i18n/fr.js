@@ -373,7 +373,6 @@ export const fr = {
       disclaimer: "Résumé de recherche uniquement. Ne remplace ni un jugement médical ni un diagnostic.",
       generate: "Générer la synthèse",
       loading: "Génération de la synthèse...",
-      regenerate: "Générer à nouveau",
       error: "Impossible de générer la synthèse pour le moment.",
       noResults: "Lancez une recherche avant de demander une synthèse.",
     },

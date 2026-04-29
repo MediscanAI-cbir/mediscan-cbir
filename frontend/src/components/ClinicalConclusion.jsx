@@ -166,15 +166,6 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
             <span>{content.disclaimer}</span>
           </div>
 
-          {/* Tags for the results used as context. */}
-          <div className="mb-4 flex flex-wrap gap-1.5">
-            {topResults.map((r, i) => (
-              <span key={i} className="search-tone-sync search-conclusion-chip text-[11px] px-2 py-1 rounded-lg bg-bg border border-border text-muted font-mono">
-                #{r.rank} {r.score.toFixed(3)}
-              </span>
-            ))}
-          </div>
-
           {/* States: button, loading, error, conclusion. */}
           <div key={summaryStateKey} className="mediscan-results-stage-enter">
             {!conclusion && !loading && (
@@ -202,9 +193,6 @@ export default function ClinicalConclusion({ searchResult, isAccent = false, cla
                 <div className="space-y-3 text-xs text-text">
                   {renderConclusionBlocks(conclusion)}
                 </div>
-                <button onClick={() => { setConclusion(null); setError(null); }} className="search-tone-sync search-ai-summary-regenerate mt-3 text-xs text-muted hover:text-text underline underline-offset-2">
-                  {content.regenerate}
-                </button>
               </div>
             )}
           </div>

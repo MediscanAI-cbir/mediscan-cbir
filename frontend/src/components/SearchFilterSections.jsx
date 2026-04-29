@@ -1,3 +1,7 @@
+import { X } from "lucide-react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+
 /**
  * @fileoverview Filter card components for the CBIR search page.
  * @module components/SearchFilterSections
@@ -29,12 +33,111 @@ function joinClassNames(...classNames) {
 }
 
 /**
+ * Render the filter controls inside a floating pop-up dialog.
+ *
+ * @component
+ * @param {object} props
+ * @param {boolean} props.open
+ * @param {function(): void} props.onClose
+ * @param {string} props.title
+ * @param {string} props.closeLabel
+ * @param {"primary"|"accent"} [props.tone="accent"]
+ * @param {string} [props.scopeClassName=""]
+ * @param {string} [props.panelClassName=""]
+ * @param {React.ReactNode} props.children
+ * @returns {JSX.Element|null}
+ */
+export function SearchFilterPopover({
+  open,
+  onClose,
+  title,
+  closeLabel,
+  tone = "accent",
+  scopeClassName = "",
+  panelClassName = "",
+  children,
+}) {
+  useEffect(() => {
+    if (!open || typeof document === "undefined") {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    /**
+     * Close the pop-up from keyboard input.
+     * @param {KeyboardEvent} event
+     */
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onClose]);
+
+  if (!open || typeof document === "undefined") {
+    return null;
+  }
+
+  const shellClassName = tone === "primary"
+    ? "mediscan-primary-surface"
+    : "mediscan-accent-surface";
+  const closeButtonClassName = tone === "primary"
+    ? "mediscan-primary-outline-button"
+    : "mediscan-accent-outline-button";
+
+  return createPortal(
+    <div
+      className={`search-filter-popover-overlay search-filter-popover-overlay-${tone} fixed inset-0 z-[10020] flex items-center justify-center p-4`}
+      onMouseDown={onClose}
+    >
+      <div className={joinClassNames("search-filter-popover-scope relative", scopeClassName)}>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={closeLabel}
+          title={closeLabel}
+          className={`search-filter-popover-close absolute -right-2 -top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border transition-all ${closeButtonClassName}`}
+        >
+          <X className="h-4 w-4" strokeWidth={1.9} />
+        </button>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={title}
+          className={joinClassNames(
+            `search-filter-popover-panel search-filter-popover-tone-${tone} w-full overflow-hidden rounded-[1.35rem] border shadow-2xl`,
+            shellClassName,
+            panelClassName,
+          )}
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          <div className="max-h-[min(70vh,34rem)] overflow-y-auto p-5 md:max-h-[min(72vh,36rem)]">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+/**
  * Render the filter panel header with title, active count, and reset action.
  *
  * @component
  * @param {object} props
  * @param {string} props.title
  * @param {string} [props.titleClassName=""]
+ * @param {React.ReactNode} [props.headerMeta=null]
+ * @param {string} [props.headerMetaClassName=""]
  * @param {string} props.infoLabel
  * @param {function(): void} props.onInfoClick
  * @param {string} [props.infoButtonClassName=""]
@@ -51,6 +154,8 @@ function joinClassNames(...classNames) {
 export function SearchFilterPanelHeader({
   title,
   titleClassName = "",
+  headerMeta = null,
+  headerMetaClassName = "",
   infoLabel,
   onInfoClick,
   infoButtonClassName = "",
@@ -68,6 +173,11 @@ export function SearchFilterPanelHeader({
           <h3 className={titleClassName}>
             {title}
           </h3>
+          {headerMeta ? (
+            <span className={headerMetaClassName}>
+              {headerMeta}
+            </span>
+          ) : null}
           <button
             type="button"
             onClick={onInfoClick}

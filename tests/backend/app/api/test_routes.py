@@ -455,6 +455,33 @@ def test_generate_conclusion_rejects_client_supplied_captions(client: TestClient
 
 
 @patch("backend.app.api.routes.generate_clinical_conclusion")
+def test_generate_conclusion_clamps_out_of_range_scores(
+    mock_generate: MagicMock,
+    client: TestClient,
+) -> None:
+    """Out-of-range frontend scores are normalized before hitting the summary service."""
+    mock_generate.return_value = "Resume de recherche."
+
+    response = client.post(
+        "/api/generate-conclusion",
+        json={
+            "mode": "visual",
+            "results": [
+                {
+                    "rank": 1,
+                    "image_id": "ROCOv2_2023_train_000123",
+                    "score": 1.37,
+                }
+            ],
+        },
+    )
+
+    assert response.status_code == 200
+    sent_context = mock_generate.call_args.args[0]
+    assert sent_context["results"][0]["score"] == 1.0
+
+
+@patch("backend.app.api.routes.generate_clinical_conclusion")
 def test_generate_conclusion_maps_errors(mock_generate: MagicMock, client: TestClient) -> None:
     """Conclusion service failures become 503 errors."""
     mock_generate.side_effect = ClinicalConclusionError("Service indisponible")
@@ -547,7 +574,7 @@ def test_contact_sends_email(client: TestClient) -> None:
 
 
 def test_contact_rejects_honeypot_submissions(client: TestClient) -> None:
-    """Bots filling the hidden contact field are rejected before SMTP."""
+    """Bots filling the hidden contact field are rejected before email delivery."""
     email_service = MagicMock()
     app.state.email_service = email_service
 
@@ -568,9 +595,9 @@ def test_contact_rejects_honeypot_submissions(client: TestClient) -> None:
 
 
 def test_contact_returns_503_when_email_is_not_configured(client: TestClient) -> None:
-    """Missing SMTP configuration is reported as a 503."""
+    """Missing email configuration is reported as a 503."""
     email_service = MagicMock()
-    email_service.send_contact_email.side_effect = EmailConfigurationError("SMTP not configured")
+    email_service.send_contact_email.side_effect = EmailConfigurationError("Email not configured")
     app.state.email_service = email_service
 
     response = client.post(
@@ -584,13 +611,13 @@ def test_contact_returns_503_when_email_is_not_configured(client: TestClient) ->
     )
 
     assert response.status_code == 503
-    assert response.json()["detail"] == "SMTP not configured"
+    assert response.json()["detail"] == "Email not configured"
 
 
 def test_contact_returns_502_when_email_delivery_fails(client: TestClient) -> None:
-    """SMTP delivery errors are reported as a 502."""
+    """Email delivery errors are reported as a 502."""
     email_service = MagicMock()
-    email_service.send_contact_email.side_effect = EmailDeliveryError("SMTP send failed")
+    email_service.send_contact_email.side_effect = EmailDeliveryError("Email send failed")
     app.state.email_service = email_service
 
     response = client.post(
@@ -604,4 +631,4 @@ def test_contact_returns_502_when_email_delivery_fails(client: TestClient) -> No
     )
 
     assert response.status_code == 502
-    assert response.json()["detail"] == "SMTP send failed"
+    assert response.json()["detail"] == "Email send failed"

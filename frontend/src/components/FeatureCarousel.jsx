@@ -269,6 +269,17 @@ function getClosestCardIndex(track) {
     return 0;
   }
 
+  const scrollEnd = Math.max(0, track.scrollWidth - track.clientWidth);
+  const edgeThreshold = 4;
+
+  if (track.scrollLeft <= edgeThreshold) {
+    return 0;
+  }
+
+  if (track.scrollLeft >= scrollEnd - edgeThreshold) {
+    return cards.length - 1;
+  }
+
   let closestIndex = 0;
   let closestDistance = Number.POSITIVE_INFINITY;
 
@@ -365,7 +376,7 @@ export default function FeatureCarousel({
    * @param {number} nextIndex
    */
   const scrollToIndex = useCallback(
-    (index) => {
+    (index, behavior = "smooth") => {
       const track = trackRef.current;
       if (!track) {
         return;
@@ -380,7 +391,7 @@ export default function FeatureCarousel({
 
       track.scrollTo({
         left: target.offsetLeft,
-        behavior: "smooth",
+        behavior,
       });
       setActiveIndex(nextIndex);
     },

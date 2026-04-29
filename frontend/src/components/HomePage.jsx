@@ -87,9 +87,9 @@ const HUB_ORGANS = [
  * cardIndex: index in content.hub.cards[]
  */
 const HUB_CARDS = [
+  { position: "bc", tone: "visual",   icon: "eye",  cardIndex: 0 }, // bottom-center
   { position: "tl", tone: "semantic", icon: "interpretive", cardIndex: 4 }, // 315deg top-left
   { position: "tr", tone: "semantic", icon: "text", cardIndex: 3 }, // 45deg top-right
-  { position: "bc", tone: "visual",   icon: "eye",  cardIndex: 0 }, // bottom-center
 ];
 
 const HUB_INTRO_ANIMATION = {
@@ -228,12 +228,14 @@ export default function HomePage({
 
       const layoutRect = layoutNode.getBoundingClientRect();
       const donutRect = donutNode.getBoundingClientRect();
+      const stableDonutWidth = donutNode.offsetWidth || donutRect.width;
+      const stableDonutHeight = donutNode.offsetHeight || donutRect.height;
       const donutCenter = {
-        x: donutRect.left + donutRect.width / 2,
-        y: donutRect.top + donutRect.height / 2,
+        x: layoutRect.left + layoutRect.width / 2,
+        y: layoutRect.top + layoutRect.height / 2,
       };
-      const donutRadiusX = donutRect.width / 2;
-      const donutRadiusY = donutRect.height / 2;
+      const donutRadiusX = stableDonutWidth / 2;
+      const donutRadiusY = stableDonutHeight / 2;
 
       const lineSpecs = [
         {
@@ -279,7 +281,7 @@ export default function HomePage({
         if (spec.donutAnchor === "bottom-center") {
           donutPoint = {
             x: donutCenter.x,
-            y: donutRect.bottom,
+            y: donutCenter.y + donutRadiusY,
           };
         } else {
           const dx = cardPoint.x - donutCenter.x;
@@ -341,7 +343,7 @@ export default function HomePage({
       window.removeEventListener("resize", scheduleUpdate);
       resizeObserver?.disconnect();
     };
-  }, [content.hub.cards, hubIntroState]);
+  }, [content.hub.cards]);
 
 
   return (

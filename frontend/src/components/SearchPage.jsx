@@ -47,8 +47,11 @@ export default function SearchPage({
   onSearchToneChange,
 }) {
   const pageShellClass = view === "hub"
-    ? "-mt-16 md:-mt-20 pt-16 md:pt-20"
+    ? "search-hub-route -mt-16 md:-mt-20 pt-16 md:pt-20"
     : "-mt-16 md:-mt-20";
+  const pageInnerClass = view === "hub"
+    ? "search-hub-route-inner relative z-10"
+    : "relative z-10";
 
   const views = {
     hub: (
@@ -77,7 +80,7 @@ export default function SearchPage({
 
   return (
     <div className={`${pageShellClass} relative isolate overflow-x-hidden`}>
-      <div className="relative z-10">{views[view] ?? views.hub}</div>
+      <div className={pageInnerClass}>{views[view] ?? views.hub}</div>
     </div>
   );
 }

@@ -106,6 +106,10 @@ describe("carousel and hub interactions", () => {
     fireEvent.keyDown(track, { key: "ArrowLeft" });
     expect(track.scrollTo).toHaveBeenLastCalledWith({ left: 280, behavior: "smooth" });
 
+    track.scrollLeft = track.scrollWidth - track.clientWidth;
+    fireEvent.scroll(track);
+    expect(screen.getByLabelText("Unknown icon (4/4)")).toHaveAttribute("aria-current", "true");
+
     fireEvent.click(screen.getByLabelText("Unknown icon (4/4)"));
     expect(track.scrollTo).toHaveBeenLastCalledWith({ left: 840, behavior: "smooth" });
 
@@ -140,6 +144,29 @@ describe("carousel and hub interactions", () => {
 
     expect(screen.getByAltText("First demo")).toBeInTheDocument();
     await flushTimers(250);
+  });
+
+  it("lets native mobile scrolling handle touch gestures without JS resnapping", () => {
+    renderWithProviders(
+      <FeatureCarousel
+        items={[
+          { type: "image", label: "First", src: "/one.png", alt: "First demo" },
+          { type: "image", label: "Second", src: "/two.png", alt: "Second demo" },
+          { type: "image", label: "Third", src: "/three.png", alt: "Third demo" },
+        ]}
+        regionLabel="Mobile carousel"
+      />,
+    );
+
+    const track = screen.getByRole("region", { name: "Mobile carousel" });
+    prepareCarouselGeometry(track);
+
+    track.scrollLeft = 0;
+    fireEvent.touchStart(track, { touches: [{ clientX: 240 }] });
+    track.scrollLeft = 840;
+    fireEvent.touchEnd(track, { changedTouches: [{ clientX: 20 }] });
+
+    expect(track.scrollTo).not.toHaveBeenCalled();
   });
 
   it("animates SearchHubView and dispatches the two choices", async () => {

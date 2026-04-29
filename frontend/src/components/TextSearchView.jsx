@@ -3,7 +3,7 @@
  * @module components/TextSearchView
  */
 
-import { BadgePercent, Info, Search, Sparkles, Tags } from "lucide-react";
+import { BadgePercent, Info, Search, SlidersHorizontal, Sparkles, Tags } from "lucide-react";
 import { useState, useContext, useEffect, useMemo, useRef, useCallback } from "react";
 import { LangContext } from "../context/LangContextValue";
 import Controls from "./Controls";
@@ -12,6 +12,7 @@ import ResultsGrid from "./ResultsGrid";
 import {
   SearchCaptionFilterCard,
   SearchCuiFilterCard,
+  SearchFilterPopover,
   SearchFilterPanelHeader,
   SearchReferenceFilterCard,
   SearchScoreFilterCard,
@@ -40,7 +41,8 @@ import {
 import { CUI_TYPES } from "../data/cuiCategories";
 
 // Positive values scroll slightly lower; negative values keep the result block higher.
-const TEXT_SEARCH_SCROLL_OFFSET = 60;
+const TEXT_SEARCH_MOBILE_SCROLL_OFFSET = 12;
+const TEXT_SEARCH_DESKTOP_SCROLL_OFFSET = 54;
 const TEXT_SEARCH_SCROLL_MAX_RETRIES = 4;
 const TEXT_SEARCH_SCROLL_RETRY_DELAY_MS = 160;
 const TEXT_SEARCH_SCROLL_TOLERANCE = 6;
@@ -89,6 +91,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const [cuiFinding, setCuiFinding] = useState("");
   const [referenceFilter, setReferenceFilter] = useState("");
   const [activeCaptionFilterIds, setActiveCaptionFilterIds] = useState([]);
+  const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState(false);
 
   // UI timers and refs for guided notes and automatic result scrolling.
   const [quickNoteHighlighted, setQuickNoteHighlighted] = useState(false);
@@ -125,7 +128,9 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
       return;
     }
 
-    const targetY = getResultsGridScrollTargetY(targetNode, TEXT_SEARCH_SCROLL_OFFSET);
+    const isMobileViewport = window.matchMedia?.("(max-width: 767px)")?.matches ?? window.innerWidth < 768;
+    const scrollOffset = isMobileViewport ? TEXT_SEARCH_MOBILE_SCROLL_OFFSET : TEXT_SEARCH_DESKTOP_SCROLL_OFFSET;
+    const targetY = getResultsGridScrollTargetY(targetNode, scrollOffset);
 
     /**
      * Finalize one scroll attempt and retry if the layout shifted after render.
@@ -139,7 +144,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
         return;
       }
 
-      const latestTargetY = getResultsGridScrollTargetY(latestTargetNode, TEXT_SEARCH_SCROLL_OFFSET);
+      const latestTargetY = getResultsGridScrollTargetY(latestTargetNode, scrollOffset);
       const remainingDelta = Math.abs(window.scrollY - latestTargetY);
 
       if (remainingDelta <= TEXT_SEARCH_SCROLL_TOLERANCE || attempt >= TEXT_SEARCH_SCROLL_MAX_RETRIES) {
@@ -290,6 +295,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   * Scroll to the filter explanation and pulse the related guide note.
   */
   function handleFilterInfoClick() {
+    setIsFilterPopoverOpen(false);
     scrollToInfoSection({
       sectionId: "text-search-filters-note",
       eyebrowId: "text-search-filters-note-eyebrow",
@@ -383,6 +389,29 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
 
   const hasSuggestedCaptionFilters = suggestedCaptionFilters.length > 0;
   const hasResults = Boolean(results);
+  useEffect(() => {
+    if (!hasResults) {
+      setIsFilterPopoverOpen(false);
+    }
+  }, [hasResults]);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) {
+      return undefined;
+    }
+
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    function closePopoverOnDesktop(event = desktopQuery) {
+      if (event.matches) {
+        setIsFilterPopoverOpen(false);
+      }
+    }
+
+    closePopoverOnDesktop();
+    desktopQuery.addEventListener?.("change", closePopoverOnDesktop);
+    return () => {
+      desktopQuery.removeEventListener?.("change", closePopoverOnDesktop);
+    };
+  }, []);
   const uploadEntryClass = entryAnimationsActive ? "by-image-panel-enter-left" : "";
   const controlsEntryClass = entryAnimationsActive ? "by-image-panel-enter-down" : "";
   const launchEntryClass = entryAnimationsActive ? "by-image-panel-enter-up" : "";
@@ -405,6 +434,8 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const filterPanelInfoButtonClassName = `info-trigger info-trigger-accent inline-flex h-5.5 w-5.5 items-center justify-center ${filterNoteHighlighted ? "info-trigger-glow-accent" : ""} focus:outline-none focus:ring-2 focus:ring-accent/25`;
   const filterPanelHintClassName = "mt-1 text-xs leading-5 text-muted";
   const filterPanelResetButtonClassName = `search-toolbar-button rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all ${activeFilterCount > 0 ? "cursor-pointer mediscan-accent-outline-button" : "cursor-not-allowed opacity-45 border-border bg-bg text-muted"}`;
+  const filterTriggerClassName = "image-search-filter-trigger-button text-search-filter-trigger-button search-action-button inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all mediscan-accent-action text-on-strong";
+  const filterTriggerCountClassName = "border-white/20 bg-white/14 text-current";
   const filterLabelClassName = "text-[10px] text-muted font-semibold uppercase tracking-wider";
   const filterInputClassName = "search-workspace-field w-full rounded-xl border border-border bg-bg py-2.5 px-3 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent";
   const filterSelectLabelClassName = "block text-[10px] text-muted/70 font-medium uppercase tracking-wider truncate";
@@ -413,6 +444,119 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const filterScoreValueClassName = "search-filter-score-value-accent min-w-[2.8rem] text-right text-sm font-bold mediscan-accent-text";
   const filterScoreScaleClassName = "mt-2 flex items-center justify-between text-[11px] text-muted";
   const filterSortShellClassName = "image-search-mode-shell image-search-mode-shell-accent mt-1.5 flex gap-1 rounded-xl border p-1";
+  const filterPopoverCloseLabel = lang === "fr" ? "Fermer les filtres" : "Close filters";
+  const visibleResultCount = displayResults?.results?.length ?? 0;
+  function renderFilterControlCards() {
+    return (
+      <div className="mt-4 flex flex-col gap-3">
+        <SearchCaptionFilterCard
+          label={filters.caption}
+          labelClassName={filterLabelClassName}
+          value={searchText}
+          onChange={setSearchText}
+          placeholder={filters.captionPlaceholder}
+          inputWrapperClassName="mt-1.5"
+          inputClassName={filterInputClassName}
+          suggestedFilters={hasSuggestedCaptionFilters ? suggestedCaptionFilters : []}
+          activeFilterIds={activeCaptionFilterIds}
+          onToggleFilter={handleCaptionFilterToggle}
+          getToggleClassName={getCaptionFilterButtonClassName}
+          quickTermsLabel={filters.quickTerms}
+          quickTermsLabelClassName="mb-1.5 text-[10px] text-muted font-medium uppercase tracking-wider"
+          quickTermsListClassName="flex flex-wrap gap-1.5"
+        />
+
+        <SearchCuiFilterCard
+          label={filters.cui}
+          labelClassName={filterLabelClassName}
+          value={cuiFilter}
+          onChange={setCuiFilter}
+          placeholder={filters.cuiPlaceholder}
+          inputClassName={`${filterInputClassName} mt-1.5`}
+          selectGroups={cuiSelectGroups}
+          selectLabelClassName={filterSelectLabelClassName}
+          selectClassName={filterSelectClassName}
+          lang={lang}
+        />
+
+        <SearchScoreFilterCard
+          label={filters.minScore}
+          labelClassName={filterLabelClassName}
+          value={minScore}
+          onChange={setMinScore}
+          sliderClassName={filterScoreSliderClassName}
+          scoreClassName={filterScoreValueClassName}
+          scaleClassName={filterScoreScaleClassName}
+        />
+
+        <SearchReferenceFilterCard
+          label={filters.reference}
+          labelClassName={filterLabelClassName}
+          value={referenceFilter}
+          onChange={setReferenceFilter}
+          placeholder={filters.referencePlaceholder}
+          inputClassName={`${filterInputClassName} mt-1.5`}
+        />
+
+        <SearchSortFilterCard
+          label={filters.sort}
+          labelClassName={filterLabelClassName}
+          shellClassName={filterSortShellClassName}
+          options={sortOptions}
+          currentValue={sortOrder}
+          onChange={setSortOrder}
+          getOptionClassName={getSortOptionClassName}
+        />
+      </div>
+    );
+  }
+
+  function renderFilterHeader() {
+    return (
+      <SearchFilterPanelHeader
+        title={filters.title}
+        titleClassName={filterPanelTitleClassName}
+        infoLabel={filters.infoLabel}
+        onInfoClick={handleFilterInfoClick}
+        infoButtonClassName={filterPanelInfoButtonClassName}
+        hint={filters.refineHint}
+        hintClassName={filterPanelHintClassName}
+        onReset={resetFilters}
+        resetDisabled={activeFilterCount === 0}
+        resetLabel={filters.reset}
+        resetButtonClassName={filterPanelResetButtonClassName}
+      />
+    );
+  }
+
+  function renderFilterPopoverContent() {
+    return (
+      <>
+        {renderFilterHeader()}
+        {renderFilterControlCards()}
+      </>
+    );
+  }
+
+  function renderDesktopFilterSidebar() {
+    return (
+      <div className="image-search-panel image-search-filter-stage-panel mediscan-accent-surface rounded-2xl border p-5 shadow-sm backdrop-blur-sm">
+        {renderFilterHeader()}
+
+        <div className="mt-4 flex items-center gap-2">
+          <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
+            {content.step3}
+          </span>
+          <span className="text-sm font-semibold text-title">
+            {resultCount} {resultCount === 1 ? t.search.results.resultsFoundSingular : t.search.results.resultsFoundPlural}
+          </span>
+        </div>
+
+        {renderFilterControlCards()}
+      </div>
+    );
+  }
+
   /**
    * Compose classes for a caption-filter chip.
    * @param {boolean} isActive
@@ -497,7 +641,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     <div className="search-workspace search-workspace-text search-workspace-accent search-semantic-theme bg-transparent">
 
       {/* Header */}
-      <section className="max-w-[1400px] mx-auto px-4 py-10 sm:px-6">
+      <section className="search-view-header max-w-[1400px] mx-auto px-4 py-10 sm:px-6">
         <button
           type="button"
           onClick={onBack}
@@ -508,26 +652,28 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
           </svg>
           {content.back}
         </button>
-        <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-title mb-3">
+        <div className="search-view-header-copy text-center">
+          <h1 className="search-view-header-title text-4xl md:text-5xl font-bold text-title mb-3">
             {content.headline}
           </h1>
-          <span className="text-search-header-badge image-search-step-badge-accent mediscan-accent-chip inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-            </svg>
-            {content.badge}
-          </span>
-          <button
-            type="button"
-            onClick={handleModeInfoClick}
-            className={`ml-2 info-trigger info-trigger-accent inline-flex h-5.5 w-5.5 -translate-y-0.5 items-center justify-center text-sm font-medium ${quickNoteHighlighted ? "info-trigger-glow-accent" : ""} focus:outline-none focus:ring-2 focus:ring-accent/25`}
-            aria-label={content.modeInfoLabel}
-            title={content.modeInfoLabel}
-          >
-            i
-          </button>
+          <div className="search-view-header-support-row inline-flex flex-wrap items-center justify-center gap-2">
+            <span className="search-view-header-support text-search-header-badge image-search-step-badge-accent mediscan-accent-chip inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+              {content.badge}
+            </span>
+            <button
+              type="button"
+              onClick={handleModeInfoClick}
+              className={`search-view-header-support-info info-trigger info-trigger-accent inline-flex h-5.5 w-5.5 -translate-y-0.5 items-center justify-center text-sm font-medium ${quickNoteHighlighted ? "info-trigger-glow-accent" : ""} focus:outline-none focus:ring-2 focus:ring-accent/25`}
+              aria-label={content.modeInfoLabel}
+              title={content.modeInfoLabel}
+            >
+              i
+            </button>
+          </div>
         </div>
       </section>
 
@@ -592,7 +738,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
             <StatusBar status={status?.type === "error" ? status : null} tone="accent" />
 
             {/* Panneau 3 : Info panel — stable pendant la recherche */}
-            <div className={`image-search-panel image-search-visual-stage-panel mediscan-accent-surface rounded-2xl p-6 md:p-7 border shadow-sm flex flex-col justify-between text-left lg:h-[14rem] ${launchEntryClass}`}>
+            <div className={`image-search-panel search-mobile-detail-panel image-search-visual-stage-panel mediscan-accent-surface rounded-2xl p-6 md:p-7 border shadow-sm flex flex-col justify-between text-left lg:h-[14rem] ${launchEntryClass}`}>
               <div>
                 <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
                   {infoStepLabel}
@@ -636,108 +782,39 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
             <div className="lg:col-span-3">
               <div
                 ref={resultsStageRef}
-                className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(300px,0.88fr)_minmax(0,2.12fr)] lg:items-start lg:gap-6"
+                className="mt-4 space-y-4 lg:grid lg:grid-cols-[minmax(300px,0.88fr)_minmax(0,2.12fr)] lg:items-start lg:gap-6 lg:space-y-0"
                 style={{ overflowAnchor: "none" }}
               >
-
-                {/* Filter sidebar */}
-                <div className="lg:self-start">
-                  <div
-                    className="image-search-panel image-search-filter-stage-panel mediscan-accent-surface rounded-2xl border p-5 shadow-sm backdrop-blur-sm"
+                <div className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
+                  <h2 className="text-lg font-bold text-title">
+                    {visibleResultCount} {visibleResultCount === 1 ? t.search.results.resultsFoundSingular : t.search.results.resultsFoundPlural}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setIsFilterPopoverOpen(true)}
+                    className={filterTriggerClassName}
+                    aria-label={filters.title}
+                    title={filters.title}
                   >
-                    <SearchFilterPanelHeader
-                      title={filters.title}
-                      titleClassName={filterPanelTitleClassName}
-                      infoLabel={filters.infoLabel}
-                      onInfoClick={handleFilterInfoClick}
-                      infoButtonClassName={filterPanelInfoButtonClassName}
-                      hint={filters.refineHint}
-                      hintClassName={filterPanelHintClassName}
-                      onReset={resetFilters}
-                      resetDisabled={activeFilterCount === 0}
-                      resetLabel={filters.reset}
-                      resetButtonClassName={filterPanelResetButtonClassName}
-                    />
-
-                    <div className="mt-4 flex items-center gap-2">
-                      <span className="image-search-step-badge-accent mediscan-accent-chip inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]">
-                        {content.step3}
+                    <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.9} />
+                    <span>{filters.title}</span>
+                    {activeFilterCount > 0 && (
+                      <span className={`inline-flex min-w-5 items-center justify-center rounded-full border px-1.5 py-0.5 text-[10px] font-semibold ${filterTriggerCountClassName}`}>
+                        {activeFilterCount}
                       </span>
-                      <span className="text-sm font-semibold text-title">
-                        {resultCount} {resultCount === 1 ? t.search.results.resultsFoundSingular : t.search.results.resultsFoundPlural}
-                      </span>
-                    </div>
-
-                    <div className="mt-4 flex flex-col gap-3">
-                      <SearchCaptionFilterCard
-                        label={filters.caption}
-                        labelClassName={filterLabelClassName}
-                        value={searchText}
-                        onChange={setSearchText}
-                        placeholder={filters.captionPlaceholder}
-                        inputWrapperClassName="mt-1.5"
-                        inputClassName={filterInputClassName}
-                        suggestedFilters={hasSuggestedCaptionFilters ? suggestedCaptionFilters : []}
-                        activeFilterIds={activeCaptionFilterIds}
-                        onToggleFilter={handleCaptionFilterToggle}
-                        getToggleClassName={getCaptionFilterButtonClassName}
-                        quickTermsLabel={filters.quickTerms}
-                        quickTermsLabelClassName="mb-1.5 text-[10px] text-muted font-medium uppercase tracking-wider"
-                        quickTermsListClassName="flex flex-wrap gap-1.5"
-                      />
-
-                      <SearchCuiFilterCard
-                        label={filters.cui}
-                        labelClassName={filterLabelClassName}
-                        value={cuiFilter}
-                        onChange={setCuiFilter}
-                        placeholder={filters.cuiPlaceholder}
-                        inputClassName={`${filterInputClassName} mt-1.5`}
-                        selectGroups={cuiSelectGroups}
-                        selectLabelClassName={filterSelectLabelClassName}
-                        selectClassName={filterSelectClassName}
-                        lang={lang}
-                      />
-
-                      <SearchScoreFilterCard
-                        label={filters.minScore}
-                        labelClassName={filterLabelClassName}
-                        value={minScore}
-                        onChange={setMinScore}
-                        sliderClassName={filterScoreSliderClassName}
-                        scoreClassName={filterScoreValueClassName}
-                        scaleClassName={filterScoreScaleClassName}
-                      />
-
-                      <SearchReferenceFilterCard
-                        label={filters.reference}
-                        labelClassName={filterLabelClassName}
-                        value={referenceFilter}
-                        onChange={setReferenceFilter}
-                        placeholder={filters.referencePlaceholder}
-                        inputClassName={`${filterInputClassName} mt-1.5`}
-                      />
-
-                      <SearchSortFilterCard
-                        label={filters.sort}
-                        labelClassName={filterLabelClassName}
-                        shellClassName={filterSortShellClassName}
-                        options={sortOptions}
-                        currentValue={sortOrder}
-                        onChange={setSortOrder}
-                        getOptionClassName={getSortOptionClassName}
-                      />
-
-                    </div>
-                  </div>
+                    )}
+                  </button>
                 </div>
 
-                {/* Results grid */}
+                <div className="hidden lg:block lg:self-start">
+                  {renderDesktopFilterSidebar()}
+                </div>
+
                 <div className="min-w-0">
                   <ResultsGrid
                     data={displayResults}
                     className="mt-0"
-                    headerHiddenOnDesktop
+                    hideHeader
                     animateOnMount={false}
                     cardsGridExternalRef={resultsGridRef}
                     onExportJson={exportJSON}
@@ -746,6 +823,18 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
                   />
                   <ClinicalConclusion searchResult={results} isAccent={true} className="mt-6" />
                 </div>
+
+                <SearchFilterPopover
+                  open={isFilterPopoverOpen}
+                  onClose={() => setIsFilterPopoverOpen(false)}
+                  title={filters.title}
+                  closeLabel={filterPopoverCloseLabel}
+                  tone="accent"
+                  scopeClassName="search-workspace search-workspace-text search-workspace-accent search-semantic-theme"
+                  panelClassName="image-search-panel image-search-filter-stage-panel mediscan-accent-surface backdrop-blur-sm"
+                >
+                  {renderFilterPopoverContent()}
+                </SearchFilterPopover>
               </div>
             </div>
           )}

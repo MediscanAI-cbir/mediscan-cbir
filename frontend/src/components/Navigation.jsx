@@ -245,9 +245,6 @@ export default function Navigation({
             className="flex items-center justify-between mt-8 pt-5"
             style={{ borderTop: "1px solid var(--palette-border)" }}
           >
-            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--palette-muted)" }}>
-              {t.nav.settings || "Settings"}
-            </span>
             <LanguageSelector />
           </div>
 

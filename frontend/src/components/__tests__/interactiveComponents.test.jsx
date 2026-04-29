@@ -451,7 +451,7 @@ describe("interactive components", () => {
     await waitFor(() => expect(screen.getByText("Boom")).toBeInTheDocument());
   });
 
-  it("generates, copies and resets clinical conclusions", async () => {
+  it("generates and copies clinical conclusions", async () => {
     fetchConclusion.mockResolvedValueOnce({
       conclusion: "- First point\n- Second point\n\nFinal paragraph",
     });
@@ -472,8 +472,7 @@ describe("interactive components", () => {
     fireEvent.click(screen.getByTitle(fr.search.conclusion.copy));
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
 
-    fireEvent.click(screen.getByText(fr.search.conclusion.regenerate));
-    expect(screen.getByText(fr.search.conclusion.generate)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /generate again|générer à nouveau/i })).not.toBeInTheDocument();
   });
 
   it("shows clinical conclusion empty and API error states", async () => {

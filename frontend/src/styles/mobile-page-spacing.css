@@ -1,0 +1,53 @@
+/* Mobile-only page top spacing reductions. */
+@media (max-width: 767px) {
+  .home-page-content > section:first-child {
+    padding-top: 3.15rem !important;
+  }
+
+  .home-hero-layout {
+    padding-top: 0.55rem !important;
+  }
+
+  .home-hero-copy {
+    padding-top: 1.35rem !important;
+  }
+
+  .contact-page-surface > div,
+  .about-page-surface > div,
+  .faq-page-surface > div {
+    padding-top: 5.2rem !important;
+  }
+
+  .contact-page-surface > div > div:first-child,
+  .about-page-surface > div > div:first-child,
+  .faq-page-surface > div > div:first-child {
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+  }
+
+  section.py-10[class*="max-w-[1400px]"],
+  section.py-16[class*="max-w-[1400px]"] {
+    padding-top: 2.35rem !important;
+  }
+
+  .features-page:not(.features-page-embedded) .features-showcase-section {
+    padding-top: 5.2rem !important;
+  }
+
+  .features-page:not(.features-page-embedded) .features-showcase-header > div {
+    margin-top: 0 !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .contact-page-surface > div,
+  .about-page-surface > div,
+  .faq-page-surface > div {
+    padding-top: 4.7rem !important;
+  }
+
+  section.py-10[class*="max-w-[1400px]"],
+  section.py-16[class*="max-w-[1400px]"] {
+    padding-top: 1.85rem !important;
+  }
+}

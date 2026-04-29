@@ -12,6 +12,7 @@ import {
   ResultCompareModalView,
   ResultDetailsModalView,
   ResultsGridCards,
+  ResultsGridExportControls,
   ResultsGridHeader,
   ResultsGridToolbar,
 } from "./ResultsGridParts";
@@ -476,6 +477,7 @@ function ResultCompareModal({ result, comparisonSource, originRect, tone, conten
  * @param {object|null} props.data
  * @param {boolean} [props.useHomeVisualTone=false]
  * @param {string} [props.className="mt-8"]
+ * @param {boolean} [props.hideHeader=false]
  * @param {boolean} [props.headerHiddenOnDesktop=false]
  * @param {boolean} [props.animateOnMount=false]
  * @param {string[]} [props.selectedIds]
@@ -494,6 +496,7 @@ export default function ResultsGrid({
   data,
   useHomeVisualTone = false,
   className = "mt-8",
+  hideHeader = false,
   headerHiddenOnDesktop = false,
   animateOnMount = false,
   selectedIds: controlledSelectedIds,
@@ -637,13 +640,15 @@ export default function ResultsGrid({
     <section
       className={`${className} ${animateOnMount ? "mediscan-results-stage-enter" : ""} ${desktopLockedHeightClass ? `lg:flex lg:flex-col ${desktopLockedHeightClass}` : ""}`}
     >
-      <ResultsGridHeader
-        resultCount={resultRows.length}
-        content={content}
-        modeLabel={modeLabel}
-        modeColor={modeColor}
-        headerHiddenOnDesktop={headerHiddenOnDesktop}
-      />
+      {!hideHeader && (
+        <ResultsGridHeader
+          resultCount={resultRows.length}
+          content={content}
+          modeLabel={modeLabel}
+          modeColor={modeColor}
+          headerHiddenOnDesktop={headerHiddenOnDesktop}
+        />
+      )}
 
       <ResultsGridToolbar
         currentPage={currentPage}
@@ -676,6 +681,17 @@ export default function ResultsGrid({
         desktopLockedHeightClass={desktopLockedHeightClass}
         desktopThreeColumns={desktopThreeColumns}
         onGridRef={handleCardsGridRef}
+      />
+
+      <ResultsGridExportControls
+        exportLabel={exportLabel}
+        exportDisabled={exportDisabled}
+        exportButtonClass={exportButtonClass}
+        activeExport={activeExport}
+        onExportJson={() => handleExportClick("json", onExportJson)}
+        onExportCsv={() => handleExportClick("csv", onExportCsv)}
+        onExportPdf={() => handleExportClick("pdf", onExportPdf)}
+        className="search-results-toolbar-export-bottom hidden"
       />
 
       {/* Detail modal */}

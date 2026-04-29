@@ -439,6 +439,14 @@
 
   .features-carousel-track {
     grid-auto-columns: calc(100vw - 3.3rem);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+  }
+
+  .feature-spotlight-item {
+    scroll-snap-stop: normal;
   }
 
   .feature-spotlight-card {

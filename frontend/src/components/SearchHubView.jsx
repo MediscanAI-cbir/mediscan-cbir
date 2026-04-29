@@ -65,28 +65,6 @@ function SearchChoiceDonut({
     tone === "primary"
       ? "search-hub-donut-choice-cta search-hub-donut-choice-cta-primary"
       : "search-hub-donut-choice-cta search-hub-donut-choice-cta-accent";
-  // Keep the mobile hub donuts visible even when older responsive rules disable
-  // the desktop intro animation state.
-  const ringStyle = {
-    display: "block",
-    opacity: 1,
-    transform: "translate(-50%, -50%)",
-    animation: "none",
-    "--hub-ring-reveal": "360deg",
-  };
-  const donutStyle = {
-    display: "block",
-    opacity: 1,
-    transform: "none",
-    animation: "none",
-    "--hub-donut-reveal": "360deg",
-  };
-  const coreStyle = {
-    display: "flex",
-    opacity: 1,
-    transform: "translate(-50%, -50%)",
-    animation: "none",
-  };
 
   return (
     <button
@@ -96,11 +74,11 @@ function SearchChoiceDonut({
       data-hub-intro={hubIntroState}
     >
       <div className="search-hub-donut-choice-visual" aria-hidden="true">
-        <div className="home-hub-ring-dashed" style={ringStyle} />
-        <div className="home-hub-donut" style={donutStyle}>
+        <div className="home-hub-ring-dashed" />
+        <div className="home-hub-donut">
           <div className="home-hub-donut-inner" />
         </div>
-        <div className="home-hub-core" style={coreStyle}>
+        <div className="home-hub-core">
           {centerIcon}
         </div>
       </div>
@@ -206,7 +184,7 @@ export default function SearchHubView({ onChooseImage, onChooseText }) {
   }, [hubIntroState]);
 
   return (
-    <div className="search-hub-page relative box-border min-h-[calc(100dvh-4rem)] overflow-x-hidden overflow-y-auto bg-transparent px-6 py-8 pb-16 md:min-h-[calc(100dvh-5rem)] md:py-12">
+    <div className="search-hub-page relative box-border min-h-[calc(100dvh-4rem)] overflow-x-hidden bg-transparent px-6 py-8 pb-16 md:min-h-[calc(100dvh-5rem)] md:py-12">
       {/* Decorative background circles */}
       <div className="search-hub-bg-orbs pointer-events-none absolute inset-0 overflow-hidden">
         <div className="search-hub-bg-orb search-hub-bg-orb-primary absolute left-[-8%] top-[10%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
