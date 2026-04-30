@@ -1,7 +1,7 @@
 # MEDISCAN AI Commands
 
 <p align="center">
-  <a href="README.md">English README</a> · <a href="READMEfr.md">README français</a>
+  <a href="README.md">English README</a> · <a href="README.md#francais">README français</a>
 </p>
 
 ## Quick Start
@@ -66,14 +66,14 @@ Backend only:
 ```bash
 python3.11 -m venv .venv311
 source .venv311/bin/activate
-pip install -r requirements.lock.txt
+pip install -r project-files/requirements.lock.txt
 PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Tests:
 
 ```bash
-pytest
+PYTHONPATH=src pytest
 ```
 
 Evaluations:

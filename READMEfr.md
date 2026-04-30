@@ -74,20 +74,34 @@
     <strong>Top contributors</strong>
   </p>
 
-  <p>
-    <a href="https://github.com/OzanTaskin" title="OzanTaskin">
-      <img src="https://avatars.githubusercontent.com/u/198925800?v=4" alt="OzanTaskin" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-    <a href="https://github.com/Somixe" title="Somixe">
-      <img src="https://avatars.githubusercontent.com/u/189563390?v=4" alt="Somixe" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-    <a href="https://github.com/ales-frhn" title="ales-frhn">
-      <img src="https://avatars.githubusercontent.com/u/238909877?v=4" alt="ales-frhn" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-    <a href="https://github.com/RayaneWebDev" title="RayaneWebDev">
-      <img src="https://avatars.githubusercontent.com/u/182266761?v=4" alt="RayaneWebDev" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-  </p>
+  <table border="0" cellpadding="8" cellspacing="0">
+    <tr>
+      <td align="center" width="96">
+        <a href="https://github.com/OzanTaskin" title="OzanTaskin">
+          <img src="https://avatars.githubusercontent.com/u/198925800?v=4" alt="OzanTaskin" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>OzanTaskin</sub>
+        </a>
+      </td>
+      <td align="center" width="96">
+        <a href="https://github.com/Somixe" title="Somixe">
+          <img src="https://avatars.githubusercontent.com/u/189563390?v=4" alt="Somixe" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>Somixe</sub>
+        </a>
+      </td>
+      <td align="center" width="96">
+        <a href="https://github.com/ales-frhn" title="ales-frhn">
+          <img src="https://avatars.githubusercontent.com/u/238909877?v=4" alt="ales-frhn" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>ales-frhn</sub>
+        </a>
+      </td>
+      <td align="center" width="96">
+        <a href="https://github.com/RayaneWebDev" title="RayaneWebDev">
+          <img src="https://avatars.githubusercontent.com/u/182266761?v=4" alt="RayaneWebDev" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>RayaneWebDev</sub>
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
 
 ## Sommaire
@@ -701,7 +715,7 @@ Backend seul :
 ```bash
 python3.11 -m venv .venv311
 source .venv311/bin/activate
-pip install -r requirements.lock.txt
+pip install -r project-files/requirements.lock.txt
 PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
@@ -715,7 +729,7 @@ curl http://127.0.0.1:8000/api/ready
 Tests :
 
 ```bash
-pytest
+PYTHONPATH=src pytest
 ```
 
 Évaluations :
@@ -738,6 +752,7 @@ Les évaluations dépendent des index stables, des métadonnées et, pour l'éva
 |-- src/mediscan/         Runtime retrieval, embedders, recherche FAISS
 |-- artifacts/            Index FAISS, IDs, manifests stables
 |-- proofs/perf/          CSV de preuves d'évaluation
+|-- project-files/        Dépendances, métadonnées Python et règles Git de référence
 |-- scripts/              Build index, query CLI, visualisations, évaluations
 |-- tests/                Tests unitaires et API
 `-- bin/                  Lanceurs macOS, Linux et Windows

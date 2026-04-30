@@ -8,8 +8,8 @@ readonly PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 readonly FRONTEND_DIR="$PROJECT_DIR/frontend"
 readonly VENV_DIR="$PROJECT_DIR/.venv311"
 readonly PYTHON_BIN="$VENV_DIR/bin/python"
-readonly REQUIREMENTS_LOCK="$PROJECT_DIR/requirements.lock.txt"
-readonly REQUIREMENTS_FALLBACK="$PROJECT_DIR/requirements.txt"
+readonly REQUIREMENTS_LOCK="$PROJECT_DIR/project-files/requirements.lock.txt"
+readonly REQUIREMENTS_FALLBACK="$PROJECT_DIR/project-files/requirements.txt"
 readonly PY_DEPS_STAMP_FILE="$VENV_DIR/.mediscan_py_deps_stamp"
 readonly FE_DEPS_STAMP_FILE="$FRONTEND_DIR/.mediscan_fe_deps_stamp"
 readonly PYTORCH_CPU_INDEX="https://download.pytorch.org/whl/cpu"
@@ -328,7 +328,7 @@ ensure_python_environment() {
     log_info "Installing Python dependencies..."
     if [ -f "$REQUIREMENTS_LOCK" ]; then
         if ! "$PYTHON_BIN" -m pip install -q -r "$REQUIREMENTS_LOCK"; then
-            log_warn "requirements.lock.txt failed on this machine; retrying with requirements.txt."
+            log_warn "project-files/requirements.lock.txt failed on this machine; retrying with project-files/requirements.txt."
             "$PYTHON_BIN" -m pip install -q -r "$REQUIREMENTS_FALLBACK"
         fi
     else

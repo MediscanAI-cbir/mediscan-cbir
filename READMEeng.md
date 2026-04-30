@@ -1,7 +1,7 @@
 # MEDISCAN AI
 
 <p align="center">
-  <strong>English</strong> · <a href="READMEfr.md">Français</a> · <a href="COMMAND.md">Commands</a>
+  <strong>English</strong> · <a href="README.md#francais">Français</a> · <a href="COMMAND.md">Commands</a>
 </p>
 
 <div align="center">
@@ -74,20 +74,34 @@
     <strong>Top contributors</strong>
   </p>
 
-  <p>
-    <a href="https://github.com/OzanTaskin" title="OzanTaskin">
-      <img src="https://avatars.githubusercontent.com/u/198925800?v=4" alt="OzanTaskin" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-    <a href="https://github.com/Somixe" title="Somixe">
-      <img src="https://avatars.githubusercontent.com/u/189563390?v=4" alt="Somixe" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-    <a href="https://github.com/ales-frhn" title="ales-frhn">
-      <img src="https://avatars.githubusercontent.com/u/238909877?v=4" alt="ales-frhn" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-    <a href="https://github.com/RayaneWebDev" title="RayaneWebDev">
-      <img src="https://avatars.githubusercontent.com/u/182266761?v=4" alt="RayaneWebDev" width="64" height="64" style="border-radius: 50%;" />
-    </a>
-  </p>
+  <table border="0" cellpadding="8" cellspacing="0">
+    <tr>
+      <td align="center" width="96">
+        <a href="https://github.com/OzanTaskin" title="OzanTaskin">
+          <img src="https://avatars.githubusercontent.com/u/198925800?v=4" alt="OzanTaskin" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>OzanTaskin</sub>
+        </a>
+      </td>
+      <td align="center" width="96">
+        <a href="https://github.com/Somixe" title="Somixe">
+          <img src="https://avatars.githubusercontent.com/u/189563390?v=4" alt="Somixe" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>Somixe</sub>
+        </a>
+      </td>
+      <td align="center" width="96">
+        <a href="https://github.com/ales-frhn" title="ales-frhn">
+          <img src="https://avatars.githubusercontent.com/u/238909877?v=4" alt="ales-frhn" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>ales-frhn</sub>
+        </a>
+      </td>
+      <td align="center" width="96">
+        <a href="https://github.com/RayaneWebDev" title="RayaneWebDev">
+          <img src="https://avatars.githubusercontent.com/u/182266761?v=4" alt="RayaneWebDev" width="64" height="64" style="border-radius: 50%;" /><br />
+          <sub>RayaneWebDev</sub>
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
 
 ## Table of Contents
@@ -701,7 +715,7 @@ Backend only:
 ```bash
 python3.11 -m venv .venv311
 source .venv311/bin/activate
-pip install -r requirements.lock.txt
+pip install -r project-files/requirements.lock.txt
 PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
@@ -715,7 +729,7 @@ curl http://127.0.0.1:8000/api/ready
 Tests:
 
 ```bash
-pytest
+PYTHONPATH=src pytest
 ```
 
 Evaluations:
@@ -738,6 +752,7 @@ Evaluations depend on stable indexes, metadata and, for strict evaluation, groun
 |-- src/mediscan/         Retrieval runtime, embedders, FAISS search
 |-- artifacts/            FAISS indexes, IDs, stable manifests
 |-- proofs/perf/          Evaluation proof CSV files
+|-- project-files/        Requirements, Python metadata and Git reference rules
 |-- scripts/              Index building, CLI queries, visualizations, evaluations
 |-- tests/                Unit and API tests
 `-- bin/                  macOS, Linux and Windows launchers
