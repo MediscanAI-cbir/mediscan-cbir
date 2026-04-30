@@ -1,268 +1,279 @@
-# MEDISCAN AI
+# MediScan AI
 
-MEDISCAN AI est un prototype academique de recherche d'images medicales. Il permet de retrouver des images proches par similarite visuelle, par proximite semantique, ou depuis une requete textuelle.
+<div align="center">
+  <img src="frontend/public/Logo-2.svg" alt="MediScan AI logo" width="118" />
 
-Important : ce projet n'est pas un dispositif medical, n'est pas un outil de diagnostic et ne doit pas etre utilise pour prendre une decision clinique.
+  <h3>Multimodal medical image retrieval built as a full AI product prototype.</h3>
 
-## Lancement rapide
+  <p>
+    <strong>React + FastAPI + FAISS + DINOv2 + fine-tuned BioMedCLIP</strong><br />
+    Image-to-image search, semantic retrieval, text-to-image search, relaunch workflows, and evaluated retrieval artifacts.
+  </p>
 
-Depuis une machine neuve, le lancement normal se fait avec un seul fichier.
+  <p>
+    <img alt="Python" src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+    <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=06141B" />
+    <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-API-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+    <img alt="FAISS" src="https://img.shields.io/badge/FAISS-vector_search-20232A?style=for-the-badge" />
+  </p>
 
-Windows :
+  <p>
+    <strong>Non-clinical academic prototype.</strong>
+    Built for retrieval research, AI product engineering, and portfolio review.
+  </p>
+</div>
 
-```bat
-bin\run.bat
-```
+![MediScan AI product flow](docs/assets/readme/product-flow.gif)
 
-macOS ou Linux :
+## Why This Project Stands Out
 
-```bash
-./bin/run.sh
-```
+MediScan AI is not a notebook wrapped in a UI. It is an end-to-end retrieval system with separate model choices for separate user intents, a product-grade frontend, a FastAPI backend, stable FAISS artifacts, and recorded evaluation summaries.
 
-macOS en double-clic :
+It demonstrates:
 
-```text
-bin/MEDISCAN_EXECUTABLE.command
-```
+- multimodal retrieval across image and text inputs
+- two complementary embedding strategies instead of a one-model-fits-all shortcut
+- a fine-tuned medical image-language model integrated into the runtime
+- reproducible FAISS artifacts with manifests and metadata
+- strict ground-truth evaluation on modality, anatomy, and modality+organ labels
+- a polished bilingual interface designed as a real product surface
 
-Apres le demarrage :
+## Demo
 
-- Frontend : http://127.0.0.1:5173
-- Backend : http://127.0.0.1:8000
-- API health check : http://127.0.0.1:8000/api/health
+### Visual Search
 
-## Dossier bin
+Image query -> visual neighbors -> browsable results.
 
-Le dossier `bin/` est volontairement minimal :
+![Visual search demo](docs/assets/readme/visual-search.gif)
 
-```text
-bin/
-  run.bat                    Lanceur Windows, double-cliquable.
-  run.sh                     Lanceur macOS/Linux.
-  MEDISCAN_EXECUTABLE.command Lanceur macOS double-cliquable.
-```
+### Text-To-Image Search
 
-Il n'y a pas de fichier d'installation cache a lancer a la main. Toute la preparation est integree dans `run.bat` et `run.sh`.
+Clinical text query -> semantic embedding -> ranked medical images.
 
-## Ce que les lanceurs installent
+![Text search demo](docs/assets/readme/text-search.gif)
 
-Les lanceurs preparent le projet en mode zero-shot :
+## Core Features
 
-- detection ou installation de Python 3.11 quand c'est possible ;
-- detection ou installation de Node.js compatible avec Vite ;
-- creation du venv local `.venv311` ;
-- installation de `pip`, `setuptools` et `wheel` ;
-- installation forcee de PyTorch et TorchVision en CPU-only depuis l'index officiel PyTorch ;
-- installation des dependances Python du projet ;
-- verification que PyTorch n'est pas une version CUDA/GPU ;
-- verification des imports critiques : `torch`, `torchvision`, `open_clip`, `faiss`, `fastapi`, `uvicorn`, `transformers`, `PIL`, `numpy` ;
-- verification des fichiers FAISS et metadonnees dans `artifacts/` ;
-- installation du frontend avec `npm ci` ;
-- demarrage du backend FastAPI et du frontend Vite.
+| Feature | What it does |
+|---|---|
+| Visual image search | Retrieves visually similar medical images from a reference image. |
+| Semantic image search | Retrieves medically aligned neighbors using a semantic image-language space. |
+| Text-to-image search | Turns a clinical text query into a semantic retrieval vector. |
+| Search relaunch | Starts a new search from one result or from multiple selected results. |
+| AI-assisted synthesis | Generates a clinical-style summary from retrieved evidence. |
+| Product UI | Provides result grids, detail views, comparison flows, export paths, themes, and bilingual copy. |
 
-Le point important pour Windows : le lanceur installe PyTorch CPU avant les autres dependances, puis le reinstalle en CPU a la fin. Si `open_clip_torch` ou une autre dependance essaie de tirer une mauvaise version de PyTorch, le lanceur remet la version CPU-only avant de demarrer.
+## Retrieval Modes
 
-## Verification sans demarrer l'application
+| Mode | Input | Runtime model | Index | Goal |
+|---|---|---|---|---|
+| Visual | Image | `facebook/dinov2-base` | `artifacts/index.faiss` | Visual and structural similarity |
+| Semantic | Image | `hf-hub:Ozantsk/biomedclip-rocov2-finetuned` | `artifacts/index_semantic.faiss` | Medically meaningful similarity |
+| Text | Text | `hf-hub:Ozantsk/biomedclip-rocov2-finetuned` | `artifacts/index_semantic.faiss` | Text-to-image retrieval |
 
-Pour tester l'installation sans ouvrir les serveurs :
+The project deliberately keeps visual retrieval and semantic retrieval separate:
 
-Windows :
+- `facebook/dinov2-base` is used when visual structure, morphology, and image appearance are the main signal.
+- `hf-hub:Ozantsk/biomedclip-rocov2-finetuned` is used when medical meaning or language alignment matters.
 
-```bat
-bin\run.bat check
-```
+## Fine-Tuned BioMedCLIP
 
-macOS / Linux :
-
-```bash
-./bin/run.sh check
-```
-
-Si cette commande passe, Python, PyTorch CPU, OpenCLIP, FAISS, les index et le frontend sont prets.
-
-## Documentation locale
-
-Pour generer le portail de documentation :
-
-Windows :
-
-```bat
-bin\run.bat docs
-```
-
-macOS / Linux :
-
-```bash
-./bin/run.sh docs
-```
-
-Sortie :
+The semantic branch uses a ROCOv2 fine-tuned BioMedCLIP checkpoint:
 
 ```text
-docs/index.html
+hf-hub:Ozantsk/biomedclip-rocov2-finetuned
 ```
 
-## Fichiers necessaires
+That model powers both:
 
-Les fichiers lourds de recherche sont dans `artifacts/` :
+- semantic image-to-image retrieval
+- text-to-image retrieval
 
-- `artifacts/index.faiss`
-- `artifacts/index_semantic.faiss`
-- `artifacts/ids.json`
-- `artifacts/ids_semantic.json`
-- `artifacts/cui_categories.json`
-- `artifacts/manifests/visual_stable.json`
-- `artifacts/manifests/semantic_stable.json`
+The semantic FAISS index was rebuilt with vectors produced by the same fine-tuned checkpoint. This avoids a common retrieval mistake: querying an index with embeddings from a different model space.
 
-Si le projet vient d'un clone Git, installer Git LFS puis recuperer les vrais fichiers :
+| Semantic artifact | Value |
+|---|---|
+| Manifest | `artifacts/manifests/semantic_stable.json` |
+| FAISS index | `artifacts/index_semantic.faiss` |
+| IDs metadata | `artifacts/ids_semantic.json` |
+| Indexed vectors | `59,962` |
+| Embedding dimension | `512` |
+| Status | `validated` |
+
+## Performance Snapshot
+
+The strict semantic evaluation filters to images with complete ground-truth labels for modality, organ, and modality+organ.
+
+Ground-truth coverage used by the recorded strict evaluation:
+
+| Ground-truth set | Count |
+|---|---:|
+| Fully annotated image IDs across the 3 CSVs | `12,251` |
+| Fully annotated image IDs present in the indexed train split | `9,140` |
+
+### Strict Semantic Retrieval, k=10
+
+| Semantic setup | TM queries | TA queries | TMO queries | TM results | TA results | TMO results |
+|---|---:|---:|---:|---:|---:|---:|
+| Recorded semantic baseline | `90.97%` | `90.40%` | `88.58%` | `97.07%` | `95.15%` | `91.42%` |
+| Fine-tuned BioMedCLIP ROCOv2 | `91.29%` | `90.70%` | `88.88%` | `96.91%` | `95.22%` | `91.37%` |
+
+Metric meaning:
+
+- `TM`: same modality
+- `TA`: same anatomy / organ
+- `TMO`: same modality + organ
+- `queries`: percentage of queries with at least one matching result
+- `results`: percentage of evaluated results matching the label
+
+### Text-To-Image Retrieval, k=10
+
+| Evaluation | Queries | Precision@k | Top-1 hit |
+|---|---:|---:|---:|
+| Caption-to-image | `100` | `77.0%` | `100.0%` |
+| Keyword-to-image | `100` | `39.3%` | `86.0%` |
+
+The keyword evaluation is intentionally conservative: it checks explicit keyword occurrence in captions, so semantically correct results with different wording can be undercounted.
+
+## Architecture
+
+```mermaid
+flowchart TB
+    UI["React 19 + Vite frontend"] --> API["FastAPI backend"]
+    API --> SERVICE["SearchService"]
+    SERVICE --> REGISTRY["Thread-safe resource registry"]
+    REGISTRY --> VISUAL["Visual branch: DINOv2 + FAISS"]
+    REGISTRY --> SEMANTIC["Semantic branch: fine-tuned BioMedCLIP + FAISS"]
+    VISUAL --> ARTIFACTS["Indexes, IDs, manifests, metrics"]
+    SEMANTIC --> ARTIFACTS
+```
+
+## API Overview
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/health` | Backend health check |
+| `POST /api/search` | Image upload retrieval |
+| `POST /api/search-text` | Text-to-image retrieval |
+| `POST /api/search-by-id` | Relaunch from one indexed image |
+| `POST /api/search-by-ids` | Relaunch from multiple selected images |
+| `POST /api/generate-conclusion` | AI-assisted synthesis |
+| `POST /api/contact` | Contact form delivery |
+| `GET /api/images/{image_id}` | Redirect to the public image asset |
+
+## Tech Stack
+
+| Layer | Tools |
+|---|---|
+| Frontend | React 19, Vite, custom CSS, lucide-react |
+| Backend | FastAPI, Pydantic-style schemas, service layer architecture |
+| Retrieval | FAISS, DINOv2, BioMedCLIP, OpenCLIP, normalized embeddings |
+| Evaluation | Recorded strict semantic and text retrieval metrics |
+| Artifacts | Git LFS for FAISS indexes and large retrieval assets |
+
+## Quick Start
+
+### Prerequisites
+
+- Python `3.11`
+- Node.js `>=20.19.0` or `>=22.12.0`
+- npm
+- Git LFS
+
+### Clone
 
 ```bash
+git clone https://github.com/MediscanAI-cbir/mediscan-cbir.git
+cd mediscan-cbir
 git lfs install
 git lfs pull
 ```
 
-Si le projet est rendu sous forme de dossier ou d'archive, verifier que les fichiers FAISS ne sont pas de petits fichiers texte Git LFS. Les lanceurs refusent de demarrer si les index sont absents ou trop petits.
-
-## Variables optionnelles
-
-Copier `.env.example` vers `.env` uniquement si necessaire :
+### Configure
 
 ```bash
 cp .env.example .env
 ```
 
-Variables utiles :
+Optional AI synthesis:
 
-- `BACKEND_PORT=8000` ou `MEDISCAN_BACKEND_PORT=8000` pour changer le port backend ;
-- `GROQ_KEY_API=...` pour activer la conclusion assistee par LLM ;
-- `MONGO_URI=...` si une base MongoDB externe est utilisee ;
-- `MEDISCAN_CORS_ORIGINS=...` pour autoriser un autre frontend.
-
-Sans `.env`, le lancement local fonctionne avec les valeurs par defaut.
-
-## Depannage rapide
-
-**Python 3.11 introuvable**
-
-Windows : installer Python 3.11 depuis https://www.python.org/downloads/ et cocher `Add Python to PATH`.
-
-macOS : installer Python 3.11 avec `brew install python@3.11` ou depuis python.org.
-
-Linux Debian/Ubuntu : `sudo apt install python3.11 python3.11-venv python3.11-dev`.
-
-**Node.js trop ancien**
-
-Installer Node.js 22 LTS depuis https://nodejs.org/, puis relancer le script.
-
-**Erreur PyTorch, OpenCLIP ou CUDA sur Windows**
-
-Supprimer l'environnement virtuel et relancer :
-
-```bat
-rmdir /s /q .venv311
-bin\run.bat check
+```env
+GROQ_KEY_API=your_groq_api_key_here
 ```
 
-Le lanceur reinstallera PyTorch CPU-only depuis `https://download.pytorch.org/whl/cpu`.
+### Run
 
-**Erreur `open_clip_torch`**
-
-La cause la plus frequente est un PyTorch incorrect ou un venv partiellement installe. Supprimer `.venv311`, verifier la connexion Internet, puis relancer `bin\run.bat check` ou `./bin/run.sh check`.
-
-**Erreur FAISS ou fichiers d'index manquants**
-
-Lancer :
-
-```bash
-git lfs install
-git lfs pull
-```
-
-Puis relancer le lanceur. Si les fichiers `.faiss` font seulement quelques octets ou quelques Ko, ce sont des pointeurs Git LFS et non les vrais index.
-
-**Erreur `npm ci`**
-
-Verifier Node.js avec :
-
-```bash
-node --version
-```
-
-Il faut Node.js 20.19+ ou 22.12+. Ensuite relancer le lanceur. Si besoin, supprimer `frontend/node_modules` et relancer.
-
-**Port 8000 ou 5173 deja utilise**
-
-Les scripts essaient de liberer les ports automatiquement. Si le probleme reste present, fermer les anciens terminaux ou changer le port backend dans `.env` :
-
-```text
-BACKEND_PORT=8010
-```
-
-Le frontend reste sur `5173`.
-
-**Permission refusee sur macOS/Linux**
-
-Rendre les lanceurs executables :
+macOS / Linux:
 
 ```bash
 chmod +x bin/run.sh bin/MEDISCAN_EXECUTABLE.command
-```
-
-Puis relancer `./bin/run.sh`.
-
-**macOS bloque le fichier `.command`**
-
-Clic droit sur `MEDISCAN_EXECUTABLE.command`, choisir `Ouvrir`, puis confirmer. Sinon lancer `./bin/run.sh` dans le terminal.
-
-**Installation bloquee par Internet, proxy ou certificat**
-
-Relancer depuis un reseau stable. Si un proxy est obligatoire, configurer `HTTP_PROXY` et `HTTPS_PROXY` dans le terminal avant de lancer le script.
-
-## Commandes utiles pour le rendu
-
-Verifier l'installation :
-
-```bash
-./bin/run.sh check
-```
-
-Lancer l'application :
-
-```bash
 ./bin/run.sh
 ```
 
-Executer les tests Python :
+Windows:
 
-```bash
-.venv311/bin/python -m pytest tests/src tests/backend
+```bat
+bin\run.bat
 ```
 
-Executer les tests frontend :
+Open:
+
+- Frontend: `http://127.0.0.1:5173`
+- Backend: `http://127.0.0.1:8000`
+- Health check: `http://127.0.0.1:8000/api/health`
+
+## Developer Commands
+
+Frontend:
 
 ```bash
 cd frontend
-npm test
+npm ci
+npm run dev
+npm run lint
+npm run build
 ```
 
-## Structure du projet
+Backend:
+
+```bash
+python3.11 -m venv .venv311
+source .venv311/bin/activate
+pip install -r requirements.txt
+PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
+
+Tests:
+
+```bash
+pytest
+```
+
+## Repository Structure
 
 ```text
-backend/          API FastAPI
-frontend/         Interface React/Vite
-src/mediscan/     Moteur de recherche, embedders, runtime
-scripts/          Scripts de requete, indexation et documentation
-artifacts/        Index FAISS et metadonnees
-bin/              Lanceurs locaux
-tests/            Tests backend, frontend et moteur
+.
+|-- backend/              FastAPI app, routes, services, validation
+|-- frontend/             React product interface
+|-- src/mediscan/         Retrieval runtime, embedders, indexing helpers
+|-- artifacts/            FAISS indexes, ID metadata, manifests
+|-- scripts/visualization Demo grid generation utilities
+|-- tests/                Python test suite
+|-- docs/assets/readme/   README GIF assets
+`-- bin/                  macOS, Linux, and Windows launchers
 ```
 
-## Notes techniques
+## What This Demonstrates
 
-- Le backend force l'execution CPU via `CUDA_VISIBLE_DEVICES=""`.
-- Les embedders chargent DINOv2 et BioMedCLIP sur CPU.
-- FAISS utilise `faiss-cpu`.
-- Les dependances Python sont installees dans `.venv311`, jamais globalement.
-- Les dependances frontend restent dans `frontend/node_modules`.
-- Les fichiers generes localement comme `.venv311`, `node_modules` et `docs/` ne sont pas necessaires dans le rendu source.
+MediScan AI shows the full path from model selection to product experience:
+
+- choosing the right embedding family for the retrieval task
+- maintaining model/index consistency through manifests
+- designing a usable interface around dense retrieval workflows
+- exposing retrieval through a clean API instead of ad hoc scripts
+- validating retrieval behavior with ground-truth evaluation summaries
+- packaging the project so it can be reviewed, run, and explained
+
+## Disclaimer
+
+MediScan AI is a non-clinical academic prototype. It is intended for experimentation, retrieval research, interface design, and AI product engineering demonstration. It must not be used as a medical device or as a substitute for clinical judgment.
