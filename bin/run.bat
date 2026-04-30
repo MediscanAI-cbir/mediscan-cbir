@@ -222,7 +222,7 @@ if exist "requirements.lock.txt" (
     for /f %%h in ('powershell -NoProfile -Command "(Get-FileHash -Algorithm SHA256 'requirements.lock.txt').Hash"') do set "LOCK_HASH=%%h"
 )
 
-set "EXPECTED_PY_STAMP=req:%REQ_HASH%;lock:%LOCK_HASH%;torch:2.11.0-cpu;torchvision:0.26.0-cpu"
+set "EXPECTED_PY_STAMP=req:%REQ_HASH%;lock:%LOCK_HASH%;torch:2.11.0-cpu;torchvision:0.26.0-cpu;torch-install:no-deps"
 set "CURRENT_PY_STAMP="
 if exist "%PY_STAMP_FILE%" set /p CURRENT_PY_STAMP=<"%PY_STAMP_FILE%"
 
@@ -269,7 +269,7 @@ exit /b 0
 
 :install_cpu_pytorch
 echo [INFO] Installing PyTorch CPU wheels...
-"%PYTHON_EXE%" -m pip install -q --upgrade --force-reinstall --index-url %PYTORCH_CPU_INDEX% --extra-index-url https://pypi.org/simple torch==2.11.0+cpu torchvision==0.26.0+cpu
+"%PYTHON_EXE%" -m pip install -q --upgrade --force-reinstall --no-deps --index-url %PYTORCH_CPU_INDEX% --extra-index-url https://pypi.org/simple torch==2.11.0+cpu torchvision==0.26.0+cpu
 if errorlevel 1 (
     echo [ERROR] CPU-only PyTorch installation failed.
     echo Check your internet connection, delete .venv311 if needed, then relaunch bin\run.bat.

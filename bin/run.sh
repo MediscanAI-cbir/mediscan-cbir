@@ -195,11 +195,11 @@ install_cpu_pytorch() {
 
     log_info "Installing PyTorch CPU wheels..."
     if [ "$system_name" = "Darwin" ]; then
-        "$PYTHON_BIN" -m pip install -q --upgrade --force-reinstall \
+        "$PYTHON_BIN" -m pip install -q --upgrade --force-reinstall --no-deps \
             --index-url "$PYTORCH_CPU_INDEX" --extra-index-url https://pypi.org/simple \
             "torch==2.11.0" "torchvision==0.26.0"
     else
-        "$PYTHON_BIN" -m pip install -q --upgrade --force-reinstall \
+        "$PYTHON_BIN" -m pip install -q --upgrade --force-reinstall --no-deps \
             --index-url "$PYTORCH_CPU_INDEX" --extra-index-url https://pypi.org/simple \
             "torch==2.11.0+cpu" "torchvision==0.26.0+cpu"
     fi
@@ -303,7 +303,7 @@ ensure_python_environment() {
     if [ -f "$REQUIREMENTS_LOCK" ]; then
         lock_stamp="$(hash_file "$REQUIREMENTS_LOCK")"
     fi
-    expected_stamp="req:$(hash_file "$REQUIREMENTS_FALLBACK")|lock:$lock_stamp|torch:2.11.0-cpu|torchvision:0.26.0-cpu"
+    expected_stamp="req:$(hash_file "$REQUIREMENTS_FALLBACK")|lock:$lock_stamp|torch:2.11.0-cpu|torchvision:0.26.0-cpu|torch-install:no-deps"
 
     if [ "$current_stamp" = "$expected_stamp" ]; then
         log_ok "Python dependencies already up to date"
