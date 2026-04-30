@@ -478,6 +478,8 @@ export const fr = {
       relaunchSelection: "Rechercher depuis la sélection",
       selectionSearchSingle: "Rechercher depuis l'image",
       selectionSearchPlural: "Rechercher depuis les images",
+      relaunchHistoryTitle: "Historique des relances",
+      relaunchHistoryItemLabel: "Relance",
     },
   },
 

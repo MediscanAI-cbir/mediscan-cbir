@@ -124,6 +124,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
   const [semanticResults, setSemanticResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [relaunchHistory, setRelaunchHistory] = useState([]);
 
   // Search filters shown once results are available.
   const [minScore, setMinScore] = useState(0);
@@ -206,6 +207,36 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
     setVisualResults(null);
     setSemanticResults(null);
     setSelectedIds([]);
+    setRelaunchHistory([]);
+  }
+
+  /**
+   * Keep a session-scoped trace of successful relaunch inputs.
+   * @param {string|string[]} imageIds
+   */
+  function appendRelaunchHistory(imageIds) {
+    const normalizedIds = (Array.isArray(imageIds) ? imageIds : [imageIds])
+      .map((imageId) => String(imageId || "").trim())
+      .filter(Boolean);
+
+    if (normalizedIds.length === 0) return;
+
+    const sourceRows = compareMode
+      ? [...(visualResults?.results ?? []), ...(semanticResults?.results ?? [])]
+      : (results?.results ?? []);
+    const rowsById = new Map(sourceRows.map((row) => [row.image_id, row]));
+    const images = normalizedIds.map((imageId) => {
+      const row = rowsById.get(imageId);
+      return {
+        image_id: imageId,
+        path: row?.path || imageUrl(imageId),
+      };
+    });
+
+    setRelaunchHistory((currentHistory) => [
+      ...currentHistory,
+      { images },
+    ]);
   }
 
   /**
@@ -272,10 +303,12 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
         setSelectedIds([]);
         setVisualResults(attachCallbacks(visual));
         setSemanticResults(attachCallbacks(semantic));
+        appendRelaunchHistory(imageId);
       } else {
         const data = await searchById(imageId, mode, k);
         setSelectedIds([]);
         setResults(attachCallbacks(data));
+        appendRelaunchHistory(imageId);
       }
     }, { clearExistingResults: false });
   }
@@ -294,10 +327,12 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
         setSelectedIds([]);
         setVisualResults(attachCallbacks(visual));
         setSemanticResults(attachCallbacks(semantic));
+        appendRelaunchHistory(imageIds);
       } else {
         const data = await searchByIds(imageIds, mode, k);
         setSelectedIds([]);
         setResults(attachCallbacks(data));
+        appendRelaunchHistory(imageIds);
       }
     }, { clearExistingResults: false });
   }
@@ -487,6 +522,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
       ? resultsContent.selectionReadySingle
       : resultsContent.selectionReadyPlural
     : resultsContent.selectionHint;
+  const hasRelaunchHistory = relaunchHistory.length > 0;
   const selectionActionLabel = selectedIds.length > 1
     ? resultsContent.selectionSearchPlural
     : resultsContent.selectionSearchSingle;
@@ -666,6 +702,44 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
               <span>{selectionActionLabel}</span>
             </button>
           </div>
+
+          {hasRelaunchHistory && (
+            <div className="mt-4 border-t border-border/60 pt-4">
+              <p className="search-tone-sync text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+                {resultsContent.relaunchHistoryTitle}
+              </p>
+              <div className="mt-2 space-y-2">
+                {relaunchHistory.map((entry, index) => (
+                  <div
+                    key={`${entry.images.map((image) => image.image_id).join("|")}-${index}`}
+                    className="search-relaunch-history-row flex min-w-0 flex-col gap-2 rounded-xl py-1 text-xs sm:flex-row sm:items-start sm:gap-3"
+                  >
+                    <span className="shrink-0 font-semibold text-text">
+                      {resultsContent.relaunchHistoryItemLabel} {index + 1} :
+                    </span>
+                    <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+                      {entry.images.map((image) => (
+                        <span
+                          key={image.image_id}
+                          className={`search-relaunch-history-chip inline-flex w-full min-w-0 items-center gap-2 rounded-2xl border bg-bg/80 py-1 pl-1 pr-3 text-left sm:w-auto sm:max-w-full sm:rounded-full ${isAccent ? "search-selection-chip-accent border-accent/18" : useHomeVisualTone ? "search-selection-chip-primary" : "border-border"}`}
+                          title={image.image_id}
+                        >
+                          <img
+                            src={image.path || imageUrl(image.image_id)}
+                            alt={image.image_id}
+                            className="h-9 w-9 rounded-full border border-bg object-cover bg-bg"
+                          />
+                          <span className={`${toneSyncClass} min-w-0 flex-1 truncate text-xs font-medium text-text sm:max-w-[12rem] sm:flex-none`}>
+                            {image.image_id}
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

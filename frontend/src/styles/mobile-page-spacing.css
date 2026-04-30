@@ -1,11 +1,11 @@
 /* Mobile-only page top spacing reductions. */
 @media (max-width: 767px) {
   .home-page-content > section:first-child {
-    padding-top: 3.15rem !important;
+    padding-top: 7rem !important;
   }
 
   .home-hero-layout {
-    padding-top: 0.55rem !important;
+    padding-top: 1.5rem !important;
   }
 
   .home-hero-copy {

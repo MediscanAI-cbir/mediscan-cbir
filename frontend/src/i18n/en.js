@@ -489,6 +489,8 @@ export const en = {
       relaunchSelection: "Search from selection",
       selectionSearchSingle: "Search from image",
       selectionSearchPlural: "Search from images",
+      relaunchHistoryTitle: "Relaunch history",
+      relaunchHistoryItemLabel: "Relaunch",
     },
   },
 

@@ -219,7 +219,7 @@ function ResultCard({
               onToggleSelect(result.image_id);
             }}
             onKeyDown={(event) => event.stopPropagation()}
-            className={`absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 shadow transition-all ${
+            className={`search-result-select-indicator absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 shadow transition-all ${
               selected ? cardClasses.checkbox : `bg-surface border-border ${cardClasses.checkboxHover}`
             }`}
           >
