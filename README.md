@@ -1,7 +1,7 @@
 # MEDISCAN AI
 
 <p align="center">
-  <strong>English</strong> · <a href="#francais">Français</a> · <a href="COMMAND.md">Commands</a>
+  <strong>English</strong> · <a href="#francais">Français</a>
 </p>
 
 <div align="center">
@@ -715,7 +715,7 @@ Backend only:
 ```bash
 python3.11 -m venv .venv311
 source .venv311/bin/activate
-pip install -r project-files/requirements.lock.txt
+pip install -r requirements.lock.txt
 PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
@@ -751,10 +751,12 @@ Evaluations depend on stable indexes, metadata and, for strict evaluation, groun
 |-- frontend/             React / Vite interface
 |-- src/mediscan/         Retrieval runtime, embedders, FAISS search
 |-- artifacts/            FAISS indexes, IDs, stable manifests
-|-- proofs/perf/          Evaluation proof CSV files
-|-- project-files/        Requirements, Python metadata and Git reference rules
+|-- docs/assets/readme/   README visuals and product demos
 |-- scripts/              Index building, CLI queries, visualizations, evaluations
 |-- tests/                Unit and API tests
+|-- requirements.txt      Python dependency set
+|-- requirements.lock.txt Pinned Python dependency set
+|-- pyproject.toml        Python package and test metadata
 `-- bin/                  macOS, Linux and Windows launchers
     |-- run.sh            macOS / Linux terminal launcher
     |-- run.bat           Windows launcher
@@ -799,7 +801,7 @@ MEDISCAN AI is a non-clinical academic prototype. It is intended for experimenta
 # MEDISCAN AI
 
 <p align="center">
-  <a href="#mediscan-ai">English</a> · <strong>Français</strong> · <a href="COMMAND.md">Commandes</a>
+  <a href="#mediscan-ai">English</a> · <strong>Français</strong>
 </p>
 
 <div align="center">
@@ -1513,7 +1515,7 @@ Backend seul :
 ```bash
 python3.11 -m venv .venv311
 source .venv311/bin/activate
-pip install -r project-files/requirements.lock.txt
+pip install -r requirements.lock.txt
 PYTHONPATH=src uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
@@ -1549,10 +1551,12 @@ Les évaluations dépendent des index stables, des métadonnées et, pour l'éva
 |-- frontend/             Interface React / Vite
 |-- src/mediscan/         Runtime retrieval, embedders, recherche FAISS
 |-- artifacts/            Index FAISS, IDs, manifests stables
-|-- proofs/perf/          CSV de preuves d'évaluation
-|-- project-files/        Dépendances, métadonnées Python et règles Git de référence
+|-- docs/assets/readme/   Visuels README et demos produit
 |-- scripts/              Build index, query CLI, visualisations, évaluations
 |-- tests/                Tests unitaires et API
+|-- requirements.txt      Dépendances Python
+|-- requirements.lock.txt Dépendances Python figées
+|-- pyproject.toml        Métadonnées package Python et tests
 `-- bin/                  Lanceurs macOS, Linux et Windows
     |-- run.sh            Lanceur macOS / Linux en terminal
     |-- run.bat           Lanceur Windows

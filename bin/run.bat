@@ -217,9 +217,9 @@ if errorlevel 1 (
 
 set "REQ_HASH=NOHASH"
 set "LOCK_HASH=NOLOCK"
-for /f %%h in ('powershell -NoProfile -Command "(Get-FileHash -Algorithm SHA256 'project-files\requirements.txt').Hash"') do set "REQ_HASH=%%h"
-if exist "project-files\requirements.lock.txt" (
-    for /f %%h in ('powershell -NoProfile -Command "(Get-FileHash -Algorithm SHA256 'project-files\requirements.lock.txt').Hash"') do set "LOCK_HASH=%%h"
+for /f %%h in ('powershell -NoProfile -Command "(Get-FileHash -Algorithm SHA256 'requirements.txt').Hash"') do set "REQ_HASH=%%h"
+if exist "requirements.lock.txt" (
+    for /f %%h in ('powershell -NoProfile -Command "(Get-FileHash -Algorithm SHA256 'requirements.lock.txt').Hash"') do set "LOCK_HASH=%%h"
 )
 
 set "EXPECTED_PY_STAMP=req:%REQ_HASH%;lock:%LOCK_HASH%;torch:2.11.0-cpu;torchvision:0.26.0-cpu"
@@ -250,14 +250,14 @@ call :install_cpu_pytorch || exit /b 1
 
 echo [INFO] Installing Python dependencies...
 set "PY_DEPS_INSTALLED=0"
-if exist "project-files\requirements.lock.txt" (
-    "%PYTHON_EXE%" -m pip install -q -r project-files\requirements.lock.txt
+if exist "requirements.lock.txt" (
+    "%PYTHON_EXE%" -m pip install -q -r requirements.lock.txt
     if !errorlevel! equ 0 set "PY_DEPS_INSTALLED=1"
-    if "!PY_DEPS_INSTALLED!"=="0" echo [WARN] project-files\requirements.lock.txt failed; retrying with project-files\requirements.txt.
+    if "!PY_DEPS_INSTALLED!"=="0" echo [WARN] requirements.lock.txt failed; retrying with requirements.txt.
 )
 
 if "%PY_DEPS_INSTALLED%"=="0" (
-    "%PYTHON_EXE%" -m pip install -q -r project-files\requirements.txt
+    "%PYTHON_EXE%" -m pip install -q -r requirements.txt
     if errorlevel 1 exit /b 1
 )
 
