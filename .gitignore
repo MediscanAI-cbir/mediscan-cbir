@@ -12,8 +12,6 @@ proofs/
 weights/
 .env
 .env.*
-!.env.example
-.envrc
 frontend/.env
 frontend/.env.*
 !frontend/.env.example
@@ -56,18 +54,6 @@ coverage/
 .vscode/
 .claude/
 
-# Secret/key material
-*.pem
-*.key
-*.p12
-*.pfx
-id_rsa
-id_dsa
-id_ecdsa
-id_ed25519
-credentials*.json
-service-account*.json
-
 # Frontend generated files
 frontend/node_modules/
 frontend/dist/
@@ -75,15 +61,23 @@ frontend/coverage/
 frontend/.mediscan_fe_deps_stamp
 node_modules/
 
-# README media is source-controlled; generated docs stay local.
+# docs
 docs/
-!docs/
-docs/*
-!docs/assets/
-docs/assets/*
-!docs/assets/readme/
-docs/assets/readme/*
-!docs/assets/readme/*.svg
-!docs/assets/readme/*.gif
-/readmePROD.md
-tests/README.md
+
+# Root README variants: keep only the GitHub landing page, FR/EN versions and commands.
+/README*.md
+/readme*.md
+!/README.md
+!/READMEfr.md
+!/READMEeng.md
+!/COMMAND.md
+
+# Root files hidden from the GitHub tree but kept locally when useful.
+/.env.example
+/production.env.example
+/.python-version
+/LICENSE
+/check_mongo.py
+/package.json
+/package-lock.json
+/manuel_installation.*
