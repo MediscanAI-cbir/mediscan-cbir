@@ -1633,17 +1633,6 @@
   color: rgba(226, 232, 240, 0.9) !important;
 }
 
-@media (min-width: 1024px) {
-  .search-workspace-image {
-    padding-top: 2.1rem;
-  }
-
-  .search-workspace-image .search-view-header {
-    padding-top: 0.9rem !important;
-    padding-bottom: 1.35rem !important;
-  }
-}
-
 :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-note,
 :root:not([data-theme="dark"]) .search-workspace-image.search-workspace-accent .search-ai-summary-panel .search-conclusion-chip {
   background-color: color-mix(in srgb, #cce1e5 54%, white 46%) !important;
