@@ -4,7 +4,7 @@
  */
 
 import { BadgePercent, Info, Search, SlidersHorizontal, Sparkles, Tags } from "lucide-react";
-import { useState, useContext, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useContext, useEffect, useLayoutEffect, useMemo, useRef, useCallback } from "react";
 import { LangContext } from "../context/LangContextValue";
 import Controls from "./Controls";
 import StatusBar from "./StatusBar";
@@ -23,6 +23,7 @@ import { searchText as apiSearchText } from "../api";
 import ClinicalConclusion from "./ClinicalConclusion";
 import {
   CURATED_CAPTION_FILTERS,
+  MIN_SIMILARITY_SCORE,
   exportResultsAsCsv,
   exportResultsAsJson,
   exportResultsAsPdf,
@@ -82,7 +83,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   const [loading, setLoading] = useState(false);
 
   // Client-side filters applied to the current text-search result set.
-  const [minScore, setMinScore] = useState(0);
+  const [minScore, setMinScore] = useState(MIN_SIMILARITY_SCORE);
   const [searchText, setSearchText] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const [cuiFilter, setCuiFilter] = useState("");
@@ -172,7 +173,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onChromeToneChange?.("accent");
     return () => {
       clearTimeoutRef(quickNoteHighlightTimerRef);
@@ -259,7 +260,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   * Reset all filters to their default values.
   */
   function resetFilters() {
-    setMinScore(0);
+    setMinScore(MIN_SIMILARITY_SCORE);
     setSearchText("");
     setSortOrder("desc");
     setCuiFilter("");
@@ -367,7 +368,7 @@ export default function TextSearchView({ onBack, onChromeToneChange }) {
   }, [results]);
 
   const activeFilterCount = [
-    minScore > 0,
+    minScore > MIN_SIMILARITY_SCORE,
     Boolean(searchText.trim()),
     Boolean(cuiFilter.trim()),
     Boolean(referenceFilter.trim()),

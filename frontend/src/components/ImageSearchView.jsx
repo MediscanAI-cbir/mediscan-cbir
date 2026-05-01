@@ -4,7 +4,7 @@
  */
 
 import { BadgePercent, Search, SlidersHorizontal, Sparkles, Tags, X } from "lucide-react";
-import { useState, useContext, useEffect, useMemo, useRef } from "react";
+import { useState, useContext, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { LangContext } from "../context/LangContextValue";
 import UploadZone from "./UploadZone";
 import Controls from "./Controls";
@@ -24,6 +24,7 @@ import { searchImage, searchById, searchByIds, imageUrl } from "../api";
 import ClinicalConclusion from "./ClinicalConclusion";
 import {
   CURATED_CAPTION_FILTERS,
+  MIN_SIMILARITY_SCORE,
   exportResultsAsCsv,
   exportResultsAsJson,
   exportResultsAsPdf,
@@ -127,7 +128,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
   const [relaunchHistory, setRelaunchHistory] = useState([]);
 
   // Search filters shown once results are available.
-  const [minScore, setMinScore] = useState(0);
+  const [minScore, setMinScore] = useState(MIN_SIMILARITY_SCORE);
   const [searchText, setSearchText] = useState("");
   const [cuiFilter, setCuiFilter] = useState("");
   const [cuiPresence, setCuiPresence] = useState("all");
@@ -394,7 +395,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
 
   /** Reset all filters to their default values. */
   function resetFilters() {
-    setMinScore(0);
+    setMinScore(MIN_SIMILARITY_SCORE);
     setSearchText("");
     setCuiFilter("");
     setCuiPresence("all");
@@ -535,7 +536,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
       ? "image-search-mode-shell image-search-mode-shell-primary"
       : "border-primary/20 bg-primary/10";
   const activeFilterCount = [
-    minScore > 0,
+    minScore > MIN_SIMILARITY_SCORE,
     Boolean(searchText.trim()),
     Boolean(cuiFilter.trim()),
     Boolean(referenceFilter.trim()),
@@ -839,7 +840,7 @@ export default function ImageSearchView({ onBack, onChromeToneChange }) {
     },
   ];
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     onChromeToneChange?.(isAccent ? "accent" : "primary");
   }, [isAccent, onChromeToneChange]);
 

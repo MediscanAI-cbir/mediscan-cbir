@@ -7,22 +7,15 @@ import { useContext, useEffect, useState } from "react";
 import { LangContext } from "../context/LangContextValue";
 import { useTheme } from "../context/useTheme";
 
-/**
- * Documentation for components/AboutPage.
- * @component
- * @param {object} props
- * @param {string} [props.className=""]
- * @returns {JSX.Element}
- */
-function GitHubMark({ className = "" }) {
+function LinkedInMark({ className = "" }) {
   return (
     <svg
-      viewBox="0 0 24 26"
+      viewBox="0 0 24 24"
       aria-hidden="true"
       fill="currentColor"
       className={className}
     >
-      <path d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58l-.02-2.04c-3.34.73-4.04-1.41-4.04-1.41A3.18 3.18 0 0 0 3.64 18c-1.09-.75.08-.73.08-.73a2.52 2.52 0 0 1 1.84 1.24 2.57 2.57 0 0 0 3.5 1 2.58 2.58 0 0 1 .77-1.61c-2.66-.3-5.46-1.33-5.46-5.91a4.63 4.63 0 0 1 1.23-3.21 4.3 4.3 0 0 1 .12-3.16s1-.32 3.3 1.23a11.4 11.4 0 0 1 6 0c2.29-1.55 3.29-1.23 3.29-1.23a4.3 4.3 0 0 1 .12 3.16 4.62 4.62 0 0 1 1.23 3.21c0 4.59-2.81 5.61-5.48 5.91a2.9 2.9 0 0 1 .82 2.25l-.01 3.33c0 .32.21.7.82.58A12 12 0 0 0 12 .5Z" />
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   );
 }
@@ -199,31 +192,25 @@ export default function AboutPage() {
             <SectionLabel>{content.team?.title}</SectionLabel>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {teamMembers.map((member, idx) => (
-                <div
+                <a
                   key={idx}
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`p-6 rounded-2xl border border-border bg-bg flex flex-col items-center text-center hover:border-text/20 transition-all duration-300 ${anim("up")}`}
                   style={{ animationDelay: `${idx * 60}ms` }}
                 >
                   <TeamAvatar member={member} />
                   <div className="flex items-center justify-center gap-1.5 mb-1">
-                    {member.github && (
-                      <a
-                        href={member.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group text-muted"
-                      >
-                        <GitHubMark className="w-4 h-4 md:w-4 md:h-4 group-hover:translate-y-[-2px] transition-transform" />
-                      </a>
+                    {member.linkedin && (
+                      <LinkedInMark className="w-4 h-4 flex-shrink-0 text-muted" />
                     )}
-
                     <h3 className="font-semibold text-title text-[12px] md:text-sm leading-tight whitespace-nowrap">
                       {member.name}
                     </h3>
-
                   </div>
                   <p className="text-xs text-muted">{member.role}</p>
-                </div>
+                </a>
               ))}
             </div>
           </div>

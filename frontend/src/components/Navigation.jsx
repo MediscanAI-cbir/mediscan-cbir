@@ -25,6 +25,7 @@ const MOBILE_MENU_ROUTE_CLOSE_DELAY_MS = 245;
  * @param {function(string): void} props.onPageChange
  * @param {boolean} [props.visible=true]
  * @param {"default"|"primary"|"accent"} [props.tone="default"]
+ * @param {function(boolean): void} [props.onMobileMenuOpenChange]
  * @returns {JSX.Element}
  *
  */
@@ -33,6 +34,7 @@ export default function Navigation({
   onPageChange,
   visible = true,
   tone = "default",
+  onMobileMenuOpenChange,
 }) {
   const { t } = useContext(LangContext);
   /** Mobile menu open state. */
@@ -62,10 +64,12 @@ export default function Navigation({
   // Lock body scrolling while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "unset";
+    onMobileMenuOpenChange?.(isMenuOpen);
     return () => {
       document.body.style.overflow = "unset";
+      onMobileMenuOpenChange?.(false);
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, onMobileMenuOpenChange]);
 
   /**
    * Navigate to a page and close the mobile menu when it is open.
@@ -149,11 +153,12 @@ export default function Navigation({
   return (
     <>
       <nav
-        className="sticky top-0 z-[9999] w-full transition-all duration-300"
+        className={`sticky top-0 z-[9999] w-full transition-all duration-300 ${
+          isMenuOpen ? "mobile-menu-nav-open" : ""
+        }`}
         style={{
           opacity: show ? 1 : 0,
           transform: show ? "translateY(0)" : "translateY(-100%)",
-          background: "transparent",
           pointerEvents: show ? "auto" : "none",
         }}
       >
@@ -213,7 +218,7 @@ export default function Navigation({
 
       {/* Fullscreen mobile menu */}
       <div
-        className={`md:hidden fixed inset-0 z-[9998] transition-all duration-300 ${
+        className={`mobile-menu-overlay md:hidden fixed inset-0 z-[9998] transition-all duration-300 ${
           isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
         style={{

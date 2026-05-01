@@ -22,13 +22,37 @@ function getResultRows(payload) {
 }
 
 /**
+ * Lowest raw similarity value accepted by result filtering.
+ * @constant {number}
+ */
+export const MIN_SIMILARITY_SCORE = -1;
+
+/**
+ * Highest raw similarity value accepted by result filtering.
+ * @constant {number}
+ */
+export const MAX_SIMILARITY_SCORE = 1;
+
+/**
  * Convert a cosine-like similarity score in [-1, 1] to a display percentage.
  * @param {number} score
  * @returns {number}
  */
 export function similarityScoreToPercent(score) {
-  const boundedScore = Number.isFinite(score) ? Math.min(1, Math.max(-1, score)) : 0;
+  const boundedScore = Number.isFinite(score)
+    ? Math.min(MAX_SIMILARITY_SCORE, Math.max(MIN_SIMILARITY_SCORE, score))
+    : 0;
   return Math.round(((boundedScore + 1) / 2) * 100);
+}
+
+/**
+ * Convert a displayed similarity percentage back to the raw score threshold.
+ * @param {number} percent
+ * @returns {number}
+ */
+export function similarityPercentToScore(percent) {
+  const boundedPercent = Number.isFinite(percent) ? Math.min(100, Math.max(0, percent)) : 50;
+  return (boundedPercent / 100) * 2 - 1;
 }
 
 /**
@@ -223,7 +247,7 @@ async function loadImageAsBase64(url) {
  *
  * @param {object|null} payload
  * @param {object} [options={}]
- * @param {number} [options.minScore=0]
+ * @param {number} [options.minScore=MIN_SIMILARITY_SCORE]
  * @param {string} [options.captionFilter=""]
  * @param {"asc"|"desc"} [options.sortOrder="desc"]
  * @param {string} [options.cuiFilter=""]
@@ -238,7 +262,7 @@ async function loadImageAsBase64(url) {
 export function filterResultsPayload(
   payload,
   {
-    minScore = 0,
+    minScore = MIN_SIMILARITY_SCORE,
     captionFilter = "",
     sortOrder = "desc",
     cuiFilter = "",
@@ -257,12 +281,13 @@ export function filterResultsPayload(
   const normalizedCaptionFilter = normalizeFilterValue(captionFilter);
   const normalizedCuiFilter = normalizeFilterValue(cuiFilter);
   const normalizedReferenceFilter = normalizeFilterValue(referenceFilter);
+  const minScorePercent = similarityScoreToPercent(minScore);
   const normalizedCaptionTermGroups = captionTermGroups
     .map((group) => (Array.isArray(group) ? group : [group]))
     .map((group) => group.map((term) => normalizeFilterValue(term)).filter(Boolean))
     .filter((group) => group.length > 0);
   const filteredResults = payload.results
-    .filter((result) => result.score >= minScore)
+    .filter((result) => similarityScoreToPercent(result.score) >= minScorePercent)
     .filter((result) =>
       normalizeFilterValue(result.caption).includes(normalizedCaptionFilter),
     )

@@ -153,16 +153,22 @@ Three types of search are available:
 
 ## Documentation
 
-The project documentation can be generated as a single local portal:
-
-```bash
-python scripts/generate_docs.py
-```
-
-Or through the project shell shortcut:
+The project documentation can be generated as a single local portal. Run the command from the repository root; there is no `./run.sh` file at the root, the launcher lives in `bin/`.
 
 ```bash
 ./bin/run.sh docs
+```
+
+On Windows, use the batch launcher from the same repository root:
+
+```bat
+bin\run.bat docs
+```
+
+If the environment is already prepared, the underlying generator can also be run directly:
+
+```bash
+python scripts/generate_docs.py
 ```
 
 The generated portal is located here:
@@ -170,6 +176,8 @@ The generated portal is located here:
 ```text
 docs/index.html
 ```
+
+The portal includes the frontend JSDoc tree, Python/backend reference pages, and the shared style guide. The generation step performs a documentation audit and fails when a frontend module, exported symbol, or Python public symbol is missing required documentation.
 
 ## Application Demo
 
@@ -953,16 +961,22 @@ Trois types de recherche sont proposés :
 
 ## Documentation
 
-La documentation du projet peut être générée dans un portail unique :
-
-```bash
-python scripts/generate_docs.py
-```
-
-Ou via le raccourci shell du projet :
+La documentation du projet peut être générée dans un portail unique. Lance la commande depuis la racine du dépôt ; il n'y a pas de fichier `./run.sh` à la racine, le lanceur est dans `bin/`.
 
 ```bash
 ./bin/run.sh docs
+```
+
+Sous Windows, utilise le lanceur batch depuis cette même racine :
+
+```bat
+bin\run.bat docs
+```
+
+Si l'environnement est déjà prêt, le générateur interne peut aussi être lancé directement :
+
+```bash
+python scripts/generate_docs.py
 ```
 
 Le portail généré se trouve ici :
@@ -970,6 +984,8 @@ Le portail généré se trouve ici :
 ```text
 docs/index.html
 ```
+
+Le portail contient l'arborescence JSDoc frontend, les pages de référence Python/backend et le guide de style partagé. La génération effectue un audit documentaire et échoue si un module frontend, un symbole exporté ou un symbole public Python n'a pas la documentation requise.
 
 ## Démo de l'application
 

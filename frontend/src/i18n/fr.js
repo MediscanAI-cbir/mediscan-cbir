@@ -530,10 +530,10 @@ export const fr = {
     team: {
       title: "L’équipe",
       members: [
-        { name: "Taouache Rayane", color: "semantic", photo : "/photo-rayane.jpeg", github: "https://github.com/RayaneWebDev" },
-        { name: "Ozan Taskin",     color: "visual", photo : "/photo-ozan.jpeg", github: "https://github.com/OzanTaskin" },
-        { name: "Ales Ferhani",    color: "semantic", photo : "/photo-ales.jpeg", github: "https://github.com/ales-frhn" },
-        { name: "Maxime Huang",    color: "visual", photo : "/photo-maxime.jpeg", github: "https://github.com/Somixe" },
+        { name: "Taouache Rayane", color: "semantic", photo : "/photo-rayane.jpeg", linkedin: "https://www.linkedin.com/in/rayane-taouache-28079232a/" },
+        { name: "Ozan Taskin",     color: "visual", photo : "/photo-ozan.jpeg", linkedin: "https://www.linkedin.com/in/ozan-taskin-84a3052aa/" },
+        { name: "Ales Ferhani",    color: "semantic", photo : "/photo-ales.jpeg", linkedin: "https://www.linkedin.com/in/ales-ferhani/" },
+        { name: "Maxime Huang",    color: "visual", photo : "/photo-maxime.jpeg", linkedin: "https://www.linkedin.com/in/maxime-huang-188615354/" },
       ],
     },
     disclaimer: {

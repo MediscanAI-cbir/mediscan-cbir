@@ -12,6 +12,7 @@ import Navigation from "./components/Navigation";
 import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
 import Spinner from "./components/Spinner";
+import useMobileViewportChrome from "./hooks/useMobileViewportChrome";
 
 // Chargement paresseux des pages secondaires
 const SearchPage = lazy(() => import("./components/SearchPage"));
@@ -40,6 +41,7 @@ const HOME_SURFACE = "home-page";
 const SEARCH_HUB_SURFACE = "search-hub-surface";
 const SEARCH_PRIMARY_SURFACE = "search-primary-surface";
 const SEARCH_ACCENT_SURFACE = "search-accent-surface";
+const SEARCH_TEXT_SURFACE = "search-text-surface";
 const DEFAULT_SURFACE = "bg-bg";
 const PAGE_EXIT_DURATION_MS = 240;
 const SURFACE_FADE_DURATION_MS = 620;
@@ -73,6 +75,9 @@ const STATIC_ROUTE_SURFACES = {
   home: HOME_SURFACE,
   contact: HOME_SURFACE,
   faq: HOME_SURFACE,
+  about: HOME_SURFACE,
+  privacy: HOME_SURFACE,
+  legal: HOME_SURFACE,
 };
 
 /**
@@ -150,6 +155,7 @@ function getRouteSurface(route, searchTone = "default") {
   }
 
   if (route.searchView === "hub") return SEARCH_HUB_SURFACE;
+  if (route.searchView === "text") return SEARCH_TEXT_SURFACE;
   if (searchTone === "primary") return SEARCH_PRIMARY_SURFACE;
   if (searchTone === "accent") return SEARCH_ACCENT_SURFACE;
   return DEFAULT_SURFACE;
@@ -184,6 +190,11 @@ function AppInner() {
   const [searchTone, setSearchTone] = useState("default");
   const [surfaceOverlay, setSurfaceOverlay] = useState(null);
   const [surfaceOverlayVisible, setSurfaceOverlayVisible] = useState(false);
+  const [paintedRoute, setPaintedRoute] = useState(DEFAULT_ROUTE);
+  const [paintedSurface, setPaintedSurface] = useState(() =>
+    getRouteSurface(DEFAULT_ROUTE, getInitialSearchTone(DEFAULT_ROUTE))
+  );
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const pageTimerRef = useRef(null);
   const preloadTimerRef = useRef(null);
@@ -237,24 +248,18 @@ function AppInner() {
 
     lockBodyScroll();
     clearSurfaceRevealFrames();
-    if (currentSurface !== nextSurface) {
-      setSurfaceOverlay(nextSurface);
-      setSurfaceOverlayVisible(false);
-      surfaceRevealFrameRef.current = requestAnimationFrame(() => {
-        surfaceRevealFrameRef.current = requestAnimationFrame(() => {
-          setSurfaceOverlayVisible(true);
-        });
-      });
-    } else {
-      setSurfaceOverlay(null);
-      setSurfaceOverlayVisible(false);
-    }
+    setPaintedRoute(displayRoute);
+    setPaintedSurface(currentSurface);
+    setSurfaceOverlay(null);
+    setSurfaceOverlayVisible(false);
     setPageVisible(false);
     clearTimeout(pageTimerRef.current);
     pageTimerRef.current = window.setTimeout(() => {
       clearBodyScrollLock(true);
       setSearchTone(nextSearchTone);
       setDisplayRoute(nextRoute);
+      setPaintedRoute(nextRoute);
+      setPaintedSurface(nextSurface);
       setSurfaceOverlay(null);
       setSurfaceOverlayVisible(false);
 
@@ -280,9 +285,14 @@ function AppInner() {
 
   /** Update the tone without causing a re-render when unchanged */
   function handleSearchToneChange(nextTone) {
-    setSearchTone((currentTone) =>
-      currentTone === nextTone ? currentTone : nextTone
-    );
+    if (searchTone === nextTone) return;
+
+    clearSurfaceRevealFrames();
+    setSearchTone(nextTone);
+    setPaintedRoute(displayRoute);
+    setPaintedSurface(getRouteSurface(displayRoute, nextTone));
+    setSurfaceOverlay(null);
+    setSurfaceOverlayVisible(false);
   }
 
   useEffect(() => {
@@ -318,12 +328,16 @@ function AppInner() {
   const opacity = pageVisible && langVisible ? 1 : 0;
   const translateY = pageVisible ? "0px" : "4px";
   const scale = pageVisible ? 1 : 0.996;
-  const currentSurface = getRouteSurface(displayRoute, searchTone);
+  const { shellRef, mobilePage, mobileSearchView } =
+    useMobileViewportChrome({
+      route: paintedRoute,
+      mobileMenuOpen,
+    });
   const navActiveSurface =
     theme === "dark"
-      ? currentSurface === HOME_SURFACE
+      ? paintedSurface === HOME_SURFACE
         ? "var(--page-home-surface-bg)"
-        : currentSurface === SEARCH_HUB_SURFACE
+        : paintedSurface === SEARCH_HUB_SURFACE
           ? "var(--page-search-hub-surface-bg)"
           : "var(--page-default-surface-bg)"
       : null;
@@ -332,6 +346,7 @@ function AppInner() {
       ? searchTone
       : "default";
   const showFooter = shouldShowFooter(displayRoute);
+  const mobileFooterEdge = showFooter;
   const pageProps =
     displayRoute.page === SEARCH_PAGE
       ? {
@@ -345,15 +360,20 @@ function AppInner() {
 
   return (
     <div
+      ref={shellRef}
       translate="no"
-      className="notranslate relative isolate min-h-screen text-text"
+      className={`mobile-viewport-edge-frame ${paintedSurface} notranslate relative isolate min-h-screen text-text`}
+      data-mobile-page={mobilePage}
+      data-mobile-search-view={mobileSearchView}
+      data-mobile-menu-open={mobileMenuOpen ? "true" : "false"}
+      data-mobile-footer-edge={mobileFooterEdge ? "true" : "false"}
       style={{
         ...(navActiveSurface ? { "--nav-active-surface": navActiveSurface } : {}),
         transition: `color ${MOTION_ENTER_DURATION_MS}ms ${MOTION_ENTER_EASE}`,
       }}
     >
       <div
-        className={`pointer-events-none absolute inset-0 ${currentSurface}`}
+        className={`pointer-events-none absolute inset-0 ${paintedSurface}`}
         style={{ transition: "none" }}
       />
       {surfaceOverlay && (
@@ -373,6 +393,7 @@ function AppInner() {
           onPageChange={handlePageChange}
           visible={navVisible}
           tone={navTone}
+          onMobileMenuOpenChange={setMobileMenuOpen}
         />
 
         <main
@@ -394,6 +415,7 @@ function AppInner() {
 
         {showFooter && (
           <div
+            className="page-footer-shell"
             style={{
               opacity,
               transform: opacity ? "translateY(0)" : "translateY(18px)",

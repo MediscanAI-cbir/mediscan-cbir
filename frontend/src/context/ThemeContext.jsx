@@ -96,6 +96,24 @@ function getInitialPalette() {
  * @param {"light"|"dark"} nextTheme
  */
 function syncThemeColorMeta(root, nextTheme) {
+  // color-scheme must be updated on all viewports for correct UA rendering.
+  const colorSchemeMeta = getOrCreateMeta(COLOR_SCHEME_META_SELECTOR, "color-scheme");
+  colorSchemeMeta.setAttribute("content", nextTheme === "dark" ? "dark light" : "light dark");
+  reattachMeta(colorSchemeMeta);
+  root.style.colorScheme = nextTheme;
+  if (document.body) {
+    document.body.style.colorScheme = nextTheme;
+  }
+
+  // On mobile, useMobileViewportChrome owns theme-color: it reads the actual
+  // painted surface color from the shell (which differs from --palette-bg on
+  // search pages) and keeps the iOS status bar in sync. Touching it here would
+  // create a race that the hook's MutationObserver has to chase every frame.
+  if (typeof window !== "undefined" && window.matchMedia?.("(max-width: 767px)").matches) {
+    return;
+  }
+
+  // Desktop: sync all chrome meta tags and background-color inline styles.
   const themeBackground = root.style.getPropertyValue("--palette-bg").trim();
   if (!themeBackground) return;
 
@@ -117,10 +135,6 @@ function syncThemeColorMeta(root, nextTheme) {
   navButtonMeta.setAttribute("content", themeBackground);
   reattachMeta(navButtonMeta);
 
-  const colorSchemeMeta = getOrCreateMeta(COLOR_SCHEME_META_SELECTOR, "color-scheme");
-  colorSchemeMeta.setAttribute("content", nextTheme === "dark" ? "dark light" : "light dark");
-  reattachMeta(colorSchemeMeta);
-
   const appleStatusMeta = getOrCreateMeta(
     APPLE_STATUS_BAR_META_SELECTOR,
     "apple-mobile-web-app-status-bar-style"
@@ -129,10 +143,8 @@ function syncThemeColorMeta(root, nextTheme) {
   reattachMeta(appleStatusMeta);
 
   root.style.backgroundColor = themeBackground;
-  root.style.colorScheme = nextTheme;
   if (document.body) {
     document.body.style.backgroundColor = themeBackground;
-    document.body.style.colorScheme = nextTheme;
   }
   const appRoot = document.getElementById("root");
   if (appRoot) {

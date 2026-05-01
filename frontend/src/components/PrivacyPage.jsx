@@ -1,7 +1,19 @@
+/**
+ * @fileoverview Privacy policy page for the MediScan application.
+ * @module components/PrivacyPage
+ */
+
 import { useContext } from "react";
 import { LangContext } from "../context/LangContextValue";
 import { ArrowRight } from "lucide-react";
 
+/**
+ * Render the privacy policy page and link users back to contact.
+ * @component
+ * @param {object} props
+ * @param {function(string): void} props.onPageChange
+ * @returns {JSX.Element}
+ */
 export default function PrivacyPage({ onPageChange }) {
   const { t } = useContext(LangContext);
   const content = t.privacy;

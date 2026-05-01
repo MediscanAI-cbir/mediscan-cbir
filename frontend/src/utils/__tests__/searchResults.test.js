@@ -11,12 +11,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   CURATED_CAPTION_FILTERS,
+  MIN_SIMILARITY_SCORE,
   exportResultsAsCsv,
   exportResultsAsJson,
   exportResultsAsPdf,
   filterResultsPayload,
   getResultCuiSet,
   getSuggestedCaptionFilters,
+  similarityPercentToScore,
   similarityScoreToPercent,
 } from "../searchResults";
 
@@ -84,6 +86,10 @@ describe("search result utilities", () => {
     expect(similarityScoreToPercent(0)).toBe(50);
     expect(similarityScoreToPercent(2)).toBe(100);
     expect(similarityScoreToPercent(Number.NaN)).toBe(50);
+    expect(similarityPercentToScore(0)).toBe(MIN_SIMILARITY_SCORE);
+    expect(similarityPercentToScore(50)).toBe(0);
+    expect(similarityPercentToScore(100)).toBe(1);
+    expect(similarityPercentToScore(120)).toBe(1);
   });
 
   it("extracts CUI sets from arrays, JSON strings, raw strings and blanks", () => {
@@ -119,9 +125,31 @@ describe("search result utilities", () => {
     expect(filtered.results).toHaveLength(1);
     expect(filtered.results[0].image_id).toBe("img-1");
     expect(filterResultsPayload(null)).toBeNull();
-    expect(filterResultsPayload(samplePayload(), { captionTermGroups: [[]] }).results).toHaveLength(2);
-    expect(filterResultsPayload(samplePayload(), { captionTermGroups: [[""]] }).results).toHaveLength(2);
+    expect(filterResultsPayload(samplePayload(), { captionTermGroups: [[]] }).results).toHaveLength(3);
+    expect(filterResultsPayload(samplePayload(), { captionTermGroups: [[""]] }).results).toHaveLength(3);
     expect(() => filterResultsPayload({ results: [null] }, { cuiFilter: "C1" })).toThrow();
+  });
+
+  it("filters score thresholds on the same percentage scale used by cards", () => {
+    const unfiltered = filterResultsPayload(samplePayload());
+    const filtered = filterResultsPayload(samplePayload(), {
+      minScore: similarityPercentToScore(70),
+    });
+    const roundedDisplayPayload = {
+      mode: "visual",
+      results: [
+        { image_id: "shown-90", caption: "", score: 0.79 },
+        { image_id: "shown-89", caption: "", score: 0.78 },
+      ],
+    };
+    const filteredRounded = filterResultsPayload(roundedDisplayPayload, {
+      minScore: similarityPercentToScore(90),
+    });
+
+    expect(unfiltered.results).toHaveLength(3);
+    expect(filtered.results.map((result) => result.image_id)).toEqual(["img-1", "img-2"]);
+    expect(filtered.results.every((result) => similarityScoreToPercent(result.score) >= 70)).toBe(true);
+    expect(filteredRounded.results.map((result) => result.image_id)).toEqual(["shown-90"]);
   });
 
   it("supports CUI presence and descending score filters", () => {
@@ -131,7 +159,7 @@ describe("search result utilities", () => {
 
     expect(withCui.results.map((row) => row.image_id)).toEqual(["img-1", "img-2"]);
     expect(withoutCui.results.map((row) => row.image_id)).toEqual(["ref-3"]);
-    expect(descending.results.map((row) => row.image_id)).toEqual(["img-1", "img-2"]);
+    expect(descending.results.map((row) => row.image_id)).toEqual(["img-1", "img-2", "ref-3"]);
   });
 
   it("exports JSON and CSV through temporary blob links", () => {

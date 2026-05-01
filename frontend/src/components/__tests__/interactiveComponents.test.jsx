@@ -381,7 +381,8 @@ describe("interactive components", () => {
     fireEvent.change(screen.getByPlaceholderText("caption"), { target: { value: "lung" } });
     fireEvent.click(screen.getByText("X-ray"));
     fireEvent.change(screen.getByRole("combobox"), { target: { value: "C1" } });
-    fireEvent.change(screen.getByRole("slider"), { target: { value: "0.9" } });
+    expect(screen.getByText("75%")).toBeInTheDocument();
+    fireEvent.change(screen.getByRole("slider"), { target: { value: "90" } });
     fireEvent.click(screen.getByText("Asc"));
 
     expect(onChange).toHaveBeenCalled();

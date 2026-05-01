@@ -1,7 +1,19 @@
+/**
+ * @fileoverview Legal notices page for the MediScan application.
+ * @module components/LegalPage
+ */
+
 import { useContext } from "react";
 import { LangContext } from "../context/LangContextValue";
 import { ArrowRight } from "lucide-react";
 
+/**
+ * Render the legal notices page and link users back to contact.
+ * @component
+ * @param {object} props
+ * @param {function(string): void} props.onPageChange
+ * @returns {JSX.Element}
+ */
 export default function LegalPage({ onPageChange }) {
   const { t } = useContext(LangContext);
   const content = t.legal;

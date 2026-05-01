@@ -1,0 +1,171 @@
+/* ============================================================
+   All viewports: smooth background transitions on page changes.
+   ============================================================ */
+
+/* The surface-paint layer in App.jsx carries an inline transition:none that prevents
+   any CSS transition from firing when the painted-surface class changes. Override it
+   with !important so background-color transitions smoothly instead of snapping. */
+.mobile-viewport-edge-frame > .pointer-events-none.absolute.inset-0 {
+  transition: background-color 300ms ease !important;
+}
+
+/* Gradient surfaces in light mode lack an explicit background-color, so when the
+   gradient-image layer disappears (gradients cannot cross-fade in CSS) the white
+   html background flashes through for ~1 frame before the new color appears.
+   Anchoring each surface to its flat equivalent eliminates that white moment:
+   the flat color is already in place under the gradient and seamlessly takes over. */
+:root:not([data-theme="dark"]) .search-primary-surface {
+  background-color: #d8eaed;
+}
+
+:root:not([data-theme="dark"]) .search-accent-surface {
+  background-color: #e1edef;
+}
+
+:root:not([data-theme="dark"]) .search-text-surface {
+  background-color: #e1eef0;
+}
+
+/* Mobile-only viewport edges. The top iOS/Safari edge always uses the same
+   home edge color, while each page keeps painting its own content below. */
+@media (max-width: 767px) {
+  :root {
+    --mobile-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --mobile-home-edge-bg: color-mix(in srgb, var(--theme-bg) 50%, #d3dae2 50%);
+    --mobile-root-bg: var(--mobile-home-edge-bg);
+    --mobile-menu-bg: var(--mobile-home-edge-bg);
+    --mobile-footer-bg: var(--theme-footer);
+  }
+
+  :root[data-theme="dark"] {
+    --mobile-home-edge-bg: #061018;
+  }
+
+  html,
+  body,
+  #root {
+    background: var(--mobile-root-bg) !important;
+    background-color: var(--mobile-root-bg) !important;
+    transition: none !important;
+  }
+
+  .mobile-viewport-edge-frame {
+    min-height: 100dvh;
+    background: var(--mobile-root-bg) !important;
+    background-color: var(--mobile-root-bg) !important;
+    transition: none !important;
+  }
+
+  .mobile-viewport-edge-frame > .relative.z-10 {
+    display: flex;
+    min-height: 100dvh;
+    flex-direction: column;
+  }
+
+  .mobile-viewport-edge-frame > .relative.z-10 > main {
+    flex: 1 0 auto;
+  }
+
+  .mobile-viewport-edge-frame > .relative.z-10 > nav {
+    background-color: transparent;
+  }
+
+  /* Route surface classes must not paint a competing top edge on mobile. */
+  .mobile-viewport-edge-frame > .pointer-events-none.absolute.inset-0 {
+    display: none;
+  }
+
+  .mobile-viewport-edge-frame[data-mobile-footer-edge="true"] .page-footer-shell {
+    margin-top: auto;
+    position: relative;
+    background: var(--mobile-footer-bg);
+  }
+
+  .mobile-viewport-edge-frame[data-mobile-footer-edge="true"] .page-footer-shell::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    height: max(0px, var(--mobile-safe-area-bottom));
+    background: var(--mobile-footer-bg);
+    pointer-events: none;
+  }
+
+  footer.bg-footer {
+    background-color: var(--mobile-footer-bg);
+    padding-bottom: var(--mobile-safe-area-bottom);
+  }
+
+  .mobile-menu-overlay {
+    height: 100dvh !important;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--mobile-menu-bg) !important;
+    background-color: var(--mobile-menu-bg) !important;
+  }
+
+  .mobile-menu-overlay > div {
+    min-height: 100dvh;
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: max(2.5rem, calc(2.5rem + env(safe-area-inset-bottom, 0px))) !important;
+    background: var(--mobile-menu-bg);
+  }
+
+  .mobile-menu-overlay::after {
+    content: "";
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: max(2.5rem, env(safe-area-inset-bottom, 0px));
+    background: var(--mobile-menu-bg);
+    pointer-events: none;
+  }
+
+  .mobile-menu-nav-open {
+    isolation: isolate;
+    background: var(--mobile-menu-bg) !important;
+    background-color: var(--mobile-menu-bg) !important;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .mobile-menu-nav-open::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * env(safe-area-inset-top, 0px));
+    right: 0;
+    left: 0;
+    z-index: 0;
+    height: calc(100% + env(safe-area-inset-top, 0px));
+    background: var(--mobile-menu-bg);
+    pointer-events: none;
+  }
+
+  .mobile-menu-nav-open > div {
+    position: relative;
+    z-index: 1;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: var(--mobile-menu-bg);
+  }
+
+  :root[data-theme="dark"][data-mobile-page="search"][data-mobile-search-view="hub"] .search-hub-bg-orbs {
+    display: none !important;
+  }
+
+  /* Image Search / Text Search: the shell is the single surface on mobile.
+     .search-workspace and its pseudo-elements paint competing gradients and
+     flat colors that create a seam between the iOS safe-area and the content. */
+  .mobile-viewport-edge-frame .search-workspace {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  .mobile-viewport-edge-frame .search-workspace::before,
+  .mobile-viewport-edge-frame .search-workspace::after {
+    display: none !important;
+  }
+}

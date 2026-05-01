@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { similarityPercentToScore, similarityScoreToPercent } from "../utils/searchResults";
 
 /**
  * @fileoverview Filter card components for the CBIR search page.
@@ -381,7 +382,7 @@ export function SearchCuiFilterCard({
 }
 
 /**
- * Render the minimum-score filter as a percentage slider.
+ * Render the minimum-score filter on the same percentage scale as result cards.
  *
  * @component
  * @param {object} props
@@ -405,6 +406,8 @@ export function SearchScoreFilterCard({
   scoreStyle,
   scaleClassName = "",
 }) {
+  const scorePercent = similarityScoreToPercent(value);
+
   return (
     <SearchFilterCard>
       <label className={joinClassNames("search-filter-card-label", labelClassName)}>
@@ -414,14 +417,14 @@ export function SearchScoreFilterCard({
         <input
           type="range"
           min="0"
-          max="1"
-          step="0.01"
-          value={value}
-          onChange={(event) => onChange(Number(event.target.value))}
+          max="100"
+          step="1"
+          value={scorePercent}
+          onChange={(event) => onChange(similarityPercentToScore(Number(event.target.value)))}
           className={sliderClassName}
         />
         <span className={scoreClassName} style={scoreStyle}>
-          {Math.round(value * 100)}%
+          {scorePercent}%
         </span>
       </div>
       <div className={scaleClassName}>

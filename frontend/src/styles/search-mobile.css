@@ -3,8 +3,7 @@
    so this file is imported last and restores the hub-specific version. */
 @media (max-width: 767px) {
   [data-theme="dark"] {
-    --page-search-hub-surface-bg:
-      linear-gradient(180deg, #061018 0%, #07131b 54%, #061018 100%);
+    --page-search-hub-surface-bg: #061018;
   }
 
   .search-hub-route {
@@ -259,32 +258,29 @@
     padding: max(0.55rem, env(safe-area-inset-top)) 0.85rem max(0.55rem, env(safe-area-inset-bottom));
   }
 
+  .search-filter-popover-overlay::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 0;
+    height: max(0.55rem, env(safe-area-inset-top));
+    background: var(--search-filter-popover-overlay-bg, var(--page-default-surface-bg));
+    pointer-events: none;
+  }
+
+  .search-filter-popover-overlay > * {
+    position: relative;
+    z-index: 1;
+  }
+
   :root:not([data-theme="dark"]) .search-filter-popover-overlay-primary {
-    --search-filter-popover-overlay-bg:
-      radial-gradient(circle at 10% 8%, color-mix(in srgb, #acd2d9 34%, transparent) 0%, transparent 34%),
-      radial-gradient(circle at 88% 18%, color-mix(in srgb, #acd2d9 44%, white 56%) 0%, transparent 30%),
-      radial-gradient(circle at 86% 10%, color-mix(in srgb, #acd2d9 28%, transparent) 0%, transparent 36%),
-      radial-gradient(circle at 14% 22%, color-mix(in srgb, #acd2d9 32%, white 68%) 0%, transparent 32%),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, #acd2d9 56%, white 44%) 0%,
-        color-mix(in srgb, #acd2d9 48%, white 52%) 32%,
-        color-mix(in srgb, #acd2d9 38%, white 62%) 68%,
-        color-mix(in srgb, #acd2d9 28%, white 72%) 100%
-      );
+    --search-filter-popover-overlay-bg: var(--mobile-home-edge-bg, color-mix(in srgb, var(--theme-bg) 50%, #d3dae2 50%));
   }
 
   :root:not([data-theme="dark"]) .search-filter-popover-overlay-accent {
-    --search-filter-popover-overlay-bg:
-      radial-gradient(circle at 12% 10%, color-mix(in srgb, #cce1e5 28%, transparent) 0%, transparent 34%),
-      radial-gradient(circle at 86% 16%, color-mix(in srgb, #cce1e5 34%, white 66%) 0%, transparent 30%),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, #cce1e5 56%, white 44%) 0%,
-        color-mix(in srgb, #cce1e5 48%, white 52%) 34%,
-        color-mix(in srgb, #cce1e5 38%, white 62%) 70%,
-        color-mix(in srgb, #cce1e5 28%, white 72%) 100%
-      );
+    --search-filter-popover-overlay-bg: var(--mobile-home-edge-bg, color-mix(in srgb, var(--theme-bg) 50%, #d3dae2 50%));
   }
 
   [data-theme="dark"] .search-filter-popover-overlay-primary,
